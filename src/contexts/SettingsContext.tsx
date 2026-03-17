@@ -18,6 +18,7 @@ type ChartVisibility = {
   engagementHeatmap: boolean;
   codeChurnChart: boolean;
   insightsPanel: boolean;
+  userProfileCard: boolean;
 };
 
 type Settings = {
