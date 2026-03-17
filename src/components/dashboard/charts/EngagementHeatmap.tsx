@@ -48,7 +48,7 @@ export const EngagementHeatmap = ({ data }: EngagementHeatmapProps) => {
 
     const maxVal = Math.max(...Array.from(dailyActivity.values()), 1);
 
-    return { seriesData, weekLabels, maxVal };
+    return { seriesData, weekLabels, maxVal, firstWeekStart };
   }, [data]);
 
   const options: Partial<HighchartsOptions> = {
