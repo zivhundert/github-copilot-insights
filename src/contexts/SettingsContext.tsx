@@ -63,7 +63,7 @@ const DEFAULT_SETTINGS: Settings = {
   linesPerMinute: 10,
   theme: "light",
   pricePerHour: 55,
-  copilotPricePerUser: 19,
+  copilotPricePerUser: 39,
   chartVisibility: DEFAULT_CHART_VISIBILITY,
 };
 
