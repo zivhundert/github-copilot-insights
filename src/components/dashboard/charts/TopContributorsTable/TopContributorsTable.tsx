@@ -44,7 +44,8 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
                 <PopoverContent>
                   <div className="space-y-2">
                     <p>Users ranked by performance segment and comprehensive activity metrics.</p>
-                    <p className="text-sm text-muted-foreground">Acceptance Rate = (Lines Added / Lines Suggested) × 100</p>
+                    <p className="text-sm text-muted-foreground">Acceptance Rate = (Code Acceptances / Code Generations) × 100 (event-based)</p>
+                    <p className="text-sm text-muted-foreground">AI Amplification = (Lines Added / Lines Suggested) × 100. Can exceed 100% due to agent/edit workflows.</p>
                     <p className="text-sm text-muted-foreground">User ROI = (Individual Money Saved / Annual Copilot Cost per User) × 100</p>
                     <div className="text-sm text-muted-foreground space-y-1">
                       <p><strong>Performance Segments:</strong></p>
@@ -73,6 +74,7 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
                 <SortableTableHead column="acceptedLines" label={columnLabels.acceptedLines} sortConfig={sortConfig} onSort={handleSort} />
                 <SortableTableHead column="suggestedLines" label={columnLabels.suggestedLines} sortConfig={sortConfig} onSort={handleSort} />
                 <SortableTableHead column="acceptanceRate" label={columnLabels.acceptanceRate} sortConfig={sortConfig} onSort={handleSort} />
+                <SortableTableHead column="aiAmplification" label={columnLabels.aiAmplification} sortConfig={sortConfig} onSort={handleSort} />
                 <SortableTableHead column="interactions" label={columnLabels.interactions} sortConfig={sortConfig} onSort={handleSort} />
                 <SortableTableHead column="codeGenerations" label={columnLabels.codeGenerations} sortConfig={sortConfig} onSort={handleSort} />
                 <SortableTableHead column="codeAcceptances" label={columnLabels.codeAcceptances} sortConfig={sortConfig} onSort={handleSort} />

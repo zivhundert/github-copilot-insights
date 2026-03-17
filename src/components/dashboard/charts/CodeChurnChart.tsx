@@ -65,7 +65,7 @@ export const CodeChurnChart = ({ data, aggregationPeriod }: CodeChurnChartProps)
     },
     series: [
       {
-        name: 'Lines Added',
+        name: 'AI Lines Added',
         type: 'area',
         data: chartData.map(d => [d.ts, d.added]),
         color: '#16a34a',
@@ -75,7 +75,7 @@ export const CodeChurnChart = ({ data, aggregationPeriod }: CodeChurnChartProps)
         },
       },
       {
-        name: 'Lines Deleted',
+        name: 'AI Lines Deleted',
         type: 'area',
         data: chartData.map(d => [d.ts, d.deleted]),
         color: '#dc2626',
@@ -96,8 +96,8 @@ export const CodeChurnChart = ({ data, aggregationPeriod }: CodeChurnChartProps)
 
   return (
     <ChartContainer
-      title="Code Churn (Lines Added vs Deleted)"
-      helpText="Shows lines added (green) vs deleted (red) over time. The dashed purple line represents net churn (added minus deleted)."
+      title="Code Churn (AI Lines Added vs Deleted)"
+      helpText="Shows Copilot-related lines added (green) vs deleted (red) over time. The dashed purple line represents net churn (added minus deleted)."
     >
       <BaseHighchart options={options} />
     </ChartContainer>

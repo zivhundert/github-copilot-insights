@@ -3,9 +3,10 @@ import { Rocket, Sparkles, TrendingUp, Sprout } from 'lucide-react';
 import { PerformanceSegment } from './types';
 
 export const getPerformanceSegment = (acceptanceRate: number, interactions: number, userROI: number): PerformanceSegment => {
-  if (acceptanceRate > 40 && interactions > 200 && userROI > 100) return 'Champion';
-  if (acceptanceRate > 25 && interactions > 50 && userROI > 70) return 'Producer';
-  if (acceptanceRate > 15 || interactions > 10 || userROI > 25) return 'Explorer';
+  // Thresholds calibrated for event-based acceptance rate (typically higher than line-based)
+  if (acceptanceRate > 60 && interactions > 200 && userROI > 100) return 'Champion';
+  if (acceptanceRate > 40 && interactions > 50 && userROI > 70) return 'Producer';
+  if (acceptanceRate > 20 || interactions > 10 || userROI > 25) return 'Explorer';
   return 'Starter';
 };
 
@@ -49,9 +50,9 @@ export const getSegmentCalculationExplanation = (
 
 const getThresholdForSegment = (segment: PerformanceSegment, type: 'acceptance' | 'interactions' | 'roi'): number => {
   switch (segment) {
-    case 'Champion': return type === 'acceptance' ? 40 : type === 'interactions' ? 200 : 100;
-    case 'Producer': return type === 'acceptance' ? 25 : type === 'interactions' ? 50 : 70;
-    case 'Explorer': return type === 'acceptance' ? 15 : type === 'interactions' ? 10 : 25;
+    case 'Champion': return type === 'acceptance' ? 60 : type === 'interactions' ? 200 : 100;
+    case 'Producer': return type === 'acceptance' ? 40 : type === 'interactions' ? 50 : 70;
+    case 'Explorer': return type === 'acceptance' ? 20 : type === 'interactions' ? 10 : 25;
     case 'Starter': return 0;
   }
 };

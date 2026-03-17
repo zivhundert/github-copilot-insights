@@ -14,28 +14,26 @@ interface AcceptanceRateChartProps {
 
 export const AcceptanceRateChart = ({ data, aggregationPeriod }: AcceptanceRateChartProps) => {
   const chartData = useMemo(() => {
-    const periodData = new Map<string, { accepted: number; suggested: number }>();
+    const periodData = new Map<string, { acceptances: number; generations: number }>();
     
     data.forEach(row => {
       const date = row.day;
-      // Only use code_completion feature for acceptance rate (suggest→accept flow)
-      const codeCompletion = (row.totals_by_feature || []).find(f => f.feature === 'code_completion');
-      const accepted = codeCompletion?.loc_added_sum || 0;
-      const suggested = codeCompletion?.loc_suggested_to_add_sum || 0;
+      const acceptances = row.code_acceptance_activity_count || 0;
+      const generations = row.code_generation_activity_count || 0;
       
       if (!periodData.has(date)) {
-        periodData.set(date, { accepted: 0, suggested: 0 });
+        periodData.set(date, { acceptances: 0, generations: 0 });
       }
       
       const period = periodData.get(date)!;
-      period.accepted += accepted;
-      period.suggested += suggested;
+      period.acceptances += acceptances;
+      period.generations += generations;
     });
 
     return Array.from(periodData.entries())
-      .map(([date, { accepted, suggested }]) => {
+      .map(([date, { acceptances, generations }]) => {
         const timestamp = new Date(date).getTime();
-        const rate = suggested > 0 ? (accepted / suggested) * 100 : 0;
+        const rate = generations > 0 ? (acceptances / generations) * 100 : 0;
         return [timestamp, rate];
       })
       .sort((a, b) => a[0] - b[0]);
@@ -54,7 +52,6 @@ export const AcceptanceRateChart = ({ data, aggregationPeriod }: AcceptanceRateC
     yAxis: {
       ...getLineChartConfig().yAxis,
       min: 0,
-      max: 100,
       labels: {
         formatter: function() { return this.value + '%'; }
       }
@@ -85,8 +82,8 @@ export const AcceptanceRateChart = ({ data, aggregationPeriod }: AcceptanceRateC
 
   return (
     <ChartContainer
-      title={`AI Adoption Quality Trend (${getPeriodText()})`}
-      helpText="Shows the percentage of suggested lines that were accepted over time."
+      title={`Acceptance Rate Trend (${getPeriodText()})`}
+      helpText="Percentage of Copilot suggestions accepted by developers over time (event-based: Code Acceptances / Code Generations)."
     >
       <BaseHighchart options={options} />
     </ChartContainer>

@@ -42,10 +42,10 @@ export const UserProfileCard = ({ data, userName }: UserProfileCardProps) => {
       .slice(0, 3)
       .map(([lang]) => lang);
 
-    // Acceptance rate
-    const totalAdded = data.reduce((s, r) => s + (r.loc_added_sum || 0), 0);
-    const totalSuggested = data.reduce((s, r) => s + (r.loc_suggested_to_add_sum || 0), 0);
-    const acceptanceRate = totalSuggested > 0 ? (totalAdded / totalSuggested) * 100 : 0;
+    // Event-based acceptance rate
+    const totalAcceptances = data.reduce((s, r) => s + (r.code_acceptance_activity_count || 0), 0);
+    const totalGenerations = data.reduce((s, r) => s + (r.code_generation_activity_count || 0), 0);
+    const acceptanceRate = totalGenerations > 0 ? (totalAcceptances / totalGenerations) * 100 : null;
 
     // Total interactions
     const totalInteractions = data.reduce((s, r) => s + (r.user_initiated_interaction_count || 0), 0);
@@ -104,7 +104,9 @@ export const UserProfileCard = ({ data, userName }: UserProfileCardProps) => {
               <TrendingUp className="h-3.5 w-3.5" />
               Acceptance Rate
             </div>
-            <p className="text-sm font-medium">{profile.acceptanceRate.toFixed(1)}%</p>
+            <p className="text-sm font-medium">
+              {profile.acceptanceRate !== null ? `${profile.acceptanceRate.toFixed(1)}%` : 'N/A'}
+            </p>
           </div>
 
           <div className="space-y-1">

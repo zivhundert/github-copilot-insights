@@ -12,6 +12,7 @@ export interface ContributorWithSegment {
   acceptedLines: number;
   suggestedLines: number;
   acceptanceRate: number;
+  aiAmplification: number;
   interactions: number;
   codeGenerations: number;
   codeAcceptances: number;
@@ -26,6 +27,7 @@ export type SortableColumn =
   | "acceptedLines"
   | "suggestedLines"
   | "acceptanceRate"
+  | "aiAmplification"
   | "interactions"
   | "codeGenerations"
   | "codeAcceptances"
@@ -43,6 +45,7 @@ export const columnLabels: Record<SortableColumn, string> = {
   acceptedLines: "Lines Added",
   suggestedLines: "Lines Suggested",
   acceptanceRate: "Acceptance Rate",
+  aiAmplification: "AI Amplification",
   interactions: "Interactions",
   codeGenerations: "Code Generations",
   codeAcceptances: "Code Acceptances",

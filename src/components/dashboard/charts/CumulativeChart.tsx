@@ -26,31 +26,31 @@ export const CumulativeChart = ({ baseFilteredData, aggregationPeriod }: Cumulat
       }
     };
 
-    const periodData = new Map<number, { accepted: number; suggested: number }>();
+    const periodData = new Map<number, { added: number; suggested: number }>();
     
     baseFilteredData.forEach(row => {
       const date = new Date(row.day);
       const key = groupKey(date);
-      const acceptedLines = row.loc_added_sum || 0;
+      const addedLines = row.loc_added_sum || 0;
       const suggestedLines = row.loc_suggested_to_add_sum || 0;
       
       if (!periodData.has(key)) {
-        periodData.set(key, { accepted: 0, suggested: 0 });
+        periodData.set(key, { added: 0, suggested: 0 });
       }
       const existing = periodData.get(key)!;
-      existing.accepted += acceptedLines;
+      existing.added += addedLines;
       existing.suggested += suggestedLines;
     });
 
     const sortedData = Array.from(periodData.entries()).sort(([a], [b]) => a - b);
 
-    let cumulativeAccepted = 0;
+    let cumulativeAdded = 0;
     let cumulativeSuggested = 0;
     
-    return sortedData.map(([timestamp, { accepted, suggested }]) => {
-      cumulativeAccepted += accepted;
+    return sortedData.map(([timestamp, { added, suggested }]) => {
+      cumulativeAdded += added;
       cumulativeSuggested += suggested;
-      return { date: timestamp, cumulativeAccepted, cumulativeSuggested };
+      return { date: timestamp, cumulativeAdded, cumulativeSuggested };
     });
   }, [baseFilteredData, aggregationPeriod]);
 
@@ -74,13 +74,13 @@ export const CumulativeChart = ({ baseFilteredData, aggregationPeriod }: Cumulat
     },
     series: [
       {
-        name: 'Cumulative Lines Added',
+        name: 'Total AI Code Added (All Features)',
         type: 'line',
-        data: chartData.map(d => [d.date, d.cumulativeAccepted]),
+        data: chartData.map(d => [d.date, d.cumulativeAdded]),
         color: CHART_COLORS.gradients.blue[0]
       },
       {
-        name: 'Cumulative Lines Suggested',
+        name: 'Code Suggested (Completions)',
         type: 'line',
         data: chartData.map(d => [d.date, d.cumulativeSuggested]),
         color: CHART_COLORS.gradients.orange[0],
@@ -92,7 +92,7 @@ export const CumulativeChart = ({ baseFilteredData, aggregationPeriod }: Cumulat
   return (
     <ChartContainer
       title={`AI Code Generation Growth (${getPeriodText()})`}
-      helpText={`Running total of lines added and suggested over time. Solid line: Cumulative lines added. Dashed line: Cumulative lines suggested.`}
+      helpText="Running total of Copilot-related code added vs code suggested. Added lines include completions, chat, and agent output. Suggested lines only reflect ghost-text suggestions. Added can exceed suggested because agent/edit workflows add code without suggestions."
     >
       <BaseHighchart options={options} />
     </ChartContainer>
