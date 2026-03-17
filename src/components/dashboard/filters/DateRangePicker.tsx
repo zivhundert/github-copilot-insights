@@ -7,18 +7,18 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { format, isValid, compareAsc } from 'date-fns';
 import { cn } from '@/lib/utils';
 import type { DateRange } from 'react-day-picker';
-import type { CursorDataRow } from '@/pages/Index';
+import type { CopilotDataRow } from '@/pages/Index';
 
 interface DateRangePickerProps {
-  data: CursorDataRow[];
+  data: CopilotDataRow[];
   value: DateRange | undefined;
   onChange: (dateRange: DateRange | undefined) => void;
 }
 
-function extractDateRange(data: CursorDataRow[]) {
+function extractDateRange(data: CopilotDataRow[]) {
   const validDates = data
     .map(row => {
-      const date = new Date(row.Date);
+      const date = new Date(row.day);
       return isValid(date) ? date : null;
     })
     .filter(Boolean) as Date[];
