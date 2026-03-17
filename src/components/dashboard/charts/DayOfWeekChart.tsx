@@ -62,8 +62,8 @@ export const DayOfWeekChart = ({ data }: DayOfWeekChartProps) => {
     },
     tooltip: {
       formatter: function() {
-        const point = this.point as Highcharts.Point & { custom?: { uniqueUsers?: number } };
-        return `${point.category}<br/>Added Code: <b>${Number(this.y).toLocaleString()}</b><br/>Unique Users: <b>${point.custom?.uniqueUsers ?? 0}</b>`;
+        const point = this as Highcharts.Point & { custom?: { uniqueUsers?: number }; category?: string };
+        return `${point.category}<br/>Added Code: <b>${Number(point.y).toLocaleString()}</b><br/>Unique Users: <b>${point.custom?.uniqueUsers ?? 0}</b>`;
       }
     },
     plotOptions: { column: { ...getColumnChartConfig().plotOptions?.column, color: CHART_COLORS.gradients.blue[0] } },
