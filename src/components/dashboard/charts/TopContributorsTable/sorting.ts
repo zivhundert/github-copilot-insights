@@ -35,6 +35,7 @@ export const useSortedContributors = (
       case "codeGenerations":
       case "codeAcceptances":
       case "linesDeleted":
+      case "aiAmplification":
         sorted.sort((a, b) =>
           sortConfig.direction === "asc"
             ? Number(a[sortConfig.column]) - Number(b[sortConfig.column])
