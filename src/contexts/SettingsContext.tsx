@@ -56,6 +56,7 @@ const DEFAULT_CHART_VISIBILITY: ChartVisibility = {
   engagementHeatmap: true,
   codeChurnChart: true,
   insightsPanel: true,
+  userProfileCard: true,
 };
 
 const DEFAULT_SETTINGS: Settings = {

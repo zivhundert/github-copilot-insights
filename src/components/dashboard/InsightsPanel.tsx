@@ -25,7 +25,7 @@ const FEATURE_RECOMMENDATIONS: Record<string, string> = {
 const THRESHOLD = 30;
 
 export const InsightsPanel = ({ data }: InsightsPanelProps) => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   const insights = useMemo(() => {
     const uniqueUsers = new Set(data.map(r => r.user_login));

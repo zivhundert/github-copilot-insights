@@ -70,6 +70,7 @@ export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open,
     engagementHeatmap: "Engagement Heatmap",
     codeChurnChart: "Code Churn (Lines Added vs Deleted)",
     insightsPanel: "Adoption Insights Panel",
+    userProfileCard: "User Profile Card",
   };
 
   return (
