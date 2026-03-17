@@ -1,8 +1,16 @@
-
 import { Badge } from '@/components/ui/badge';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { PerformanceSegment, ContributorWithSegment } from '../types';
-import { getSegmentIcon, getSegmentBadgeStyle, getSegmentCalculationExplanation } from '../performanceSegments';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { ContributorWithSegment, PerformanceSegment } from '../types';
+import {
+  getSegmentBadgeStyle,
+  getSegmentCalculationExplanation,
+  getSegmentIcon,
+} from '../performanceSegments';
 import { useTableHover } from './TableHoverContext';
 
 interface PerformanceSegmentBadgeProps {
@@ -10,11 +18,14 @@ interface PerformanceSegmentBadgeProps {
   contributor: ContributorWithSegment;
 }
 
-export const PerformanceSegmentBadge = ({ segment, contributor }: PerformanceSegmentBadgeProps) => {
+export const PerformanceSegmentBadge = ({
+  segment,
+  contributor,
+}: PerformanceSegmentBadgeProps) => {
   const { setHighlightedColumns, setHoveredEmail } = useTableHover();
 
   const handleMouseEnter = () => {
-    setHighlightedColumns(['acceptanceRate', 'userROI']);
+    setHighlightedColumns(['adoptionScore', 'impactScore', 'efficiency']);
     setHoveredEmail(contributor.userLogin);
   };
 
@@ -23,34 +34,52 @@ export const PerformanceSegmentBadge = ({ segment, contributor }: PerformanceSeg
     setHoveredEmail(null);
   };
 
+  const visibleBadges = contributor.badges.slice(0, 2);
+  const hiddenBadgeCount = Math.max(0, contributor.badges.length - visibleBadges.length);
+
   return (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <div 
-            className="flex items-center gap-2 group cursor-pointer"
+          <div
+            className="space-y-1 cursor-pointer"
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
           >
-            {getSegmentIcon(segment)}
-            <Badge
-              className={`${getSegmentBadgeStyle(segment)} transition-colors duration-150 group-hover:text-white group-focus:text-white`}
-            >
-              {segment}
-            </Badge>
+            <div className="flex flex-wrap items-center gap-2">
+              {getSegmentIcon(segment)}
+              <Badge className={getSegmentBadgeStyle(segment)}>{segment}</Badge>
+              {contributor.usageMode && (
+                <Badge variant="secondary" className="text-[10px] font-medium">
+                  {contributor.usageMode}
+                </Badge>
+              )}
+            </div>
+
+            {contributor.badges.length > 0 && (
+              <div className="flex flex-wrap gap-1 pl-6">
+                {visibleBadges.map((badge) => (
+                  <Badge
+                    key={badge}
+                    variant="outline"
+                    className="text-[10px] font-medium"
+                  >
+                    {badge}
+                  </Badge>
+                ))}
+                {hiddenBadgeCount > 0 && (
+                  <Badge variant="outline" className="text-[10px] font-medium">
+                    +{hiddenBadgeCount}
+                  </Badge>
+                )}
+              </div>
+            )}
           </div>
         </TooltipTrigger>
-        <TooltipContent
-          className="bg-popover text-popover-foreground border border-slate-300 dark:border-slate-700 max-w-xs shadow-lg px-4 py-2 rounded-lg font-medium text-sm leading-relaxed"
-        >
-          <pre className="whitespace-pre-wrap font-mono text-xs">
-            {getSegmentCalculationExplanation(
-              segment,
-              contributor.acceptanceRate,
-              contributor.interactions,
-              contributor.userROI
-            )}
-          </pre>
+        <TooltipContent className="max-w-sm rounded-lg border bg-popover px-4 py-3 text-sm text-popover-foreground shadow-lg">
+          <div className="whitespace-pre-wrap leading-relaxed">
+            {getSegmentCalculationExplanation(contributor)}
+          </div>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
