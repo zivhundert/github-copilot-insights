@@ -5,18 +5,17 @@ import { ChartContainer } from '@/components/common/ChartContainer';
 import { BaseHighchart } from '@/components/common/BaseHighchart';
 import { getLineChartConfig, CHART_COLORS } from '@/config/chartConfigs';
 import { createDateTooltipFormatter } from '@/utils/chartHelpers';
-import { CursorDataRow } from '@/pages/Index';
-import { formatPeriodLabel, type AggregationPeriod } from '@/utils/dataAggregation';
-import { startOfWeek, startOfMonth, format } from 'date-fns';
+import { CopilotDataRow } from '@/pages/Index';
+import { type AggregationPeriod } from '@/utils/dataAggregation';
+import { startOfWeek, startOfMonth } from 'date-fns';
 
 interface CumulativeChartProps {
-  baseFilteredData: CursorDataRow[];
+  baseFilteredData: CopilotDataRow[];
   aggregationPeriod: AggregationPeriod;
 }
 
 export const CumulativeChart = ({ baseFilteredData, aggregationPeriod }: CumulativeChartProps) => {
   const chartData = useMemo(() => {
-    // Group baseFilteredData by the selected period
     const groupKey = (date: Date) => {
       if (aggregationPeriod === 'week') {
         return startOfWeek(date, { weekStartsOn: 1 }).getTime();
@@ -27,28 +26,23 @@ export const CumulativeChart = ({ baseFilteredData, aggregationPeriod }: Cumulat
       }
     };
 
-    // Filter out aggregated rows and group by period
     const periodData = new Map<number, { accepted: number; suggested: number }>();
     
-    baseFilteredData
-      .filter(row => !row.Email.includes('active users')) // Skip aggregated rows
-      .forEach(row => {
-        const date = new Date(row.Date);
-        const key = groupKey(date);
-        const acceptedLines = parseInt(row['Chat Accepted Lines Added']) || 0;
-        const suggestedLines = parseInt(row['Chat Suggested Lines Added']) || 0;
-        
-        if (!periodData.has(key)) {
-          periodData.set(key, { accepted: 0, suggested: 0 });
-        }
-        const existing = periodData.get(key)!;
-        existing.accepted += acceptedLines;
-        existing.suggested += suggestedLines;
-      });
+    baseFilteredData.forEach(row => {
+      const date = new Date(row.day);
+      const key = groupKey(date);
+      const acceptedLines = row.loc_added_sum || 0;
+      const suggestedLines = row.loc_suggested_to_add_sum || 0;
+      
+      if (!periodData.has(key)) {
+        periodData.set(key, { accepted: 0, suggested: 0 });
+      }
+      const existing = periodData.get(key)!;
+      existing.accepted += acceptedLines;
+      existing.suggested += suggestedLines;
+    });
 
-    // Convert to sorted array and calculate cumulative sums
-    const sortedData = Array.from(periodData.entries())
-      .sort(([a], [b]) => a - b);
+    const sortedData = Array.from(periodData.entries()).sort(([a], [b]) => a - b);
 
     let cumulativeAccepted = 0;
     let cumulativeSuggested = 0;
@@ -56,11 +50,7 @@ export const CumulativeChart = ({ baseFilteredData, aggregationPeriod }: Cumulat
     return sortedData.map(([timestamp, { accepted, suggested }]) => {
       cumulativeAccepted += accepted;
       cumulativeSuggested += suggested;
-      return {
-        date: timestamp,
-        cumulativeAccepted,
-        cumulativeSuggested,
-      };
+      return { date: timestamp, cumulativeAccepted, cumulativeSuggested };
     });
   }, [baseFilteredData, aggregationPeriod]);
 
@@ -79,25 +69,18 @@ export const CumulativeChart = ({ baseFilteredData, aggregationPeriod }: Cumulat
     },
     plotOptions: {
       line: {
-        marker: {
-          enabled: false,
-          states: {
-            hover: {
-              enabled: true
-            }
-          }
-        }
+        marker: { enabled: false, states: { hover: { enabled: true } } }
       }
     },
     series: [
       {
-        name: 'Cumulative Accepted',
+        name: 'Cumulative Lines Added',
         type: 'line',
         data: chartData.map(d => [d.date, d.cumulativeAccepted]),
         color: CHART_COLORS.gradients.blue[0]
       },
       {
-        name: 'Cumulative Suggested',
+        name: 'Cumulative Lines Suggested',
         type: 'line',
         data: chartData.map(d => [d.date, d.cumulativeSuggested]),
         color: CHART_COLORS.gradients.orange[0],
@@ -109,7 +92,7 @@ export const CumulativeChart = ({ baseFilteredData, aggregationPeriod }: Cumulat
   return (
     <ChartContainer
       title={`AI Code Generation Growth (${getPeriodText()})`}
-      helpText={`Shows the running total of accepted and suggested lines over time aggregated by ${getPeriodText()} periods. Solid line: Cumulative 'Chat Accepted Lines Added', Dashed line: Cumulative 'Chat Suggested Lines Added'`}
+      helpText={`Running total of lines added and suggested over time. Solid line: Cumulative lines added. Dashed line: Cumulative lines suggested.`}
     >
       <BaseHighchart options={options} />
     </ChartContainer>

@@ -10,32 +10,71 @@ import { useDashboardData } from '@/hooks/useDashboardData';
 import { analytics } from '@/services/analytics';
 import { Settings } from 'lucide-react';
 
-export interface CursorDataRow {
-  Date: string;
-  'User ID': string;
-  Email: string;
-  'Is Active': string;
-  'Chat Suggested Lines Added': string;
-  'Chat Suggested Lines Deleted': string;
-  'Chat Accepted Lines Added': string;
-  'Chat Accepted Lines Deleted': string;
-  'Chat Total Applies': string;
-  'Chat Total Accepts': string;
-  'Chat Total Rejects': string;
-  'Chat Tabs Shown': string;
-  'Tabs Accepted': string;
-  'Edit Requests': string;
-  'Ask Requests': string;
-  'Agent Requests': string;
-  'Cmd+K Usages': string;
-  'Subscription Included Reqs': string;
-  'API Key Reqs': string;
-  'Usage Based Reqs': string;
-  'Bugbot Usages': string;
-  'Most Used Model': string;
-  'Most Used Apply Extension': string;
-  'Most Used Tab Extension': string;
-  'Client Version': string;
+export interface CopilotDataRow {
+  day: string;
+  user_login: string;
+  user_id: number;
+  enterprise_id: string;
+  user_initiated_interaction_count: number;
+  code_generation_activity_count: number;
+  code_acceptance_activity_count: number;
+  loc_suggested_to_add_sum: number;
+  loc_suggested_to_delete_sum: number;
+  loc_added_sum: number;
+  loc_deleted_sum: number;
+  used_agent: boolean;
+  used_chat: boolean;
+  used_cli: boolean;
+  totals_by_ide: Array<{
+    ide: string;
+    user_initiated_interaction_count: number;
+    code_generation_activity_count: number;
+    code_acceptance_activity_count: number;
+    loc_suggested_to_add_sum: number;
+    loc_suggested_to_delete_sum: number;
+    loc_added_sum: number;
+    loc_deleted_sum: number;
+    last_known_plugin_version?: {
+      sampled_at: string;
+      plugin: string;
+      plugin_version: string;
+    };
+    last_known_ide_version?: {
+      sampled_at: string;
+      ide_version: string;
+    };
+  }>;
+  totals_by_feature: Array<{
+    feature: string;
+    user_initiated_interaction_count: number;
+    code_generation_activity_count: number;
+    code_acceptance_activity_count: number;
+    loc_suggested_to_add_sum: number;
+    loc_suggested_to_delete_sum: number;
+    loc_added_sum: number;
+    loc_deleted_sum: number;
+  }>;
+  totals_by_language_feature: Array<{
+    language: string;
+    feature: string;
+    code_generation_activity_count: number;
+    code_acceptance_activity_count: number;
+    loc_suggested_to_add_sum: number;
+    loc_suggested_to_delete_sum: number;
+    loc_added_sum: number;
+    loc_deleted_sum: number;
+  }>;
+  totals_by_model_feature: Array<{
+    model: string;
+    feature: string;
+    user_initiated_interaction_count: number;
+    code_generation_activity_count: number;
+    code_acceptance_activity_count: number;
+    loc_suggested_to_add_sum: number;
+    loc_suggested_to_delete_sum: number;
+    loc_added_sum: number;
+    loc_deleted_sum: number;
+  }>;
 }
 
 const Index = () => {
@@ -50,22 +89,18 @@ const Index = () => {
     filters
   } = useDashboardData();
 
-  // Enhanced file upload handler with analytics
   const handleFileUploadWithAnalytics = (data: any) => {
     handleFileUpload(data);
     analytics.trackFileUpload(data.length);
   };
 
-  // Enhanced reload handler with analytics
   const handleReloadCSVWithAnalytics = () => {
     handleReloadCSV();
     analytics.trackCsvReload();
   };
 
-  // Enhanced filters handler with analytics
   const updateFiltersWithAnalytics = (newFilters: any) => {
     updateFilters(newFilters);
-    // Track which filter was used
     Object.keys(newFilters).forEach(filterKey => {
       analytics.trackFilterUsage(filterKey);
     });
@@ -81,20 +116,15 @@ const Index = () => {
           showSettingsButton={originalData.length > 0}
         />
         
-        {/* Show content only when no data is uploaded */}
         {originalData.length === 0 && (
           <div className="mt-12">
-            {/* Example Showcase - New Eye-Catching Section */}
             <ExampleShowcase />
-            
-            
             <div data-upload-section>
               <FileUpload onFileUpload={handleFileUploadWithAnalytics} isLoading={isLoading} />
             </div>
           </div>
         )}
         
-        {/* Show dashboard when data is uploaded */}
         {originalData.length > 0 && (
           <div className="mt-8 space-y-8">
             <DashboardMetrics 

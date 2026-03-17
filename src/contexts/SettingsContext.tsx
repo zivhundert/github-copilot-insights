@@ -5,13 +5,13 @@ type ChartVisibility = {
   cumulativeChart: boolean;
   acceptanceRateChart: boolean;
   modelUsageChart: boolean;
-  chatRequestTypesChart: boolean;
-  averageAskRequestsChart: boolean;
-  averageTabsAcceptedChart: boolean;
-  tabExtensionWordCloud: boolean;
+  featureUsageChart: boolean;
+  averageInteractionsChart: boolean;
+  ideDistributionChart: boolean;
   programmingLanguageTreemap: boolean;
   dayOfWeekChart: boolean;
-  clientVersionChart: boolean;
+  ideVersionChart: boolean;
+  agentAdoptionChart: boolean;
   topContributorsTable: boolean;
 };
 
@@ -19,7 +19,7 @@ type Settings = {
   linesPerMinute: number;
   theme: "light" | "dark";
   pricePerHour: number;
-  cursorPricePerUser: number;
+  copilotPricePerUser: number;
   chartVisibility: ChartVisibility;
 };
 
@@ -37,13 +37,13 @@ const DEFAULT_CHART_VISIBILITY: ChartVisibility = {
   cumulativeChart: true,
   acceptanceRateChart: true,
   modelUsageChart: true,
-  chatRequestTypesChart: true,
-  averageAskRequestsChart: true,
-  averageTabsAcceptedChart: true,
-  tabExtensionWordCloud: true,
+  featureUsageChart: true,
+  averageInteractionsChart: true,
+  ideDistributionChart: true,
   programmingLanguageTreemap: true,
   dayOfWeekChart: true,
-  clientVersionChart: true,
+  ideVersionChart: true,
+  agentAdoptionChart: true,
   topContributorsTable: true,
 };
 
@@ -51,11 +51,11 @@ const DEFAULT_SETTINGS: Settings = {
   linesPerMinute: 10,
   theme: "light",
   pricePerHour: 55,
-  cursorPricePerUser: 32,
+  copilotPricePerUser: 19,
   chartVisibility: DEFAULT_CHART_VISIBILITY,
 };
 
-const LOCALSTORAGE_KEY = "dashboard_settings_v1";
+const LOCALSTORAGE_KEY = "dashboard_settings_v2";
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
 
@@ -65,7 +65,6 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       const saved = localStorage.getItem(LOCALSTORAGE_KEY);
       if (saved) {
         const parsedSettings = JSON.parse(saved);
-        // Ensure chartVisibility exists for backwards compatibility
         if (!parsedSettings.chartVisibility) {
           parsedSettings.chartVisibility = DEFAULT_CHART_VISIBILITY;
         }

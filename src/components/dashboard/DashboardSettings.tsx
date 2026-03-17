@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
@@ -18,7 +19,7 @@ interface FormFields {
   linesPerMinute: number;
   theme: "light" | "dark";
   pricePerHour: number;
-  cursorPricePerUser: number;
+  copilotPricePerUser: number;
 }
 
 export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open, onOpenChange }) => {
@@ -28,28 +29,27 @@ export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open,
       linesPerMinute: settings.linesPerMinute, 
       theme: settings.theme,
       pricePerHour: settings.pricePerHour,
-      cursorPricePerUser: settings.cursorPricePerUser
+      copilotPricePerUser: settings.copilotPricePerUser
     },
     mode: "onBlur",
   });
 
-  // Reset form when sheet opens or settings change
   React.useEffect(() => {
     if (open) {
       reset({ 
         linesPerMinute: settings.linesPerMinute, 
         theme: settings.theme,
         pricePerHour: settings.pricePerHour,
-        cursorPricePerUser: settings.cursorPricePerUser
+        copilotPricePerUser: settings.copilotPricePerUser
       });
     }
-  }, [open, settings.linesPerMinute, settings.theme, settings.pricePerHour, settings.cursorPricePerUser, reset]);
+  }, [open, settings.linesPerMinute, settings.theme, settings.pricePerHour, settings.copilotPricePerUser, reset]);
 
   const onSubmit = (values: FormFields) => {
     updateSetting("linesPerMinute", values.linesPerMinute);
     updateSetting("theme", values.theme);
     updateSetting("pricePerHour", values.pricePerHour);
-    updateSetting("cursorPricePerUser", values.cursorPricePerUser);
+    updateSetting("copilotPricePerUser", values.copilotPricePerUser);
     onOpenChange(false);
   };
 
@@ -57,13 +57,13 @@ export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open,
     cumulativeChart: "Cumulative Usage Chart",
     acceptanceRateChart: "AI Suggestion Acceptance Rate",
     modelUsageChart: "AI Model Usage",
-    chatRequestTypesChart: "Chat Request Types",
-    averageAskRequestsChart: "Average Ask Requests",
-    averageTabsAcceptedChart: "Average Tabs Accepted",
-    tabExtensionWordCloud: "Tab Extensions Word Cloud",
+    featureUsageChart: "Feature Usage Breakdown",
+    averageInteractionsChart: "Average Interactions per Developer",
+    ideDistributionChart: "IDE Distribution",
     programmingLanguageTreemap: "Programming Language Treemap",
     dayOfWeekChart: "Activity by Day of Week",
-    clientVersionChart: "Client Version Usage",
+    ideVersionChart: "IDE & Plugin Version",
+    agentAdoptionChart: "Agent/Chat/CLI Adoption",
     topContributorsTable: "AI Adoption Champions Table",
   };
 
@@ -78,7 +78,6 @@ export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open,
         </SheetHeader>
         
         <div className="mt-6 space-y-8">
-          {/* General Settings Form */}
           <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
             <div>
               <h3 className="text-lg font-medium mb-4">General Settings</h3>
@@ -88,11 +87,7 @@ export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open,
                   <Label htmlFor="linesPerMinute">
                     Team Coding Speed (lines/minute)
                     <span className="block text-xs text-muted-foreground mt-1">
-                      <b>Why this matters:</b> Sets how quickly your team typically codes. Directly impacts time/cost savings. 
-                      <br />
                       <b>Benchmark:</b> Most teams: 8–20 lines/minute.
-                      <br />
-                      <b>Tips:</b> Survey your team, or start with 10 as a reference.
                     </span>
                   </Label>
                   <Input
@@ -118,11 +113,7 @@ export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open,
                   <Label htmlFor="pricePerHour">
                     Developer Hourly Rate ($)
                     <span className="block text-xs text-muted-foreground mt-1">
-                      <b>Why this matters:</b> Sets the rate for financial savings calculations.
-                      <br />
                       <b>Benchmark:</b> US teams: $80–$120. Global median: $50–$90.
-                      <br />
-                      <b>Tips:</b> Use your payroll or market data for accuracy.
                     </span>
                   </Label>
                   <Input
@@ -145,23 +136,19 @@ export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open,
                 </div>
                 
                 <div>
-                  <Label htmlFor="cursorPricePerUser">
-                    Cursor Subscription Cost ($/user/month)
+                  <Label htmlFor="copilotPricePerUser">
+                    GitHub Copilot Cost ($/user/month)
                     <span className="block text-xs text-muted-foreground mt-1">
-                      <b>Why this matters:</b> Tracks your AI tool’s subscription spend (factored into ROI).
-                      <br/>
-                      <b>Benchmark:</b> Cursor pro: $32/user/month (default).
-                      <br/>
-                      <b>Tips:</b> Check your actual invoice or SaaS admin for your real cost.
+                      <b>Benchmark:</b> Business: $19/user/month. Enterprise: $39/user/month.
                     </span>
                   </Label>
                   <Input
-                    id="cursorPricePerUser"
+                    id="copilotPricePerUser"
                     type="number"
                     step={1}
                     min={1}
                     max={200}
-                    {...register("cursorPricePerUser", {
+                    {...register("copilotPricePerUser", {
                       required: true,
                       valueAsNumber: true,
                       min: 1,
@@ -169,7 +156,7 @@ export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open,
                     })}
                     className="mt-1"
                   />
-                  {errors.cursorPricePerUser && (
+                  {errors.copilotPricePerUser && (
                     <div className="text-red-600 text-xs mt-1">Enter a number between 1 and 200.</div>
                   )}
                 </div>
@@ -200,7 +187,7 @@ export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open,
               </div>
               
               <div className="flex gap-2 justify-between mt-6">
-                <Button type="button" variant="secondary" onClick={() => { reset({ linesPerMinute: 10, theme: "light", pricePerHour: 55, cursorPricePerUser: 32 }); resetDefaults(); }}>
+                <Button type="button" variant="secondary" onClick={() => { reset({ linesPerMinute: 10, theme: "light", pricePerHour: 55, copilotPricePerUser: 19 }); resetDefaults(); }}>
                   Reset to Defaults
                 </Button>
                 <Button type="submit" variant="default" disabled={!isDirty}>
@@ -212,7 +199,6 @@ export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open,
 
           <Separator />
 
-          {/* Chart Visibility Settings */}
           <div>
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-medium">Chart Visibility</h3>

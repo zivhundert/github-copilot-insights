@@ -14,8 +14,8 @@ export const PerformanceSegmentBadge = ({ segment, contributor }: PerformanceSeg
   const { setHighlightedColumns, setHoveredEmail } = useTableHover();
 
   const handleMouseEnter = () => {
-    setHighlightedColumns(['acceptanceRate', 'chatTotalApplies', 'userROI']);
-    setHoveredEmail(contributor.email);
+    setHighlightedColumns(['acceptanceRate', 'userROI']);
+    setHoveredEmail(contributor.userLogin);
   };
 
   const handleMouseLeave = () => {
@@ -47,7 +47,7 @@ export const PerformanceSegmentBadge = ({ segment, contributor }: PerformanceSeg
             {getSegmentCalculationExplanation(
               segment,
               contributor.acceptanceRate,
-              contributor.chatTotalApplies,
+              contributor.interactions,
               contributor.userROI
             )}
           </pre>

@@ -1,7 +1,6 @@
 
 import { BarChart3, RefreshCcw, Settings, Download, Linkedin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useState } from "react";
 import { DashboardSettings } from "./DashboardSettings";
@@ -53,23 +52,17 @@ export const DashboardHeader = ({
     analytics.trackSettingsOpen();
   };
 
-  // Component for rendering button content - reused for both mobile and desktop
   const ButtonGroup = ({ isMobile = false }: { isMobile?: boolean }) => (
     <>
       {showReloadButton && (
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onReloadCSV}
-              className="h-8 w-8"
-            >
+            <Button variant="ghost" size="icon" onClick={onReloadCSV} className="h-8 w-8">
               <RefreshCcw className="w-4 h-4" />
             </Button>
           </TooltipTrigger>
           <TooltipContent side={isMobile ? "bottom" : "left"}>
-            <span>Load New CSV</span>
+            <span>Load New File</span>
           </TooltipContent>
         </Tooltip>
       )}
@@ -77,13 +70,7 @@ export const DashboardHeader = ({
       {showExportButton && (
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              disabled={isExporting}
-              onClick={handleExportImage}
-              className="h-8 w-8"
-            >
+            <Button variant="ghost" size="icon" disabled={isExporting} onClick={handleExportImage} className="h-8 w-8">
               <Download className="w-4 h-4" />
             </Button>
           </TooltipTrigger>
@@ -95,12 +82,7 @@ export const DashboardHeader = ({
       
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8"
-            onClick={() => window.open(LINKEDIN_URL, "_blank", "noopener,noreferrer")}
-          >
+          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => window.open(LINKEDIN_URL, "_blank", "noopener,noreferrer")}>
             <Linkedin className="w-4 h-4" />
           </Button>
         </TooltipTrigger>
@@ -112,12 +94,7 @@ export const DashboardHeader = ({
       {showSettingsButton && (
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={handleSettingsOpen}
-              className="h-8 w-8"
-            >
+            <Button variant="ghost" size="icon" onClick={handleSettingsOpen} className="h-8 w-8">
               <Settings className="w-4 h-4" />
             </Button>
           </TooltipTrigger>
@@ -131,14 +108,12 @@ export const DashboardHeader = ({
 
   return (
     <header className="text-center relative">
-      {/* Mobile buttons - horizontal, top center, above title */}
       <div className="sm:hidden flex justify-center gap-2 mb-4">
         <div className="flex bg-background/80 backdrop-blur-sm border rounded-lg p-2 shadow-sm gap-2">
           <ButtonGroup isMobile={true} />
         </div>
       </div>
 
-      {/* Desktop buttons - vertical, top right */}
       <div className="hidden sm:block absolute top-0 right-0 z-10">
         <div className="flex flex-col bg-background/80 backdrop-blur-sm border rounded-lg p-2 shadow-sm gap-1">
           <ButtonGroup isMobile={false} />
@@ -154,12 +129,12 @@ export const DashboardHeader = ({
         </h1>
       </div>
       <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-        Unlock your team's full coding potential. Track real, business-driven metrics, improve productivity, and maximize the ROI of AI-assisted development with Cursor.
+        Unlock your team's full coding potential. Track real, business-driven metrics, improve productivity, and maximize the ROI of AI-assisted development with GitHub Copilot.
       </p>
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-xl mx-auto mt-4 mb-2 text-blue-900">
         <strong>Welcome!</strong> This dashboard reveals how AI accelerates your team. 
         <ul className="list-disc text-base text-left ml-6 mt-2">
-          <li><b>See cost savings</b> and time saved by your developers using AI.</li>
+          <li><b>See cost savings</b> and time saved by your developers using GitHub Copilot.</li>
           <li><b>Spot your AI Champions</b> and help others grow.</li>
           <li><b>Adjust settings</b> for accurate ROI reporting (see top right wheel).</li>
         </ul>

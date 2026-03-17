@@ -1,6 +1,6 @@
 
 import { useState, useMemo } from 'react';
-import { CursorDataRow } from '@/pages/Index';
+import { CopilotDataRow } from '@/pages/Index';
 import { aggregateDataByPeriod, type AggregationPeriod } from '@/utils/dataAggregation';
 
 interface FilterOptions {
@@ -9,7 +9,7 @@ interface FilterOptions {
   aggregationPeriod: AggregationPeriod;
 }
 
-export const useDataFiltering = (originalData: CursorDataRow[]) => {
+export const useDataFiltering = (originalData: CopilotDataRow[]) => {
   const [filters, setFilters] = useState<FilterOptions>({
     dateRange: {},
     selectedUsers: [],
@@ -19,19 +19,17 @@ export const useDataFiltering = (originalData: CursorDataRow[]) => {
   const { filteredData, baseFilteredData } = useMemo(() => {
     let filtered = [...originalData];
 
-    // Filter by date range
     if (filters.dateRange.from || filters.dateRange.to) {
       filtered = filtered.filter(row => {
-        const rowDate = new Date(row.Date);
+        const rowDate = new Date(row.day);
         if (filters.dateRange.from && rowDate < filters.dateRange.from) return false;
         if (filters.dateRange.to && rowDate > filters.dateRange.to) return false;
         return true;
       });
     }
 
-    // Filter by users
     if (filters.selectedUsers.length > 0) {
-      filtered = filtered.filter(row => filters.selectedUsers.includes(row.Email));
+      filtered = filtered.filter(row => filters.selectedUsers.includes(row.user_login));
     }
 
     const baseFiltered = filtered;

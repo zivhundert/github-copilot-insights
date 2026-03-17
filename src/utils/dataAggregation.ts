@@ -1,38 +1,25 @@
 
 import { startOfWeek, startOfMonth, format } from 'date-fns';
-import { CursorDataRow } from '@/pages/Index';
+import { CopilotDataRow } from '@/pages/Index';
 
 export type AggregationPeriod = 'day' | 'week' | 'month';
 
-export const aggregateDataByPeriod = (data: CursorDataRow[], period: AggregationPeriod): CursorDataRow[] => {
+export const aggregateDataByPeriod = (data: CopilotDataRow[], period: AggregationPeriod): CopilotDataRow[] => {
   if (period === 'day') {
-    return data; // No aggregation needed for daily view
+    return data;
   }
 
   const aggregatedMap = new Map<string, {
     date: string;
-    users: CursorDataRow[];
-    askRequests: number;
-    editRequests: number;
-    agentRequests: number;
-    bugbotRequests: number;
-    cmdKRequests: number;
-    apiRequests: number;
-    suggestedLines: number;
-    acceptedLines: number;
-    tabsAccepted: number;
-    models: Map<string, number>;
-    applyExtensions: Map<string, number>;
-    tabExtensions: Map<string, number>;
-    activeUsers: Set<string>;
+    rows: CopilotDataRow[];
   }>();
 
   data.forEach(row => {
-    const date = new Date(row.Date);
+    const date = new Date(row.day);
     let periodKey: string;
     
     if (period === 'week') {
-      const weekStart = startOfWeek(date, { weekStartsOn: 1 }); // Monday start
+      const weekStart = startOfWeek(date, { weekStartsOn: 1 });
       periodKey = format(weekStart, 'yyyy-MM-dd');
     } else {
       const monthStart = startOfMonth(date);
@@ -42,115 +29,26 @@ export const aggregateDataByPeriod = (data: CursorDataRow[], period: Aggregation
     if (!aggregatedMap.has(periodKey)) {
       aggregatedMap.set(periodKey, {
         date: periodKey,
-        users: [],
-        askRequests: 0,
-        editRequests: 0,
-        agentRequests: 0,
-        bugbotRequests: 0,
-        cmdKRequests: 0,
-        apiRequests: 0,
-        suggestedLines: 0,
-        acceptedLines: 0,
-        tabsAccepted: 0,
-        models: new Map(),
-        applyExtensions: new Map(),
-        tabExtensions: new Map(),
-        activeUsers: new Set(),
+        rows: [],
       });
     }
 
-    const agg = aggregatedMap.get(periodKey)!;
-    
-    // Store all user records for this period
-    agg.users.push(row);
-    
-    // Aggregate numeric values
-    agg.askRequests += parseInt(row['Ask Requests']) || 0;
-    agg.editRequests += parseInt(row['Edit Requests']) || 0;
-    agg.agentRequests += parseInt(row['Agent Requests']) || 0;
-    agg.bugbotRequests += parseInt(row['Bugbot Usages']) || 0;
-    agg.cmdKRequests += parseInt(row['Cmd+K Usages']) || 0;
-    agg.apiRequests += parseInt(row['API Key Reqs']) || 0;
-    agg.suggestedLines += parseInt(row['Chat Suggested Lines Added']) || 0;
-    agg.acceptedLines += parseInt(row['Chat Accepted Lines Added']) || 0;
-    agg.tabsAccepted += parseInt(row['Tabs Accepted']) || 0;
-
-    // Collect unique active users
-    if (row['Is Active'].toLowerCase() === 'true') {
-      agg.activeUsers.add(row.Email);
-    }
-
-    // Count model usage
-    const model = row['Most Used Model'];
-    if (model && model.trim()) {
-      agg.models.set(model, (agg.models.get(model) || 0) + 1);
-    }
-
-    // Count apply extensions
-    const applyExt = row['Most Used Apply Extension'];
-    if (applyExt && applyExt.trim() && applyExt !== 'Unknown' && applyExt !== '') {
-      agg.applyExtensions.set(applyExt, (agg.applyExtensions.get(applyExt) || 0) + 1);
-    }
-
-    // Count tab extensions
-    const tabExt = row['Most Used Tab Extension'];
-    if (tabExt && tabExt.trim() && tabExt !== 'Unknown' && tabExt !== '') {
-      agg.tabExtensions.set(tabExt, (agg.tabExtensions.get(tabExt) || 0) + 1);
-    }
+    aggregatedMap.get(periodKey)!.rows.push(row);
   });
 
-  // Convert aggregated data back to CursorDataRow format
-  const result: CursorDataRow[] = [];
+  // Return all rows with updated dates for period grouping
+  const result: CopilotDataRow[] = [];
   
   Array.from(aggregatedMap.values()).forEach(agg => {
-    const mostUsedModel = Array.from(agg.models.entries())
-      .sort((a, b) => b[1] - a[1])[0]?.[0] || '';
-
-    const mostUsedApplyExt = Array.from(agg.applyExtensions.entries())
-      .sort((a, b) => b[1] - a[1])[0]?.[0] || '';
-
-    const mostUsedTabExt = Array.from(agg.tabExtensions.entries())
-      .sort((a, b) => b[1] - a[1])[0]?.[0] || '';
-
-    // Add the aggregated row for time-series charts
-    result.push({
-      Date: agg.date,
-      'User ID': '',
-      Email: `${agg.activeUsers.size} active users`, // Special marker for aggregated data
-      'Is Active': agg.activeUsers.size > 0 ? 'true' : 'false',
-      'Chat Suggested Lines Added': agg.suggestedLines.toString(),
-      'Chat Suggested Lines Deleted': '0', // Default for new column
-      'Chat Accepted Lines Added': agg.acceptedLines.toString(),
-      'Chat Accepted Lines Deleted': '0', // Default for new column
-      'Chat Total Applies': '0', // Default for new column
-      'Chat Total Accepts': '0', // Default for new column
-      'Chat Total Rejects': '0', // Default for new column
-      'Chat Tabs Shown': '0', // Default for new column
-      'Tabs Accepted': agg.tabsAccepted.toString(),
-      'Edit Requests': agg.editRequests.toString(),
-      'Ask Requests': agg.askRequests.toString(),
-      'Agent Requests': agg.agentRequests.toString(),
-      'Cmd+K Usages': agg.cmdKRequests.toString(),
-      'Subscription Included Reqs': '0', // Default for new column
-      'API Key Reqs': agg.apiRequests.toString(),
-      'Usage Based Reqs': '0', // Default for new column
-      'Bugbot Usages': agg.bugbotRequests.toString(),
-      'Most Used Model': mostUsedModel,
-      'Most Used Apply Extension': mostUsedApplyExt,
-      'Most Used Tab Extension': mostUsedTabExt,
-      'Client Version': '', // Default for new column
-    } as CursorDataRow);
-
-    // Add all individual user records for components that need them
-    agg.users.forEach(userRow => {
+    agg.rows.forEach(row => {
       result.push({
-        ...userRow,
-        Date: agg.date, // Update date to the period start
+        ...row,
+        day: agg.date,
       });
     });
   });
 
-  return result.sort((a, b) => a.Date.localeCompare(b.Date));
+  return result.sort((a, b) => a.day.localeCompare(b.day));
 };
 
 export const formatPeriodLabel = (date: string, period: AggregationPeriod): string => {

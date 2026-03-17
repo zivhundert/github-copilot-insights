@@ -1,7 +1,6 @@
 
-import { CursorDataRow } from '@/pages/Index';
+import { CopilotDataRow } from '@/pages/Index';
 
-// Badge levels: Champion, Producer, Explorer, Starter (no "AI" prefix)
 export type PerformanceSegment =
   | 'Champion'
   | 'Producer'
@@ -9,48 +8,45 @@ export type PerformanceSegment =
   | 'Starter';
 
 export interface ContributorWithSegment {
-  email: string;
+  userLogin: string;
   acceptedLines: number;
   suggestedLines: number;
   acceptanceRate: number;
-  chatTotalApplies: number;
-  tabsAccepted: number;
-  editRequests: number;
-  askRequests: number;
-  agentRequests: number;
+  interactions: number;
+  codeGenerations: number;
+  codeAcceptances: number;
+  linesDeleted: number;
   userROI: number;
   segment: PerformanceSegment;
 }
 
 export type SortableColumn =
-  | "email"
+  | "userLogin"
   | "segment"
   | "acceptedLines"
   | "suggestedLines"
   | "acceptanceRate"
-  | "chatTotalApplies"
-  | "tabsAccepted"
-  | "editRequests"
-  | "askRequests"
-  | "agentRequests"
+  | "interactions"
+  | "codeGenerations"
+  | "codeAcceptances"
+  | "linesDeleted"
   | "userROI";
 
 export interface TopContributorsTableProps {
-  data: CursorDataRow[];
+  data: CopilotDataRow[];
   isFiltered?: boolean;
 }
 
 export const columnLabels: Record<SortableColumn, string> = {
-  email: "Name",
+  userLogin: "User",
   segment: "Performance",
-  acceptedLines: "Accepted Lines",
-  suggestedLines: "Suggested Lines",
+  acceptedLines: "Lines Added",
+  suggestedLines: "Lines Suggested",
   acceptanceRate: "Acceptance Rate",
-  chatTotalApplies: "Chat Total Applies",
-  tabsAccepted: "Tabs Accepted",
-  editRequests: "Edit Requests",
-  askRequests: "Ask Requests",
-  agentRequests: "Agent Requests",
+  interactions: "Interactions",
+  codeGenerations: "Code Generations",
+  codeAcceptances: "Code Acceptances",
+  linesDeleted: "Lines Deleted",
   userROI: "User ROI",
 };
 

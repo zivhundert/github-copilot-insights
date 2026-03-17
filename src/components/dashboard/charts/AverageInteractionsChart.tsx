@@ -5,29 +5,29 @@ import { ChartContainer } from '@/components/common/ChartContainer';
 import { BaseHighchart } from '@/components/common/BaseHighchart';
 import { getLineChartConfig, CHART_COLORS } from '@/config/chartConfigs';
 import { createDateTooltipFormatter } from '@/utils/chartHelpers';
-import { CursorDataRow } from '@/pages/Index';
-import { AggregationPeriod } from '@/utils/dataAggregation';
+import { CopilotDataRow } from '@/pages/Index';
+import { type AggregationPeriod } from '@/utils/dataAggregation';
 
-interface AverageTabsAcceptedChartProps {
-  data: CursorDataRow[];
+interface AverageInteractionsChartProps {
+  data: CopilotDataRow[];
   aggregationPeriod: AggregationPeriod;
 }
 
-export const AverageTabsAcceptedChart = ({ data, aggregationPeriod }: AverageTabsAcceptedChartProps) => {
+export const AverageInteractionsChart = ({ data, aggregationPeriod }: AverageInteractionsChartProps) => {
   const chartData = useMemo(() => {
     const periodData = new Map<string, { total: number; userDays: number }>();
     
     data.forEach(row => {
-      const date = row.Date;
-      const tabsAccepted = parseInt(row['Tabs Accepted']) || 0;
+      const date = row.day;
+      const interactions = row.user_initiated_interaction_count || 0;
       
       if (!periodData.has(date)) {
         periodData.set(date, { total: 0, userDays: 0 });
       }
       
       const period = periodData.get(date)!;
-      period.total += tabsAccepted;
-      period.userDays += 1; // Count each user-day
+      period.total += interactions;
+      period.userDays += 1;
     });
 
     return Array.from(periodData.entries())
@@ -48,23 +48,15 @@ export const AverageTabsAcceptedChart = ({ data, aggregationPeriod }: AverageTab
 
   const options: Partial<HighchartsOptions> = {
     ...getLineChartConfig(),
-    tooltip: {
-      formatter: createDateTooltipFormatter('Average Tabs Accepted')
-    },
+    tooltip: { formatter: createDateTooltipFormatter('Avg Interactions') },
     plotOptions: {
       line: {
-        ...getLineChartConfig().plotOptions?.line,
-        color: CHART_COLORS.gradients.purple[0],
-        marker: { 
-          enabled: true,
-          fillColor: CHART_COLORS.gradients.purple[0],
-          lineColor: CHART_COLORS.gradients.purple[1],
-          lineWidth: 2
-        }
+        color: CHART_COLORS.gradients.green[0],
+        marker: { enabled: true },
       }
     },
     series: [{
-      name: 'Average Tabs Accepted',
+      name: 'Avg Interactions',
       type: 'line',
       data: chartData
     }]
@@ -72,8 +64,8 @@ export const AverageTabsAcceptedChart = ({ data, aggregationPeriod }: AverageTab
 
   return (
     <ChartContainer
-      title={`Code Completions per Developer (${getPeriodText()})`}
-      helpText={`Shows the average Tabs Accepted per user per ${getPeriodText().slice(0, -2)} period. Calculated as Total Tabs Accepted ÷ Number of User-Days in period`}
+      title={`Interactions per Developer (${getPeriodText()})`}
+      helpText={`Average user-initiated interactions per developer per ${getPeriodText().slice(0, -2)} period.`}
     >
       <BaseHighchart options={options} />
     </ChartContainer>

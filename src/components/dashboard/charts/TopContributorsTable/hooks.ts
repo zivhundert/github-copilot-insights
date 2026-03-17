@@ -13,7 +13,7 @@ export const useTableSorting = () => {
       if (prev.column === column) {
         return { column, direction: prev.direction === "asc" ? "desc" : "asc" };
       }
-      if (column === "email" || column === "segment") {
+      if (column === "userLogin" || column === "segment") {
         return { column, direction: "asc" };
       }
       return { column, direction: "desc" };
@@ -25,8 +25,6 @@ export const useTableSorting = () => {
 
 export const useDisplaySettings = () => {
   const [showAll, setShowAll] = useState(false);
-  
   const toggleShowAll = () => setShowAll(!showAll);
-  
   return { showAll, toggleShowAll };
 };

@@ -4,11 +4,11 @@ import { Options as HighchartsOptions } from 'highcharts';
 import { ChartContainer } from '@/components/common/ChartContainer';
 import { BaseHighchart } from '@/components/common/BaseHighchart';
 import { getLineChartConfig } from '@/config/chartConfigs';
-import { CursorDataRow } from '@/pages/Index';
+import { CopilotDataRow } from '@/pages/Index';
 import { AggregationPeriod } from '@/utils/dataAggregation';
 
 interface AcceptanceRateChartProps {
-  data: CursorDataRow[];
+  data: CopilotDataRow[];
   aggregationPeriod: AggregationPeriod;
 }
 
@@ -17,9 +17,9 @@ export const AcceptanceRateChart = ({ data, aggregationPeriod }: AcceptanceRateC
     const periodData = new Map<string, { accepted: number; suggested: number }>();
     
     data.forEach(row => {
-      const date = row.Date;
-      const accepted = parseInt(row['Chat Accepted Lines Added']) || 0;
-      const suggested = parseInt(row['Chat Suggested Lines Added']) || 0;
+      const date = row.day;
+      const accepted = row.loc_added_sum || 0;
+      const suggested = row.loc_suggested_to_add_sum || 0;
       
       if (!periodData.has(date)) {
         periodData.set(date, { accepted: 0, suggested: 0 });
@@ -54,9 +54,7 @@ export const AcceptanceRateChart = ({ data, aggregationPeriod }: AcceptanceRateC
       min: 0,
       max: 100,
       labels: {
-        formatter: function() {
-          return this.value + '%';
-        }
+        formatter: function() { return this.value + '%'; }
       }
     },
     tooltip: {
@@ -69,30 +67,18 @@ export const AcceptanceRateChart = ({ data, aggregationPeriod }: AcceptanceRateC
       line: {
         lineWidth: 3,
         marker: {
-          enabled: true,
-          radius: 4,
-          states: {
-            hover: {
-              enabled: true,
-              radius: 6
-            }
-          }
+          enabled: true, radius: 4,
+          states: { hover: { enabled: true, radius: 6 } }
         }
       }
     },
-    series: [
-      {
-        name: 'Acceptance Rate',
-        type: 'line',
-        data: chartData,
-        color: '#10b981',
-        marker: {
-          fillColor: '#10b981',
-          lineColor: '#059669',
-          lineWidth: 2
-        }
-      }
-    ]
+    series: [{
+      name: 'Acceptance Rate',
+      type: 'line',
+      data: chartData,
+      color: '#10b981',
+      marker: { fillColor: '#10b981', lineColor: '#059669', lineWidth: 2 }
+    }]
   };
 
   return (

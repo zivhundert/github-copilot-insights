@@ -12,18 +12,13 @@ export const useDashboardData = () => {
   };
 
   return {
-    // File upload data and methods
     originalData: fileUpload.data,
     isLoading: fileUpload.isLoading,
     handleFileUpload: fileUpload.handleFileUpload,
-    
-    // Filtered data and methods
     filteredData: dataFiltering.filteredData,
     baseFilteredData: dataFiltering.baseFilteredData,
     filters: dataFiltering.filters,
     updateFilters: dataFiltering.updateFilters,
-    
-    // Combined methods
     handleReloadCSV
   };
 };

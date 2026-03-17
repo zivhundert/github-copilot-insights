@@ -1,48 +1,38 @@
 
 import { useMemo } from 'react';
-import { CursorDataRow } from '@/pages/Index';
+import { CopilotDataRow } from '@/pages/Index';
 import { ContributorWithSegment } from './types';
 import { getPerformanceSegment } from './performanceSegments';
 
-export const useContributorData = (data: CursorDataRow[], linesPerMinute: number, pricePerHour: number, cursorPricePerUser: number) => {
+export const useContributorData = (data: CopilotDataRow[], linesPerMinute: number, pricePerHour: number, copilotPricePerUser: number) => {
   return useMemo(() => {
-    const userRows = data.filter(row => !row.Email.includes('active users'));
     const userStats = new Map<string, ContributorWithSegment>();
     
-    userRows.forEach(row => {
-      const email = row.Email;
-      const acceptedLines = parseInt(row['Chat Accepted Lines Added']) || 0;
-      const suggestedLines = parseInt(row['Chat Suggested Lines Added']) || 0;
-      const tabsAccepted = parseInt(row['Tabs Accepted']) || 0;
-      const editRequests = parseInt(row['Edit Requests']) || 0;
-      const askRequests = parseInt(row['Ask Requests']) || 0;
-      const agentRequests = parseInt(row['Agent Requests']) || 0;
-      const chatTotalApplies = parseInt(row['Chat Total Applies']) || 0;
+    data.forEach(row => {
+      const userLogin = row.user_login;
       
-      if (!userStats.has(email)) {
-        userStats.set(email, {
-          email,
+      if (!userStats.has(userLogin)) {
+        userStats.set(userLogin, {
+          userLogin,
           acceptedLines: 0,
           suggestedLines: 0,
           acceptanceRate: 0,
-          chatTotalApplies: 0,
-          tabsAccepted: 0,
-          editRequests: 0,
-          askRequests: 0,
-          agentRequests: 0,
+          interactions: 0,
+          codeGenerations: 0,
+          codeAcceptances: 0,
+          linesDeleted: 0,
           userROI: 0,
-          segment: 'Starter', // badge name without "AI"
+          segment: 'Starter',
         });
       }
       
-      const stats = userStats.get(email)!;
-      stats.acceptedLines += acceptedLines;
-      stats.suggestedLines += suggestedLines;
-      stats.chatTotalApplies += chatTotalApplies;
-      stats.tabsAccepted += tabsAccepted;
-      stats.editRequests += editRequests;
-      stats.askRequests += askRequests;
-      stats.agentRequests += agentRequests;
+      const stats = userStats.get(userLogin)!;
+      stats.acceptedLines += row.loc_added_sum || 0;
+      stats.suggestedLines += row.loc_suggested_to_add_sum || 0;
+      stats.interactions += row.user_initiated_interaction_count || 0;
+      stats.codeGenerations += row.code_generation_activity_count || 0;
+      stats.codeAcceptances += row.code_acceptance_activity_count || 0;
+      stats.linesDeleted += row.loc_deleted_sum || 0;
     });
     
     userStats.forEach(stats => {
@@ -50,19 +40,17 @@ export const useContributorData = (data: CursorDataRow[], linesPerMinute: number
         ? (stats.acceptedLines / stats.suggestedLines) * 100
         : 0;
       
-      // Calculate User ROI first
       const estimatedHoursSaved = Math.round(stats.acceptedLines / (linesPerMinute * 60));
       const individualMoneySaved = estimatedHoursSaved * pricePerHour;
-      const annualCursorCostPerUser = cursorPricePerUser * 12;
+      const annualCostPerUser = copilotPricePerUser * 12;
       
-      stats.userROI = annualCursorCostPerUser > 0 
-        ? (individualMoneySaved / annualCursorCostPerUser) * 100
+      stats.userROI = annualCostPerUser > 0 
+        ? (individualMoneySaved / annualCostPerUser) * 100
         : 0;
       
-      // Determine segment using updated badge names
-      stats.segment = getPerformanceSegment(stats.acceptanceRate, stats.chatTotalApplies, stats.userROI);
+      stats.segment = getPerformanceSegment(stats.acceptanceRate, stats.interactions, stats.userROI);
     });
     
     return Array.from(userStats.values());
-  }, [data, linesPerMinute, pricePerHour, cursorPricePerUser]);
+  }, [data, linesPerMinute, pricePerHour, copilotPricePerUser]);
 };
