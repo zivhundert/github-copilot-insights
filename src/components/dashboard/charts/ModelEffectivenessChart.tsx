@@ -77,6 +77,7 @@ export const ModelEffectivenessChart = ({ data }: ModelEffectivenessChartProps) 
     ],
     tooltip: {
       shared: true,
+      followPointer: true,
     },
     plotOptions: {
       column: {
@@ -95,7 +96,7 @@ export const ModelEffectivenessChart = ({ data }: ModelEffectivenessChartProps) 
         yAxis: 0,
         tooltip: {
           pointFormatter: function() {
-            return `<span style="color:${this.color}">●</span> AI Code Amplification: <b>${this.y === null ? 'Unavailable' : `${Number(this.y).toFixed(1)}%`}</b><br/><span style="opacity:0.8">This metric can exceed 100% because agent/edit workflows add code without corresponding suggested lines.</span><br/>`;
+            return `<span style="color:${this.color}">●</span> AI Code Amplification: <b>${this.y === null ? 'Unavailable' : `${Number(this.y).toFixed(1)}%`}</b><br/><span style="opacity:0.8">Can exceed 100% because agent/edit workflows add code without matching suggested lines.</span><br/>`;
           }
         },
       },
