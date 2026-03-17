@@ -19,14 +19,20 @@ const FEATURE_LABELS: Record<string, string> = {
   'chat_panel_ask_mode': 'Ask Mode',
   'agent_edit': 'Agent Edit',
   'chat_panel_custom_mode': 'Custom Mode',
+  'chat_panel_plan_mode': 'Plan Mode',
+  'chat_panel_edit_mode': 'Edit Mode',
+  'chat_inline': 'Chat Inline',
 };
 
 const FEATURE_COLORS: Record<string, string> = {
-  'code_completion': CHART_COLORS.secondary[2], // Blue
-  'chat_panel_agent_mode': CHART_COLORS.secondary[0], // Yellow/Gold
-  'chat_panel_ask_mode': CHART_COLORS.secondary[3], // Green
-  'agent_edit': CHART_COLORS.secondary[1], // Pink
-  'chat_panel_custom_mode': CHART_COLORS.secondary[4], // Purple
+  'code_completion': CHART_COLORS.secondary[2],
+  'chat_panel_agent_mode': CHART_COLORS.secondary[0],
+  'chat_panel_ask_mode': CHART_COLORS.secondary[3],
+  'agent_edit': CHART_COLORS.secondary[1],
+  'chat_panel_custom_mode': CHART_COLORS.secondary[4],
+  'chat_panel_plan_mode': CHART_COLORS.primary[1],
+  'chat_panel_edit_mode': CHART_COLORS.primary[2],
+  'chat_inline': CHART_COLORS.primary[3],
 };
 
 export const FeatureUsageChart = ({ data, aggregationPeriod }: FeatureUsageChartProps) => {
