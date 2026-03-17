@@ -77,10 +77,12 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       const saved = localStorage.getItem(LOCALSTORAGE_KEY);
       if (saved) {
         const parsedSettings = JSON.parse(saved);
-        if (!parsedSettings.chartVisibility) {
-          parsedSettings.chartVisibility = DEFAULT_CHART_VISIBILITY;
-        }
-        return parsedSettings;
+        // Merge saved visibility with defaults so new charts default to true
+        parsedSettings.chartVisibility = {
+          ...DEFAULT_CHART_VISIBILITY,
+          ...(parsedSettings.chartVisibility || {}),
+        };
+        return { ...DEFAULT_SETTINGS, ...parsedSettings };
       }
       return DEFAULT_SETTINGS;
     } catch {
