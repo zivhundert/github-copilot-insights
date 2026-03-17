@@ -99,7 +99,7 @@ export const AgentAdoptionChart = ({ data, aggregationPeriod }: AgentAdoptionCha
   return (
     <ChartContainer
       title={`Agent/Chat/CLI Adoption (${getPeriodText()})`}
-      helpText="Percentage of users using Agent, Chat, and CLI modes each day."
+      helpText="Percentage of users using each mode per day. Agent: autonomous multi-step coding tasks. Chat: interactive Q&A in the IDE sidebar. CLI: terminal-based assistance for shell commands."
     >
       <BaseHighchart options={options} />
     </ChartContainer>
