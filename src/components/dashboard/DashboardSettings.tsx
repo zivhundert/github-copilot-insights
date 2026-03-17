@@ -193,7 +193,7 @@ export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open,
               </div>
               
               <div className="flex gap-2 justify-between mt-6">
-                <Button type="button" variant="secondary" onClick={() => { reset({ linesPerMinute: 10, theme: "light", pricePerHour: 55, copilotPricePerUser: 19 }); resetDefaults(); }}>
+                <Button type="button" variant="secondary" onClick={() => { reset({ linesPerMinute: 10, theme: "light", pricePerHour: 55, copilotPricePerUser: 39 }); resetDefaults(); }}>
                   Reset to Defaults
                 </Button>
                 <Button type="submit" variant="default" disabled={!isDirty}>
