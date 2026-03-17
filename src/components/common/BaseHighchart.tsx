@@ -4,8 +4,9 @@ import Highcharts, { Options as HighchartsOptions } from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import { getBaseChartConfig } from '@/config/chartConfigs';
 
-// Import treemap module
+// Import modules
 import 'highcharts/modules/treemap';
+import 'highcharts/modules/heatmap';
 
 interface BaseHighchartProps {
   options: Partial<HighchartsOptions>;
