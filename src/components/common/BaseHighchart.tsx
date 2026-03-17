@@ -25,7 +25,14 @@ export const BaseHighchart = ({ options, className }: BaseHighchartProps) => {
       },
       tooltip: {
         ...baseConfig.tooltip,
-        ...options.tooltip
+        outside: true,
+        useHTML: true,
+        ...options.tooltip,
+        style: {
+          ...baseConfig.tooltip?.style,
+          ...(options.tooltip?.style || {}),
+          zIndex: '9999'
+        }
       },
       legend: {
         ...baseConfig.legend,
@@ -39,6 +46,7 @@ export const BaseHighchart = ({ options, className }: BaseHighchartProps) => {
       <HighchartsReact
         highcharts={Highcharts}
         options={mergedOptions}
+        containerProps={{ style: { overflow: 'visible' } }}
       />
     </div>
   );
