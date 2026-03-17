@@ -45,17 +45,19 @@ export const getSegmentCalculationExplanation = (
       ? `${contributor.aiAmplification.toFixed(1)}%`
       : 'N/A (no suggested-line baseline)';
 
-  const badgesText = contributor.badges.length
-    ? `\n• Badges: ${contributor.badges.join(', ')}`
+  const usageModeText = contributor.usageMode
+    ? `Usage mode: ${contributor.usageMode}\n\n`
     : '';
 
-  return `${contributor.segment}${
-    contributor.usageMode ? ` · ${contributor.usageMode}` : ''
-  }\n• Adoption Score: ${contributor.adoptionScore.toFixed(0)}/100\n• Impact Score: ${contributor.impactScore.toFixed(0)}/100\n• Efficiency: ${
+  const signalsText = contributor.badges.length
+    ? `\n\nSignals:\n${contributor.badges.map((badge) => `• ${badge}`).join('\n')}`
+    : '';
+
+  return `${contributor.segment}\n${usageModeText}Adoption Score: ${contributor.adoptionScore.toFixed(0)}/100\nImpact Score: ${contributor.impactScore.toFixed(0)}/100\nEfficiency: ${
     contributor.efficiency !== null
       ? `${contributor.efficiency.toFixed(1)} AI-added lines / interaction`
       : 'N/A'
-  }\n• Acceptance Rate: ${acceptanceText}\n• AI Amplification: ${amplificationText}${badgesText}\n• Segments prioritize Copilot adoption and Copilot-related output, so agent-heavy workflows are not penalized for lower traditional acceptance.`;
+  }\nAcceptance Rate: ${acceptanceText}\nAI Amplification: ${amplificationText}${signalsText}\n\nSegments prioritize Copilot adoption and Copilot-related output, so agent-heavy workflows are not penalized for lower traditional acceptance.`;
 };
 
 export const getSegmentDescription = (segment: PerformanceSegment) => {
