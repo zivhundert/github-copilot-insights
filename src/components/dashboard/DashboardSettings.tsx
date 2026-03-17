@@ -69,7 +69,7 @@ export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open,
     languageFeatureMatrix: "Language × Feature Matrix",
     engagementHeatmap: "Engagement Heatmap",
     codeChurnChart: "Code Churn (AI Lines Added vs Deleted)",
-    insightsPanel: "Adoption Insights Panel",
+    insightsPanel: "Adoption Insights",
     userProfileCard: "User Profile Card",
   };
 

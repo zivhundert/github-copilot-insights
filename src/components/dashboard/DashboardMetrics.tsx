@@ -4,8 +4,6 @@ import { MetricCard } from '@/components/common/MetricCard';
 import { calculateMetrics } from '@/utils/metricsCalculator';
 import { CopilotDataRow } from '@/pages/Index';
 import { useSettings } from "@/contexts/SettingsContext";
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Info } from 'lucide-react';
 
 interface DashboardMetricsProps {
   data: CopilotDataRow[];
