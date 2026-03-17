@@ -9,14 +9,14 @@ export const getAriaSort = (
   return sortConfig.direction === 'asc' ? 'ascending' : 'descending';
 };
 
-const sortByDirection = (
-  value: number,
-  direction: 'asc' | 'desc'
-) => (direction === 'asc' ? value : -value);
+const sortByDirection = (value: number, direction: 'asc' | 'desc') =>
+  direction === 'asc' ? value : -value;
+
+type NumericSortableColumn = Exclude<SortableColumn, 'userLogin' | 'segment'>;
 
 const getNumericValue = (
   contributor: ContributorWithSegment,
-  column: Exclude<SortableColumn, 'userLogin' | 'segment'>
+  column: NumericSortableColumn
 ) => {
   if (column === 'efficiency') {
     return contributor.efficiency ?? -1;
@@ -83,15 +83,16 @@ export const useSortedContributors = (
       case 'codeGenerations':
       case 'codeAcceptances':
       case 'linesDeleted':
-      case 'userROI':
+      case 'userROI': {
+        const numericColumn = sortConfig.column as NumericSortableColumn;
         sorted.sort((a, b) =>
           sortByDirection(
-            getNumericValue(a, sortConfig.column) -
-              getNumericValue(b, sortConfig.column),
+            getNumericValue(a, numericColumn) - getNumericValue(b, numericColumn),
             sortConfig.direction
           )
         );
         break;
+      }
     }
 
     return sorted;

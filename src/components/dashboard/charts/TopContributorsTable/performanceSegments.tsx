@@ -5,26 +5,26 @@ import { ACCEPTANCE_RELIABILITY_THRESHOLD } from './leaderboardModel';
 export const getSegmentIcon = (segment: PerformanceSegment) => {
   switch (segment) {
     case 'Champion':
-      return <Rocket className="h-4 w-4 text-blue-600" />;
+      return <Rocket className="h-4 w-4 text-primary" />;
     case 'Producer':
-      return <Sparkles className="h-4 w-4 text-green-500" />;
+      return <Sparkles className="h-4 w-4 text-foreground" />;
     case 'Explorer':
-      return <TrendingUp className="h-4 w-4 text-orange-500" />;
+      return <TrendingUp className="h-4 w-4 text-muted-foreground" />;
     case 'Starter':
-      return <Sprout className="h-4 w-4 text-lime-700" />;
+      return <Sprout className="h-4 w-4 text-secondary-foreground" />;
   }
 };
 
 export const getSegmentBadgeStyle = (segment: PerformanceSegment) => {
   switch (segment) {
     case 'Champion':
-      return 'bg-blue-200/70 text-blue-800 border-blue-300/50';
+      return 'border-primary/20 bg-primary/10 text-primary';
     case 'Producer':
-      return 'bg-green-200/70 text-green-800 border-green-300/50';
+      return 'border-border bg-secondary text-secondary-foreground';
     case 'Explorer':
-      return 'bg-orange-200/70 text-orange-800 border-orange-300/50';
+      return 'border-border bg-accent text-accent-foreground';
     case 'Starter':
-      return 'bg-lime-50 text-lime-700 border-lime-300/50';
+      return 'border-border bg-muted text-muted-foreground';
   }
 };
 
