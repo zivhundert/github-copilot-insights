@@ -65,6 +65,11 @@ export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open,
     ideVersionChart: "IDE & Plugin Version",
     agentAdoptionChart: "Agent/Chat/CLI Adoption",
     topContributorsTable: "AI Adoption Champions Table",
+    modelEffectivenessChart: "Model Effectiveness Comparison",
+    languageFeatureMatrix: "Language × Feature Matrix",
+    engagementHeatmap: "Engagement Heatmap",
+    codeChurnChart: "Code Churn (Lines Added vs Deleted)",
+    insightsPanel: "Adoption Insights Panel",
   };
 
   return (

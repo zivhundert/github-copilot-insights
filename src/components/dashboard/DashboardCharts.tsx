@@ -11,6 +11,10 @@ import { ProgrammingLanguageTreemap } from './charts/ProgrammingLanguageTreemap'
 import { IDEDistributionChart } from './charts/IDEDistributionChart';
 import { IDEVersionChart } from './charts/IDEVersionChart';
 import { AgentAdoptionChart } from './charts/AgentAdoptionChart';
+import { ModelEffectivenessChart } from './charts/ModelEffectivenessChart';
+import { LanguageFeatureMatrix } from './charts/LanguageFeatureMatrix';
+import { EngagementHeatmap } from './charts/EngagementHeatmap';
+import { CodeChurnChart } from './charts/CodeChurnChart';
 import { CopilotDataRow } from '@/pages/Index';
 import { AggregationPeriod } from '@/utils/dataAggregation';
 import { useSettings } from '@/contexts/SettingsContext';
@@ -75,6 +79,21 @@ export const DashboardCharts = React.memo(({
       ]
     },
     {
+      key: 'model-effectiveness-and-churn',
+      charts: [
+        {
+          component: <ModelEffectivenessChart data={data} />,
+          visible: chartVisibility.modelEffectivenessChart,
+          colSpan: 'half'
+        },
+        {
+          component: <CodeChurnChart data={data} aggregationPeriod={aggregationPeriod} />,
+          visible: chartVisibility.codeChurnChart,
+          colSpan: 'half'
+        }
+      ]
+    },
+    {
       key: 'interactions-and-ide',
       charts: [
         {
@@ -101,6 +120,26 @@ export const DashboardCharts = React.memo(({
           component: <AgentAdoptionChart data={data} aggregationPeriod={aggregationPeriod} />,
           visible: chartVisibility.agentAdoptionChart,
           colSpan: 'half'
+        }
+      ]
+    },
+    {
+      key: 'language-feature-matrix',
+      charts: [
+        {
+          component: <LanguageFeatureMatrix data={data} />,
+          visible: chartVisibility.languageFeatureMatrix,
+          colSpan: 'full'
+        }
+      ]
+    },
+    {
+      key: 'engagement-heatmap',
+      charts: [
+        {
+          component: <EngagementHeatmap data={data} />,
+          visible: chartVisibility.engagementHeatmap,
+          colSpan: 'full'
         }
       ]
     },

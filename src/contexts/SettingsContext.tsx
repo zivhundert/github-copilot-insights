@@ -50,6 +50,11 @@ const DEFAULT_CHART_VISIBILITY: ChartVisibility = {
   ideVersionChart: true,
   agentAdoptionChart: true,
   topContributorsTable: true,
+  modelEffectivenessChart: true,
+  languageFeatureMatrix: true,
+  engagementHeatmap: true,
+  codeChurnChart: true,
+  insightsPanel: true,
 };
 
 const DEFAULT_SETTINGS: Settings = {

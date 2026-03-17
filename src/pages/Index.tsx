@@ -5,8 +5,11 @@ import { DashboardMetrics } from '@/components/dashboard/DashboardMetrics';
 import { DashboardCharts } from '@/components/dashboard/DashboardCharts';
 import { DashboardFilters } from '@/components/dashboard/DashboardFilters';
 import { ExampleShowcase } from '@/components/dashboard/ExampleShowcase';
+import { UserProfileCard } from '@/components/dashboard/UserProfileCard';
+import { InsightsPanel } from '@/components/dashboard/InsightsPanel';
 import { PrivacyFooter } from '@/components/common/PrivacyFooter';
 import { useDashboardData } from '@/hooks/useDashboardData';
+import { useSettings } from '@/contexts/SettingsContext';
 import { analytics } from '@/services/analytics';
 import { Settings } from 'lucide-react';
 
@@ -89,6 +92,8 @@ const Index = () => {
     filters
   } = useDashboardData();
 
+  const { settings } = useSettings();
+
   const handleFileUploadWithAnalytics = (data: any) => {
     handleFileUpload(data);
     analytics.trackFileUpload(data.length);
@@ -105,6 +110,11 @@ const Index = () => {
       analytics.trackFilterUsage(filterKey);
     });
   };
+
+  const isSingleUserSelected = filters.selectedUsers && filters.selectedUsers.length === 1;
+  const singleUserData = isSingleUserSelected
+    ? filteredData.filter(r => r.user_login === filters.selectedUsers![0])
+    : [];
 
   return (
     <div className="min-h-screen bg-background">
@@ -132,10 +142,23 @@ const Index = () => {
               originalData={originalData} 
               baseFilteredData={baseFilteredData} 
             />
+
+            {settings.chartVisibility.insightsPanel && (
+              <InsightsPanel data={originalData} />
+            )}
+
             <DashboardFilters 
               data={originalData} 
               onFiltersChange={updateFiltersWithAnalytics} 
             />
+
+            {isSingleUserSelected && (
+              <UserProfileCard 
+                data={singleUserData} 
+                userName={filters.selectedUsers![0]} 
+              />
+            )}
+
             <div data-export="dashboard-charts">
               <DashboardCharts 
                 data={filteredData} 
