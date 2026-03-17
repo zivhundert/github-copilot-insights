@@ -1,59 +1,100 @@
-
 import { useMemo } from 'react';
 import { ContributorWithSegment, SortableColumn, segmentSortOrder } from './types';
 
-export const getAriaSort = (col: SortableColumn, sortConfig: { column: SortableColumn; direction: "asc" | "desc" }) => {
-  if (col !== sortConfig.column) return "none";
-  return sortConfig.direction === "asc" ? "ascending" : "descending";
+export const getAriaSort = (
+  col: SortableColumn,
+  sortConfig: { column: SortableColumn; direction: 'asc' | 'desc' }
+) => {
+  if (col !== sortConfig.column) return 'none';
+  return sortConfig.direction === 'asc' ? 'ascending' : 'descending';
+};
+
+const sortByDirection = (value: number, direction: 'asc' | 'desc') =>
+  direction === 'asc' ? value : -value;
+
+type NumericSortableColumn = Exclude<SortableColumn, 'userLogin' | 'segment'>;
+
+const getNumericValue = (
+  contributor: ContributorWithSegment,
+  column: NumericSortableColumn
+) => {
+  if (column === 'efficiency') {
+    return contributor.efficiency ?? -1;
+  }
+
+  return Number(contributor[column]);
 };
 
 export const useSortedContributors = (
   contributors: ContributorWithSegment[],
-  sortConfig: { column: SortableColumn; direction: "asc" | "desc" }
+  sortConfig: { column: SortableColumn; direction: 'asc' | 'desc' }
 ) => {
   return useMemo(() => {
     const sorted = [...contributors];
-    
+
     switch (sortConfig.column) {
-      case "userLogin":
+      case 'userLogin':
         sorted.sort((a, b) =>
-          sortConfig.direction === "asc"
+          sortConfig.direction === 'asc'
             ? a.userLogin.localeCompare(b.userLogin)
             : b.userLogin.localeCompare(a.userLogin)
         );
         break;
-      case "segment":
+      case 'segment':
         sorted.sort((a, b) => {
-          const diff = segmentSortOrder[a.segment] - segmentSortOrder[b.segment];
-          if (diff !== 0) return sortConfig.direction === "asc" ? diff : -diff;
-          return b.acceptedLines - a.acceptedLines;
+          const segmentDiff = segmentSortOrder[a.segment] - segmentSortOrder[b.segment];
+          if (segmentDiff !== 0) {
+            return sortByDirection(segmentDiff, sortConfig.direction);
+          }
+
+          const adoptionDiff = b.adoptionScore - a.adoptionScore;
+          if (adoptionDiff !== 0) return adoptionDiff;
+
+          const impactDiff = b.impactScore - a.impactScore;
+          if (impactDiff !== 0) return impactDiff;
+
+          const efficiencyDiff = b.efficiencyScore - a.efficiencyScore;
+          if (efficiencyDiff !== 0) return efficiencyDiff;
+
+          return b.acceptanceRate - a.acceptanceRate;
         });
         break;
-      case "acceptedLines":
-      case "suggestedLines":
-      case "interactions":
-      case "codeGenerations":
-      case "codeAcceptances":
-      case "linesDeleted":
-      case "aiAmplification":
+      case 'acceptanceRate':
+        sorted.sort((a, b) => {
+          const rateDiff = sortByDirection(
+            a.acceptanceRate - b.acceptanceRate,
+            sortConfig.direction
+          );
+          if (rateDiff !== 0) return rateDiff;
+
+          return sortByDirection(
+            a.codeGenerations - b.codeGenerations,
+            sortConfig.direction
+          );
+        });
+        break;
+      case 'addedLines':
+      case 'suggestedLines':
+      case 'interactions':
+      case 'adoptionScore':
+      case 'impactScore':
+      case 'efficiency':
+      case 'aiAmplification':
+      case 'codeGenerations':
+      case 'codeAcceptances':
+      case 'linesDeleted':
+      case 'userROI': {
+        const numericColumn = sortConfig.column as NumericSortableColumn;
         sorted.sort((a, b) =>
-          sortConfig.direction === "asc"
-            ? Number(a[sortConfig.column]) - Number(b[sortConfig.column])
-            : Number(b[sortConfig.column]) - Number(a[sortConfig.column])
+          sortByDirection(
+            getNumericValue(a, numericColumn) - getNumericValue(b, numericColumn),
+            sortConfig.direction
+          )
         );
         break;
-      case "acceptanceRate":
-        sorted.sort((a, b) =>
-          sortConfig.direction === "asc" ? a.acceptanceRate - b.acceptanceRate : b.acceptanceRate - a.acceptanceRate
-        );
-        break;
-      case "userROI":
-        sorted.sort((a, b) =>
-          sortConfig.direction === "asc" ? a.userROI - b.userROI : b.userROI - a.userROI
-        );
-        break;
+      }
     }
-    
+
     return sorted;
   }, [contributors, sortConfig]);
 };

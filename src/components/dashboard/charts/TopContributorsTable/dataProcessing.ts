@@ -1,20 +1,31 @@
-
 import { useMemo } from 'react';
 import { CopilotDataRow } from '@/pages/Index';
 import { ContributorWithSegment } from './types';
-import { getPerformanceSegment } from './performanceSegments';
+import {
+  ACCEPTANCE_RELIABILITY_THRESHOLD,
+  getAchievementBadges,
+  getBadgeThresholds,
+  getPerformanceSegment,
+  getUsageMode,
+  normalizeLogScore,
+} from './leaderboardModel';
 
-export const useContributorData = (data: CopilotDataRow[], linesPerMinute: number, pricePerHour: number, copilotPricePerUser: number) => {
+export const useContributorData = (
+  data: CopilotDataRow[],
+  linesPerMinute: number,
+  pricePerHour: number,
+  copilotPricePerUser: number
+) => {
   return useMemo(() => {
     const userStats = new Map<string, ContributorWithSegment>();
 
-    data.forEach(row => {
+    data.forEach((row) => {
       const userLogin = row.user_login;
-      
+
       if (!userStats.has(userLogin)) {
         userStats.set(userLogin, {
           userLogin,
-          acceptedLines: 0,
+          addedLines: 0,
           suggestedLines: 0,
           acceptanceRate: 0,
           aiAmplification: 0,
@@ -24,40 +35,108 @@ export const useContributorData = (data: CopilotDataRow[], linesPerMinute: numbe
           linesDeleted: 0,
           userROI: 0,
           segment: 'Starter',
+          usageMode: null,
+          adoptionScore: 0,
+          impactScore: 0,
+          effectivenessScore: 0,
+          efficiency: null,
+          efficiencyScore: 0,
+          acceptanceConfidence: 'low',
+          badges: [],
+          agentUsageDays: 0,
+          chatUsageDays: 0,
+          cliUsageDays: 0,
         });
       }
-      
+
       const stats = userStats.get(userLogin)!;
-      stats.acceptedLines += row.loc_added_sum || 0;
+      stats.addedLines += row.loc_added_sum || 0;
       stats.suggestedLines += row.loc_suggested_to_add_sum || 0;
       stats.interactions += row.user_initiated_interaction_count || 0;
       stats.codeGenerations += row.code_generation_activity_count || 0;
       stats.codeAcceptances += row.code_acceptance_activity_count || 0;
       stats.linesDeleted += row.loc_deleted_sum || 0;
+      stats.agentUsageDays += row.used_agent ? 1 : 0;
+      stats.chatUsageDays += row.used_chat ? 1 : 0;
+      stats.cliUsageDays += row.used_cli ? 1 : 0;
     });
-    
-    userStats.forEach((stats) => {
-      // Event-based acceptance rate
-      stats.acceptanceRate = stats.codeGenerations > 0
-        ? (stats.codeAcceptances / stats.codeGenerations) * 100
-        : 0;
 
-      // AI Code Amplification (line-based ratio)
-      stats.aiAmplification = stats.suggestedLines > 0
-        ? (stats.acceptedLines / stats.suggestedLines) * 100
-        : 0;
-      
-      const estimatedHoursSaved = Math.round(stats.acceptedLines / (linesPerMinute * 60));
+    const contributors = Array.from(userStats.values());
+    const maxAdoptionRaw = Math.max(
+      0,
+      ...contributors.map(
+        (contributor) => contributor.interactions + contributor.codeGenerations
+      )
+    );
+    const maxImpactRaw = Math.max(
+      0,
+      ...contributors.map((contributor) => contributor.addedLines)
+    );
+    const maxEfficiencyRaw = Math.max(
+      0,
+      ...contributors.map((contributor) =>
+        contributor.interactions > 0
+          ? contributor.addedLines / contributor.interactions
+          : 0
+      )
+    );
+    const annualCostPerUser = copilotPricePerUser * 12;
+
+    contributors.forEach((stats) => {
+      stats.acceptanceRate =
+        stats.codeGenerations > 0
+          ? (stats.codeAcceptances / stats.codeGenerations) * 100
+          : 0;
+
+      stats.acceptanceConfidence =
+        stats.codeGenerations >= ACCEPTANCE_RELIABILITY_THRESHOLD
+          ? 'reliable'
+          : 'low';
+
+      stats.aiAmplification =
+        stats.suggestedLines > 0
+          ? (stats.addedLines / stats.suggestedLines) * 100
+          : 0;
+
+      stats.efficiency =
+        stats.interactions > 0 ? stats.addedLines / stats.interactions : null;
+
+      const estimatedHoursSaved = Math.round(
+        stats.addedLines / (linesPerMinute * 60)
+      );
       const individualMoneySaved = estimatedHoursSaved * pricePerHour;
-      const annualCostPerUser = copilotPricePerUser * 12;
-      
-      stats.userROI = annualCostPerUser > 0 
-        ? (individualMoneySaved / annualCostPerUser) * 100
-        : 0;
-      
-      stats.segment = getPerformanceSegment(stats.acceptanceRate, stats.interactions, stats.userROI);
+
+      stats.userROI =
+        annualCostPerUser > 0
+          ? (individualMoneySaved / annualCostPerUser) * 100
+          : 0;
+
+      const adoptionRaw = stats.interactions + stats.codeGenerations;
+      stats.adoptionScore = normalizeLogScore(adoptionRaw, maxAdoptionRaw);
+      stats.impactScore = normalizeLogScore(stats.addedLines, maxImpactRaw);
+      stats.efficiencyScore = normalizeLogScore(
+        stats.efficiency ?? 0,
+        maxEfficiencyRaw
+      );
+      stats.effectivenessScore =
+        stats.codeGenerations > 0
+          ? stats.acceptanceRate * (stats.acceptanceConfidence === 'low' ? 0.5 : 1)
+          : 0;
+
+      stats.segment = getPerformanceSegment(
+        stats.adoptionScore,
+        stats.impactScore
+      );
+      stats.usageMode =
+        stats.segment === 'Starter' ? null : getUsageMode(stats);
     });
-    
-    return Array.from(userStats.values());
+
+    const badgeThresholds = getBadgeThresholds(contributors);
+
+    contributors.forEach((stats) => {
+      stats.badges = getAchievementBadges(stats, badgeThresholds);
+    });
+
+    return contributors;
   }, [data, linesPerMinute, pricePerHour, copilotPricePerUser]);
 };
