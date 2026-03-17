@@ -13,6 +13,11 @@ type ChartVisibility = {
   ideVersionChart: boolean;
   agentAdoptionChart: boolean;
   topContributorsTable: boolean;
+  modelEffectivenessChart: boolean;
+  languageFeatureMatrix: boolean;
+  engagementHeatmap: boolean;
+  codeChurnChart: boolean;
+  insightsPanel: boolean;
 };
 
 type Settings = {
