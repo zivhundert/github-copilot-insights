@@ -134,17 +134,17 @@ export const DashboardHeader = ({
       </div>
       
       <div className="flex items-center justify-center gap-3 mb-4">
-        <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-teal-600 rounded-xl flex items-center justify-center">
-          <BarChart3 className="w-6 h-6 text-white" />
+        <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-primary text-primary-foreground">
+          <BarChart3 className="w-6 h-6" />
         </div>
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-teal-600 bg-clip-text text-transparent">
+        <h1 className="text-4xl font-bold text-foreground">
           AI Development Intelligence
         </h1>
       </div>
       <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
         Unlock your team's full coding potential. Track real, business-driven metrics, improve productivity, and maximize the ROI of AI-assisted development with GitHub Copilot.
       </p>
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-xl mx-auto mt-4 mb-2 text-blue-900">
+      <div className="bg-card border border-border rounded-lg p-4 max-w-xl mx-auto mt-4 mb-2 text-foreground">
         <strong>Welcome!</strong> This dashboard reveals how AI accelerates your team. 
         <ul className="list-disc text-base text-left ml-6 mt-2">
           <li><b>See cost savings</b> and time saved by your developers using GitHub Copilot.</li>
@@ -156,3 +156,4 @@ export const DashboardHeader = ({
       <DashboardSettings open={settingsOpen} onOpenChange={setSettingsOpen} />
     </header>
   );
+};
