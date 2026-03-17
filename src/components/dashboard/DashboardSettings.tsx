@@ -69,7 +69,7 @@ export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open,
     languageFeatureMatrix: "Language × Feature Matrix",
     engagementHeatmap: "Engagement Heatmap",
     codeChurnChart: "Code Churn (AI Lines Added vs Deleted)",
-    insightsPanel: "Adoption Insights Panel",
+    insightsPanel: "Adoption Insights",
     userProfileCard: "User Profile Card",
   };
 
@@ -207,7 +207,10 @@ export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open,
 
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-medium">Chart Visibility</h3>
+              <div>
+                <h3 className="text-lg font-medium">Chart Visibility</h3>
+                <p className="text-sm text-muted-foreground">Toggle sections on or off, including fully hiding Adoption Insights.</p>
+              </div>
               <div className="flex gap-2">
                 <Button type="button" variant="outline" size="sm" onClick={showAllCharts}>
                   Show All
