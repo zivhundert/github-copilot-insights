@@ -27,7 +27,12 @@ export const ContributorRow = ({ contributor }: ContributorRowProps) => {
       </TableCell>
       <TableCell className="text-right">{contributor.acceptedLines.toLocaleString()}</TableCell>
       <TableCell className="text-right">{contributor.suggestedLines.toLocaleString()}</TableCell>
-      <TableCell className={getCellClassName('acceptanceRate')}>{contributor.acceptanceRate.toFixed(1)}%</TableCell>
+      <TableCell className={getCellClassName('acceptanceRate')}>
+        {contributor.codeGenerations > 0 ? `${contributor.acceptanceRate.toFixed(1)}%` : 'N/A'}
+      </TableCell>
+      <TableCell className={getCellClassName('aiAmplification')}>
+        {contributor.aiAmplification.toFixed(1)}%
+      </TableCell>
       <TableCell className="text-right">{contributor.interactions.toLocaleString()}</TableCell>
       <TableCell className="text-right">{contributor.codeGenerations.toLocaleString()}</TableCell>
       <TableCell className="text-right">{contributor.codeAcceptances.toLocaleString()}</TableCell>

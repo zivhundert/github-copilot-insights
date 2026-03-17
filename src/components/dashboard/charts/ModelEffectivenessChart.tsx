@@ -30,7 +30,7 @@ export const ModelEffectivenessChart = ({ data }: ModelEffectivenessChartProps) 
     return Array.from(modelStats.entries())
       .map(([model, stats]) => ({
         model,
-        acceptanceRate: stats.suggested > 0 ? (stats.added / stats.suggested) * 100 : 0,
+        amplification: stats.suggested > 0 ? (stats.added / stats.suggested) * 100 : 0,
         interactions: stats.interactions,
       }))
       .sort((a, b) => b.interactions - a.interactions);
@@ -53,9 +53,8 @@ export const ModelEffectivenessChart = ({ data }: ModelEffectivenessChartProps) 
     },
     yAxis: [
       {
-        title: { text: 'Acceptance Rate (%)', style: { color: CHART_COLORS.gradients.blue[0] } },
+        title: { text: 'AI Code Amplification (%)', style: { color: CHART_COLORS.gradients.blue[0] } },
         ...getAxisConfig(),
-        max: 100,
       },
       {
         title: { text: 'Total Interactions', style: { color: CHART_COLORS.gradients.orange[0] } },
@@ -71,9 +70,9 @@ export const ModelEffectivenessChart = ({ data }: ModelEffectivenessChartProps) 
     },
     series: [
       {
-        name: 'Acceptance Rate',
+        name: 'AI Code Amplification',
         type: 'column',
-        data: chartData.map(d => Math.round(d.acceptanceRate * 10) / 10),
+        data: chartData.map(d => Math.round(d.amplification * 10) / 10),
         color: CHART_COLORS.gradients.blue[0],
         yAxis: 0,
         tooltip: { valueSuffix: '%' },
@@ -91,7 +90,7 @@ export const ModelEffectivenessChart = ({ data }: ModelEffectivenessChartProps) 
   return (
     <ChartContainer
       title="Model Effectiveness Comparison"
-      helpText="Compares acceptance rates and total interactions across AI models. Higher acceptance rates indicate better code quality from the model."
+      helpText="Compares AI Code Amplification (Lines Added / Lines Suggested ratio) and total interactions across AI models. This metric can exceed 100% because agent/edit workflows add code without corresponding suggested lines."
     >
       <BaseHighchart options={options} />
     </ChartContainer>

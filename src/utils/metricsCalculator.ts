@@ -5,6 +5,7 @@ interface CalculatedMetrics {
   totalAcceptedLines: string;
   activeUsers: number;
   acceptanceRate: string;
+  aiCodeAmplification: string;
   estimatedHoursSaved: string;
   estimatedMoneySaved: string;
   roi: string;
@@ -29,19 +30,19 @@ export const calculateMetrics = (
     baseFilteredData.map(row => row.user_login)
   ).size;
 
-  // Only use code_completion for acceptance rate (suggest→accept flow)
-  const filteredAcceptedLines = data.reduce((sum, row) => {
-    const cc = (row.totals_by_feature || []).find(f => f.feature === 'code_completion');
-    return sum + (cc?.loc_added_sum || 0);
-  }, 0);
+  // Event-based acceptance rate: code_acceptance_activity_count / code_generation_activity_count
+  const totalAcceptances = data.reduce((sum, row) => sum + (row.code_acceptance_activity_count || 0), 0);
+  const totalGenerations = data.reduce((sum, row) => sum + (row.code_generation_activity_count || 0), 0);
 
-  const filteredSuggestedLines = data.reduce((sum, row) => {
-    const cc = (row.totals_by_feature || []).find(f => f.feature === 'code_completion');
-    return sum + (cc?.loc_suggested_to_add_sum || 0);
-  }, 0);
+  const acceptanceRate = totalGenerations > 0 
+    ? ((totalAcceptances / totalGenerations) * 100).toFixed(1)
+    : null;
 
-  const acceptanceRate = filteredSuggestedLines > 0 
-    ? ((filteredAcceptedLines / filteredSuggestedLines) * 100).toFixed(1)
+  // AI Code Amplification: total loc_added_sum / total loc_suggested_to_add_sum (all features)
+  const totalLocAdded = data.reduce((sum, row) => sum + (row.loc_added_sum || 0), 0);
+  const totalLocSuggested = data.reduce((sum, row) => sum + (row.loc_suggested_to_add_sum || 0), 0);
+  const aiCodeAmplification = totalLocSuggested > 0
+    ? ((totalLocAdded / totalLocSuggested) * 100).toFixed(1)
     : '0';
 
   const estimatedHoursSaved = Math.round(totalAcceptedLines / (settings.linesPerMinute * 60));
@@ -55,7 +56,8 @@ export const calculateMetrics = (
   return {
     totalAcceptedLines: totalAcceptedLines.toLocaleString(),
     activeUsers,
-    acceptanceRate: `${acceptanceRate}%`,
+    acceptanceRate: acceptanceRate !== null ? `${acceptanceRate}%` : 'N/A',
+    aiCodeAmplification: `${aiCodeAmplification}%`,
     estimatedHoursSaved: estimatedHoursSaved.toLocaleString(),
     estimatedMoneySaved: `$${estimatedMoneySaved.toLocaleString()}`,
     roi: `${roi}%`,
