@@ -1,5 +1,5 @@
 
-import { BarChart3, RefreshCcw, Settings, Download, Linkedin } from 'lucide-react';
+import { BarChart3, RefreshCcw, Settings, Download, Linkedin, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useState } from "react";
@@ -7,6 +7,7 @@ import { DashboardSettings } from "./DashboardSettings";
 import { useToast } from '@/hooks/use-toast';
 import { exportToImage } from '@/utils/exportUtils';
 import { analytics } from '@/services/analytics';
+import { useDashboardGuide } from '@/contexts/DashboardGuideContext';
 
 interface DashboardHeaderProps {
   showReloadButton?: boolean;
@@ -26,6 +27,7 @@ export const DashboardHeader = ({
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const { toast } = useToast();
+  const { openGuide } = useDashboardGuide();
 
   const handleExportImage = async () => {
     setIsExporting(true);
@@ -54,6 +56,17 @@ export const DashboardHeader = ({
 
   const ButtonGroup = ({ isMobile = false }: { isMobile?: boolean }) => (
     <>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button variant="ghost" size="icon" onClick={() => openGuide()} className="h-8 w-8">
+            <BookOpen className="w-4 h-4" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side={isMobile ? "bottom" : "left"}>
+          <span>How to Read This Dashboard</span>
+        </TooltipContent>
+      </Tooltip>
+
       {showReloadButton && (
         <Tooltip>
           <TooltipTrigger asChild>
@@ -121,24 +134,24 @@ export const DashboardHeader = ({
       </div>
       
       <div className="flex items-center justify-center gap-3 mb-4">
-        <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-teal-600 rounded-xl flex items-center justify-center">
-          <BarChart3 className="w-6 h-6 text-white" />
+        <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-primary text-primary-foreground">
+          <BarChart3 className="w-6 h-6" />
         </div>
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-teal-600 bg-clip-text text-transparent">
+        <h1 className="text-4xl font-bold text-foreground">
           AI Development Intelligence
         </h1>
       </div>
       <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
         Unlock your team's full coding potential. Track real, business-driven metrics, improve productivity, and maximize the ROI of AI-assisted development with GitHub Copilot.
       </p>
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-xl mx-auto mt-4 mb-2 text-blue-900">
+      <div className="bg-card border border-border rounded-lg p-4 max-w-xl mx-auto mt-4 mb-2 text-foreground">
         <strong>Welcome!</strong> This dashboard reveals how AI accelerates your team. 
         <ul className="list-disc text-base text-left ml-6 mt-2">
           <li><b>See cost savings</b> and time saved by your developers using GitHub Copilot.</li>
           <li><b>Spot your AI Champions</b> and help others grow.</li>
-          <li><b>Adjust settings</b> for accurate ROI reporting (see top right wheel).</li>
+          <li><b>Use the Guide</b> in the top-right to understand every metric and chart correctly.</li>
         </ul>
-        <div className="text-sm mt-2">Not sure how to interpret metrics? Hover <span className="inline-block align-text-bottom"><Settings className="h-4 w-4 inline" /></span> or question marks for insights.</div>
+        <div className="text-sm mt-2">Not sure how to interpret metrics? Open <span className="inline-block align-text-bottom"><BookOpen className="h-4 w-4 inline" /></span> for the full manual, or hover question marks for quick context.</div>
       </div>
       <DashboardSettings open={settingsOpen} onOpenChange={setSettingsOpen} />
     </header>
