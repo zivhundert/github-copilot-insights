@@ -1,5 +1,4 @@
 
-
 import { useMemo } from 'react';
 import { ContributorWithSegment, SortableColumn, segmentSortOrder } from './types';
 
@@ -16,30 +15,26 @@ export const useSortedContributors = (
     const sorted = [...contributors];
     
     switch (sortConfig.column) {
-      case "email":
+      case "userLogin":
         sorted.sort((a, b) =>
           sortConfig.direction === "asc"
-            ? a.email.localeCompare(b.email)
-            : b.email.localeCompare(a.email)
+            ? a.userLogin.localeCompare(b.userLogin)
+            : b.userLogin.localeCompare(a.userLogin)
         );
         break;
       case "segment":
         sorted.sort((a, b) => {
           const diff = segmentSortOrder[a.segment] - segmentSortOrder[b.segment];
-          if (diff !== 0) {
-            return sortConfig.direction === "asc" ? diff : -diff;
-          }
-          // If equal segment, secondary: acceptedLines DESC (top contributors first within segment)
+          if (diff !== 0) return sortConfig.direction === "asc" ? diff : -diff;
           return b.acceptedLines - a.acceptedLines;
         });
         break;
       case "acceptedLines":
       case "suggestedLines":
-      case "chatTotalApplies":
-      case "tabsAccepted":
-      case "editRequests":
-      case "askRequests":
-      case "agentRequests":
+      case "interactions":
+      case "codeGenerations":
+      case "codeAcceptances":
+      case "linesDeleted":
         sorted.sort((a, b) =>
           sortConfig.direction === "asc"
             ? Number(a[sortConfig.column]) - Number(b[sortConfig.column])
@@ -48,23 +43,16 @@ export const useSortedContributors = (
         break;
       case "acceptanceRate":
         sorted.sort((a, b) =>
-          sortConfig.direction === "asc"
-            ? a.acceptanceRate - b.acceptanceRate
-            : b.acceptanceRate - a.acceptanceRate
+          sortConfig.direction === "asc" ? a.acceptanceRate - b.acceptanceRate : b.acceptanceRate - a.acceptanceRate
         );
         break;
       case "userROI":
         sorted.sort((a, b) =>
-          sortConfig.direction === "asc"
-            ? a.userROI - b.userROI
-            : b.userROI - a.userROI
+          sortConfig.direction === "asc" ? a.userROI - b.userROI : b.userROI - a.userROI
         );
-        break;
-      default:
         break;
     }
     
     return sorted;
   }, [contributors, sortConfig]);
 };
-

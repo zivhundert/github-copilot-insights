@@ -1,18 +1,18 @@
 
 import { useState } from 'react';
-import { CursorDataRow } from '@/pages/Index';
-import { parseCSVFile } from '@/utils/csvParser';
+import { CopilotDataRow } from '@/pages/Index';
+import { parseNDJSONFile } from '@/utils/ndjsonParser';
 import { toast } from '@/hooks/use-toast';
 
 export const useFileUpload = () => {
-  const [data, setData] = useState<CursorDataRow[]>([]);
+  const [data, setData] = useState<CopilotDataRow[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleFileUpload = async (file: File) => {
     setIsLoading(true);
     
     try {
-      const result = await parseCSVFile(file);
+      const result = await parseNDJSONFile(file);
       
       if (result.error) {
         toast({
@@ -26,7 +26,7 @@ export const useFileUpload = () => {
       setData(result.data);
       toast({
         title: "File uploaded successfully",
-        description: `Processed ${result.data.length} rows of active user data`,
+        description: `Processed ${result.data.length} rows of Copilot usage data`,
       });
     } catch (error) {
       toast({

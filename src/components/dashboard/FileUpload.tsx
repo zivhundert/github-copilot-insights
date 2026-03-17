@@ -20,7 +20,8 @@ export const FileUpload = ({ onFileUpload, isLoading }: FileUploadProps) => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
-      'text/csv': ['.csv'],
+      'application/x-ndjson': ['.ndjson'],
+      'application/json': ['.json'],
     },
     multiple: false,
   });
@@ -41,11 +42,11 @@ export const FileUpload = ({ onFileUpload, isLoading }: FileUploadProps) => {
             <Upload className="w-8 h-8 text-white" />
           </div>
           <div>
-            <h3 className="text-xl font-semibold mb-2">Upload Cursor CSV Data</h3>
+            <h3 className="text-xl font-semibold mb-2">Upload GitHub Copilot Data</h3>
             <p className="text-muted-foreground mb-4">
               {isDragActive
-                ? 'Drop your CSV file here...'
-                : 'Drag and drop your Cursor admin panel CSV export, or click to browse'}
+                ? 'Drop your NDJSON file here...'
+                : 'Drag and drop your GitHub Copilot admin export (.ndjson or .json), or click to browse'}
             </p>
             <Button 
               variant="outline" 
@@ -57,13 +58,13 @@ export const FileUpload = ({ onFileUpload, isLoading }: FileUploadProps) => {
           </div>
           <p className="text-sm text-gray-500">
             <a 
-              href="https://www.cursor.com/analytics" 
+              href="https://docs.github.com/en/enterprise-cloud@latest/admin/managing-accounts-and-repositories/managing-users-in-your-enterprise/exporting-membership-information-for-your-enterprise" 
               target="_blank" 
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 underline"
               onClick={(e) => e.stopPropagation()}
             >
-              Download your team CSV data from Cursor Analytics
+              Learn how to export your Copilot usage data
               <ExternalLink className="w-3 h-3" />
             </a>
           </p>

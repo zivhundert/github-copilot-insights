@@ -6,12 +6,12 @@ import { DateRangePicker } from './filters/DateRangePicker';
 import { UserSelector } from './filters/UserSelector';
 import { AggregationPeriodSelector } from './filters/AggregationPeriodSelector';
 import { FilterActions } from './filters/FilterActions';
-import type { CursorDataRow } from '@/pages/Index';
+import type { CopilotDataRow } from '@/pages/Index';
 import type { DateRange } from 'react-day-picker';
 import type { AggregationPeriod } from '@/utils/dataAggregation';
 
 interface DashboardFiltersProps {
-  data: CursorDataRow[];
+  data: CopilotDataRow[];
   onFiltersChange: (filters: {
     dateRange: { from?: Date; to?: Date };
     selectedUsers: string[];
@@ -24,7 +24,7 @@ export const DashboardFilters = ({ data, onFiltersChange }: DashboardFiltersProp
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [aggregationPeriod, setAggregationPeriod] = useState<AggregationPeriod>('day');
 
-  const uniqueUsers = Array.from(new Set(data.map(row => row.Email))).sort();
+  const uniqueUsers = Array.from(new Set(data.map(row => row.user_login))).sort();
 
   const handleFilterChange = () => {
     onFiltersChange({

@@ -1,23 +1,24 @@
+
 import React, { useMemo } from 'react';
 import { CumulativeChart } from './charts/CumulativeChart';
 import { AcceptanceRateChart } from './charts/AcceptanceRateChart';
-import { AverageAskRequestsChart } from './charts/AverageAskRequestsChart';
-import { AverageTabsAcceptedChart } from './charts/AverageTabsAcceptedChart';
+import { AverageInteractionsChart } from './charts/AverageInteractionsChart';
 import { ModelUsageChart } from './charts/ModelUsageChart';
 import { TopContributorsTable } from './charts/TopContributorsTable/TopContributorsTable';
-import { ChatRequestTypesChart } from './charts/ChatRequestTypesChart';
+import { FeatureUsageChart } from './charts/FeatureUsageChart';
 import { DayOfWeekChart } from './charts/DayOfWeekChart';
 import { ProgrammingLanguageTreemap } from './charts/ProgrammingLanguageTreemap';
-import { TabExtensionWordCloud } from './charts/TabExtensionWordCloud';
-import { ClientVersionChart } from './charts/ClientVersionChart';
-import { CursorDataRow } from '@/pages/Index';
+import { IDEDistributionChart } from './charts/IDEDistributionChart';
+import { IDEVersionChart } from './charts/IDEVersionChart';
+import { AgentAdoptionChart } from './charts/AgentAdoptionChart';
+import { CopilotDataRow } from '@/pages/Index';
 import { AggregationPeriod } from '@/utils/dataAggregation';
 import { useSettings } from '@/contexts/SettingsContext';
 
 interface DashboardChartsProps {
-  data: CursorDataRow[];
-  originalData: CursorDataRow[];
-  baseFilteredData: CursorDataRow[];
+  data: CopilotDataRow[];
+  originalData: CopilotDataRow[];
+  baseFilteredData: CopilotDataRow[];
   aggregationPeriod: AggregationPeriod;
   selectedUsers?: string[];
 }
@@ -42,7 +43,6 @@ export const DashboardCharts = React.memo(({
   const { chartVisibility } = settings;
   const isFiltered = selectedUsers && selectedUsers.length > 0;
 
-  // Memoize chart configurations to prevent unnecessary re-renders
   const chartRows = useMemo((): ChartRowConfig[] => [
     {
       key: 'main-charts',
@@ -60,7 +60,7 @@ export const DashboardCharts = React.memo(({
       ]
     },
     {
-      key: 'model-and-chat',
+      key: 'model-and-feature',
       charts: [
         {
           component: <ModelUsageChart data={data} />,
@@ -68,23 +68,23 @@ export const DashboardCharts = React.memo(({
           colSpan: 'half'
         },
         {
-          component: <ChatRequestTypesChart data={data} aggregationPeriod={aggregationPeriod} />,
-          visible: chartVisibility.chatRequestTypesChart,
+          component: <FeatureUsageChart data={data} aggregationPeriod={aggregationPeriod} />,
+          visible: chartVisibility.featureUsageChart,
           colSpan: 'half'
         }
       ]
     },
     {
-      key: 'average-charts',
+      key: 'interactions-and-ide',
       charts: [
         {
-          component: <AverageAskRequestsChart data={data} aggregationPeriod={aggregationPeriod} />,
-          visible: chartVisibility.averageAskRequestsChart,
+          component: <AverageInteractionsChart data={data} aggregationPeriod={aggregationPeriod} />,
+          visible: chartVisibility.averageInteractionsChart,
           colSpan: 'half'
         },
         {
-          component: <AverageTabsAcceptedChart data={data} aggregationPeriod={aggregationPeriod} />,
-          visible: chartVisibility.averageTabsAcceptedChart,
+          component: <IDEDistributionChart data={data} />,
+          visible: chartVisibility.ideDistributionChart,
           colSpan: 'half'
         }
       ]
@@ -93,13 +93,13 @@ export const DashboardCharts = React.memo(({
       key: 'visualization-charts',
       charts: [
         {
-          component: <TabExtensionWordCloud data={data} />,
-          visible: chartVisibility.tabExtensionWordCloud,
+          component: <ProgrammingLanguageTreemap data={data} />,
+          visible: chartVisibility.programmingLanguageTreemap,
           colSpan: 'half'
         },
         {
-          component: <ProgrammingLanguageTreemap data={data} />,
-          visible: chartVisibility.programmingLanguageTreemap,
+          component: <AgentAdoptionChart data={data} aggregationPeriod={aggregationPeriod} />,
+          visible: chartVisibility.agentAdoptionChart,
           colSpan: 'half'
         }
       ]
@@ -113,8 +113,8 @@ export const DashboardCharts = React.memo(({
           colSpan: 'half'
         },
         {
-          component: <ClientVersionChart data={data} aggregationPeriod={aggregationPeriod} />,
-          visible: chartVisibility.clientVersionChart,
+          component: <IDEVersionChart data={data} aggregationPeriod={aggregationPeriod} />,
+          visible: chartVisibility.ideVersionChart,
           colSpan: 'half'
         }
       ]
@@ -129,35 +129,12 @@ export const DashboardCharts = React.memo(({
         }
       ]
     }
-  ], [
-    data, 
-    originalData, 
-    baseFilteredData, 
-    aggregationPeriod, 
-    selectedUsers, 
-    isFiltered, 
-    chartVisibility
-  ]);
+  ], [data, originalData, baseFilteredData, aggregationPeriod, selectedUsers, isFiltered, chartVisibility]);
 
-  // Helper function to render chart rows
   const renderChartRow = (rowConfig: ChartRowConfig) => {
     const visibleCharts = rowConfig.charts.filter(chart => chart.visible);
     if (visibleCharts.length === 0) return null;
 
-    // Handle special case for temporal-and-version row where client version should span full width if day chart is hidden
-    if (rowConfig.key === 'temporal-and-version') {
-      const dayChartVisible = chartVisibility.dayOfWeekChart && aggregationPeriod === 'day';
-      const clientVersionVisible = chartVisibility.clientVersionChart;
-      if (clientVersionVisible && !dayChartVisible) {
-        return (
-          <div key={rowConfig.key}>
-            <ClientVersionChart data={data} aggregationPeriod={aggregationPeriod} />
-          </div>
-        );
-      }
-    }
-
-    // For rows with full-width charts, use a simple container
     if (visibleCharts.some(chart => chart.colSpan === 'full')) {
       return (
         <div key={rowConfig.key}>
@@ -170,7 +147,6 @@ export const DashboardCharts = React.memo(({
       );
     }
 
-    // For half-width charts, use grid layout
     return (
       <div key={rowConfig.key} className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {visibleCharts.map((chart, index) => (
@@ -182,7 +158,6 @@ export const DashboardCharts = React.memo(({
     );
   };
 
-  // Filter out null rows and ensure consistent spacing
   const renderedRows = chartRows.map(renderChartRow).filter(row => row !== null);
 
   return (

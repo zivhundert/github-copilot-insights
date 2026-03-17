@@ -2,13 +2,13 @@
 import { useMemo } from 'react';
 import { MetricCard } from '@/components/common/MetricCard';
 import { calculateMetrics } from '@/utils/metricsCalculator';
-import { CursorDataRow } from '@/pages/Index';
+import { CopilotDataRow } from '@/pages/Index';
 import { useSettings } from "@/contexts/SettingsContext";
 
 interface DashboardMetricsProps {
-  data: CursorDataRow[];
-  originalData: CursorDataRow[];
-  baseFilteredData: CursorDataRow[];
+  data: CopilotDataRow[];
+  originalData: CopilotDataRow[];
+  baseFilteredData: CopilotDataRow[];
 }
 
 export const DashboardMetrics = ({ data, originalData, baseFilteredData }: DashboardMetricsProps) => {
@@ -18,7 +18,7 @@ export const DashboardMetrics = ({ data, originalData, baseFilteredData }: Dashb
     return calculateMetrics(data, baseFilteredData, {
       linesPerMinute: settings.linesPerMinute,
       pricePerHour: settings.pricePerHour,
-      cursorPricePerUser: settings.cursorPricePerUser
+      copilotPricePerUser: settings.copilotPricePerUser
     });
   }, [data, baseFilteredData, settings]);
 
@@ -28,7 +28,7 @@ export const DashboardMetrics = ({ data, originalData, baseFilteredData }: Dashb
       value: metrics.totalAcceptedLines,
       gradient: 'from-blue-500 to-blue-600',
       tooltip: <>
-        <strong>What it means:</strong> The total amount of code produced via AI suggestions (accepted lines), showing the business impact of AI adoption across your team.
+        <strong>What it means:</strong> Total lines of code added via GitHub Copilot suggestions, showing the business impact of AI adoption across your team.
         <br/><br/>
         <strong>Why it matters:</strong> More code by AI can mean faster feature delivery, freeing up engineers for higher-value work.
         <br/><br/>
@@ -40,11 +40,9 @@ export const DashboardMetrics = ({ data, originalData, baseFilteredData }: Dashb
       value: metrics.acceptanceRate,
       gradient: 'from-emerald-500 to-emerald-600',
       tooltip: <>
-        <strong>What it means:</strong> The share of suggested lines your team accepts from AI, reflecting developer trust and AI usability.
+        <strong>What it means:</strong> The share of suggested lines your team accepts from Copilot, reflecting developer trust and AI usability.
         <br/><br/>
         <strong>Why it matters:</strong> Higher rates suggest greater value from AI—industry benchmarks: 10-30% = typical, 30%+ = excellent.
-        <br/><br/>
-        <strong>Action:</strong> Encourage best practice sharing to boost adoption.
       </>
     },
     {
@@ -53,8 +51,6 @@ export const DashboardMetrics = ({ data, originalData, baseFilteredData }: Dashb
       gradient: 'from-teal-500 to-teal-600',
       tooltip: <>
         <strong>What it means:</strong> Total developer hours saved by using AI-powered suggestions, based on your team's coding speed.
-        <br/><br/>
-        <strong>Why it matters:</strong> Reclaim time for innovation and complex problem solving.
         <br/><br/>
         <strong>Tip:</strong> Adjust your team's "Coding Speed" in settings for precise reporting.
         <br/><br/>
@@ -66,9 +62,7 @@ export const DashboardMetrics = ({ data, originalData, baseFilteredData }: Dashb
       value: metrics.estimatedMoneySaved,
       gradient: 'from-green-500 to-green-600',
       tooltip: <>
-        <strong>What it means:</strong> Total estimated cost your team avoided by using AI to speed up coding (developer time valued at your set hourly rate).
-        <br/><br/>
-        <strong>Why it matters:</strong> Track the real dollar impact of AI for budget decisions.
+        <strong>What it means:</strong> Total estimated cost your team avoided by using AI to speed up coding.
         <br/><br/>
         <strong>Industry benchmark:</strong> Median developer hourly rates: $50–$120 USD.
         <br/><br/>
@@ -76,17 +70,15 @@ export const DashboardMetrics = ({ data, originalData, baseFilteredData }: Dashb
       </>
     },
     {
-      title: 'ROI - Cursor Investment Return',
+      title: 'ROI - Copilot Investment Return',
       value: metrics.roi,
       gradient: 'from-purple-500 to-purple-600',
       tooltip: <>
-        <strong>What it means:</strong> Your return on investment from using Cursor, comparing savings to annual license cost.
-        <br/><br/>
-        <strong>Why it matters:</strong> A higher percentage means better AI payback for your budget.
+        <strong>What it means:</strong> Your return on investment from using GitHub Copilot, comparing savings to annual license cost.
         <br/><br/>
         <strong>Action:</strong> Use this to justify AI expenses to leadership.
         <br/><br/>
-        <em>Annual cost = {metrics.activeUsers} users × ${settings.cursorPricePerUser}/month × 12 months</em>
+        <em>Annual cost = {metrics.activeUsers} users × ${settings.copilotPricePerUser}/month × 12 months</em>
       </>
     },
     {
@@ -94,9 +86,7 @@ export const DashboardMetrics = ({ data, originalData, baseFilteredData }: Dashb
       value: metrics.activeUsers.toString(),
       gradient: 'from-indigo-500 to-indigo-600',
       tooltip: <>
-        <strong>What it means:</strong> Number of distinct, active AI adopters on your team.
-        <br/><br/>
-        <strong>Why it matters:</strong> More active users means greater return and spreading best practices.
+        <strong>What it means:</strong> Number of distinct Copilot users on your team in the selected period.
         <br/><br/>
         <strong>Tip:</strong> Spot trends in adoption and help non-active users unlock value.
         <br/><br/>

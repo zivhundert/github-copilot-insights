@@ -22,13 +22,11 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
     data, 
     settings.linesPerMinute, 
     settings.pricePerHour, 
-    settings.cursorPricePerUser
+    settings.copilotPricePerUser
   );
   const sortedContributors = useSortedContributors(allContributors, sortConfig);
 
-  if (sortedContributors.length < 1) {
-    return null;
-  }
+  if (sortedContributors.length < 1) return null;
 
   const displayedContributors = showAll ? sortedContributors : sortedContributors.slice(0, 10);
 
@@ -46,28 +44,21 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
                 <PopoverContent>
                   <div className="space-y-2">
                     <p>Users ranked by performance segment and comprehensive activity metrics.</p>
-                    <p className="text-sm text-muted-foreground">Acceptance Rate = (Accepted Lines / Suggested Lines) × 100</p>
-                    <p className="text-sm text-muted-foreground">User ROI = (Individual Money Saved / Annual Cursor Cost per User) × 100</p>
+                    <p className="text-sm text-muted-foreground">Acceptance Rate = (Lines Added / Lines Suggested) × 100</p>
+                    <p className="text-sm text-muted-foreground">User ROI = (Individual Money Saved / Annual Copilot Cost per User) × 100</p>
                     <div className="text-sm text-muted-foreground space-y-1">
                       <p><strong>Performance Segments:</strong></p>
-                      <p>🚀 <span className="font-medium">Champion:</span> Top-tier adopter, leading by example and delivering outstanding value.</p>
-                      <p>✨ <span className="font-medium">Producer:</span> Active and effective, regularly using AI to drive efficiency.</p>
-                      <p>📈 <span className="font-medium">Explorer:</span> Exploring new tools, growing skills, and boosting your results.</p>
-                      <p>🌱 <span className="font-medium">Starter:</span> Just getting started on your productivity journey.</p>
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      <p><strong>Tip:</strong> Hover over segment badges to see calculation details and highlight relevant columns.</p>
+                      <p>🚀 <span className="font-medium">Champion:</span> Top-tier adopter with outstanding value.</p>
+                      <p>✨ <span className="font-medium">Producer:</span> Active and effective.</p>
+                      <p>📈 <span className="font-medium">Explorer:</span> Growing skills and impact.</p>
+                      <p>🌱 <span className="font-medium">Starter:</span> Just getting started.</p>
                     </div>
                   </div>
                 </PopoverContent>
               </Popover>
             </div>
             {!isFiltered && (
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={toggleShowAll}
-              >
+              <Button variant="outline" size="sm" onClick={toggleShowAll}>
                 {showAll ? 'Show Top 10' : 'Show All'}
               </Button>
             )}
@@ -77,22 +68,21 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
           <Table>
             <TableHeader>
               <TableRow>
-                <SortableTableHead column="email" label={columnLabels.email} sortConfig={sortConfig} onSort={handleSort} />
+                <SortableTableHead column="userLogin" label={columnLabels.userLogin} sortConfig={sortConfig} onSort={handleSort} />
                 <SortableTableHead column="segment" label={columnLabels.segment} sortConfig={sortConfig} onSort={handleSort} />
                 <SortableTableHead column="acceptedLines" label={columnLabels.acceptedLines} sortConfig={sortConfig} onSort={handleSort} />
                 <SortableTableHead column="suggestedLines" label={columnLabels.suggestedLines} sortConfig={sortConfig} onSort={handleSort} />
                 <SortableTableHead column="acceptanceRate" label={columnLabels.acceptanceRate} sortConfig={sortConfig} onSort={handleSort} />
-                <SortableTableHead column="chatTotalApplies" label={columnLabels.chatTotalApplies} sortConfig={sortConfig} onSort={handleSort} />
-                <SortableTableHead column="tabsAccepted" label={columnLabels.tabsAccepted} sortConfig={sortConfig} onSort={handleSort} />
-                <SortableTableHead column="editRequests" label={columnLabels.editRequests} sortConfig={sortConfig} onSort={handleSort} />
-                <SortableTableHead column="askRequests" label={columnLabels.askRequests} sortConfig={sortConfig} onSort={handleSort} />
-                <SortableTableHead column="agentRequests" label={columnLabels.agentRequests} sortConfig={sortConfig} onSort={handleSort} />
+                <SortableTableHead column="interactions" label={columnLabels.interactions} sortConfig={sortConfig} onSort={handleSort} />
+                <SortableTableHead column="codeGenerations" label={columnLabels.codeGenerations} sortConfig={sortConfig} onSort={handleSort} />
+                <SortableTableHead column="codeAcceptances" label={columnLabels.codeAcceptances} sortConfig={sortConfig} onSort={handleSort} />
+                <SortableTableHead column="linesDeleted" label={columnLabels.linesDeleted} sortConfig={sortConfig} onSort={handleSort} />
                 <SortableTableHead column="userROI" label={columnLabels.userROI} sortConfig={sortConfig} onSort={handleSort} />
               </TableRow>
             </TableHeader>
             <TableBody>
               {displayedContributors.map((contributor) => (
-                <ContributorRow key={contributor.email} contributor={contributor} />
+                <ContributorRow key={contributor.userLogin} contributor={contributor} />
               ))}
             </TableBody>
           </Table>

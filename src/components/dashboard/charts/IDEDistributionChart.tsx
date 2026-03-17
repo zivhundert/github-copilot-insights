@@ -6,23 +6,23 @@ import { BaseHighchart } from '@/components/common/BaseHighchart';
 import { getPieChartConfig, CHART_COLORS } from '@/config/chartConfigs';
 import { CopilotDataRow } from '@/pages/Index';
 
-interface ModelUsageChartProps {
+interface IDEDistributionChartProps {
   data: CopilotDataRow[];
 }
 
-export const ModelUsageChart = ({ data }: ModelUsageChartProps) => {
+export const IDEDistributionChart = ({ data }: IDEDistributionChartProps) => {
   const chartData = useMemo(() => {
-    const modelCounts = new Map<string, number>();
+    const ideCounts = new Map<string, number>();
     
     data.forEach(row => {
-      (row.totals_by_model_feature || []).forEach(mf => {
-        const model = mf.model || 'Unknown';
-        const interactions = mf.user_initiated_interaction_count || 0;
-        modelCounts.set(model, (modelCounts.get(model) || 0) + interactions);
+      (row.totals_by_ide || []).forEach(ide => {
+        const name = ide.ide || 'Unknown';
+        const interactions = ide.user_initiated_interaction_count || 0;
+        ideCounts.set(name, (ideCounts.get(name) || 0) + interactions);
       });
     });
 
-    return Array.from(modelCounts.entries())
+    return Array.from(ideCounts.entries())
       .map(([name, y], index) => ({ 
         name, 
         y, 
@@ -37,7 +37,7 @@ export const ModelUsageChart = ({ data }: ModelUsageChartProps) => {
       pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
     },
     series: [{
-      name: 'Model Usage',
+      name: 'IDE Usage',
       type: 'pie',
       data: chartData
     }]
@@ -45,8 +45,8 @@ export const ModelUsageChart = ({ data }: ModelUsageChartProps) => {
 
   return (
     <ChartContainer
-      title="AI Model Usage"
-      helpText="Distribution of AI models used across your team based on interaction counts."
+      title="IDE Distribution"
+      helpText="Distribution of IDEs used with GitHub Copilot across your team (VS Code, IntelliJ, etc.)."
     >
       <BaseHighchart options={options} />
     </ChartContainer>

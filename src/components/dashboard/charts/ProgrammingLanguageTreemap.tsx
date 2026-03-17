@@ -6,31 +6,33 @@ import { Options as HighchartsOptions } from 'highcharts';
 import { ChartContainer } from '@/components/common/ChartContainer';
 import { BaseHighchart } from '@/components/common/BaseHighchart';
 import { getTreemapChartConfig, CHART_COLORS } from '@/config/chartConfigs';
-import { CursorDataRow } from '@/pages/Index';
+import { CopilotDataRow } from '@/pages/Index';
 
 interface ProgrammingLanguageTreemapProps {
-  data: CursorDataRow[];
+  data: CopilotDataRow[];
 }
 
 export const ProgrammingLanguageTreemap = ({ data }: ProgrammingLanguageTreemapProps) => {
   const treemapData = useMemo(() => {
-    const extensionCounts = new Map<string, number>();
+    const langCounts = new Map<string, number>();
     data.forEach(row => {
-      const extension = row['Most Used Apply Extension'];
-      if (extension && extension.trim() && extension !== 'Unknown') {
-        const displayName = extension.toLowerCase() === 'tsx' ? 'TypeScript' : extension;
-        extensionCounts.set(displayName, (extensionCounts.get(displayName) || 0) + 1);
-      }
+      (row.totals_by_language_feature || []).forEach(lf => {
+        const lang = lf.language;
+        if (lang && lang !== 'unknown') {
+          const lines = (lf.loc_added_sum || 0) + (lf.code_generation_activity_count || 0);
+          langCounts.set(lang, (langCounts.get(lang) || 0) + lines);
+        }
+      });
     });
 
-    const totalCount = Array.from(extensionCounts.values()).reduce((sum, count) => sum + count, 0);
+    const totalCount = Array.from(langCounts.values()).reduce((sum, count) => sum + count, 0);
 
-    return Array.from(extensionCounts.entries())
+    return Array.from(langCounts.entries())
       .sort(([, a], [, b]) => b - a)
-      .map(([extension, count], index) => ({
-        name: extension,
+      .map(([lang, count], index) => ({
+        name: lang,
         value: count,
-        percentage: ((count / totalCount) * 100).toFixed(1),
+        percentage: totalCount > 0 ? ((count / totalCount) * 100).toFixed(1) : '0',
         color: CHART_COLORS.treemap[index % CHART_COLORS.treemap.length]
       }));
   }, [data]);
@@ -49,7 +51,7 @@ export const ProgrammingLanguageTreemap = ({ data }: ProgrammingLanguageTreemapP
   return (
     <ChartContainer
       title="Programming Language Usage"
-      helpText="Visual representation of the most frequently used programming languages. Shows programming languages by usage frequency. Larger rectangles indicate more frequent use."
+      helpText="Visual representation of programming languages used with Copilot. Larger rectangles indicate more usage."
     >
       {isEmpty ? (
         <div className="flex items-center justify-center h-full text-muted-foreground">
