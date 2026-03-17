@@ -22,7 +22,7 @@ export const EngagementHeatmap = ({ data }: EngagementHeatmapProps) => {
       dailyActivity.set(day, (dailyActivity.get(day) || 0) + (row.user_initiated_interaction_count || 0));
     });
 
-    if (dailyActivity.size === 0) return { seriesData: [], weekLabels: [], maxVal: 0 };
+    if (dailyActivity.size === 0) return { seriesData: [], weekLabels: [], maxVal: 0, firstWeekStart: new Date() };
 
     const dates = Array.from(dailyActivity.keys()).sort();
     const firstDate = parseISO(dates[0]);
