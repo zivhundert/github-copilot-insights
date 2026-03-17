@@ -42,10 +42,10 @@ export interface TopContributorsTableProps {
 export const columnLabels: Record<SortableColumn, string> = {
   userLogin: "User",
   segment: "Performance",
-  acceptedLines: "Lines Added",
-  suggestedLines: "Lines Suggested",
+  acceptedLines: "Added Code",
+  suggestedLines: "Suggested Code",
   acceptanceRate: "Acceptance Rate",
-  aiAmplification: "AI Amplification",
+  aiAmplification: "AI Code Amplification",
   interactions: "Interactions",
   codeGenerations: "Code Generations",
   codeAcceptances: "Code Acceptances",

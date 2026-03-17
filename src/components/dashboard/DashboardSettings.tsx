@@ -55,7 +55,7 @@ export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open,
 
   const chartLabels = {
     cumulativeChart: "Cumulative Usage Chart",
-    acceptanceRateChart: "AI Suggestion Acceptance Rate",
+    acceptanceRateChart: "Acceptance Rate Trend",
     modelUsageChart: "AI Model Usage",
     featureUsageChart: "Feature Usage Breakdown",
     averageInteractionsChart: "Average Interactions per Developer",
@@ -68,7 +68,7 @@ export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open,
     modelEffectivenessChart: "Model Effectiveness Comparison",
     languageFeatureMatrix: "Language × Feature Matrix",
     engagementHeatmap: "Engagement Heatmap",
-    codeChurnChart: "Code Churn (Lines Added vs Deleted)",
+    codeChurnChart: "Code Churn (AI Lines Added vs Deleted)",
     insightsPanel: "Adoption Insights Panel",
     userProfileCard: "User Profile Card",
   };
