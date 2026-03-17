@@ -14,39 +14,49 @@ interface AgentAdoptionChartProps {
 
 export const AgentAdoptionChart = ({ data, aggregationPeriod }: AgentAdoptionChartProps) => {
   const chartData = useMemo(() => {
-    const periodData = new Map<string, { agent: number; chat: number; cli: number; total: number }>();
+    const getPeriodKey = (dateString: string) => {
+      const date = new Date(dateString);
 
-    data.forEach(row => {
-      const date = row.day;
-      if (!periodData.has(date)) {
-        periodData.set(date, { agent: 0, chat: 0, cli: 0, total: 0 });
+      if (aggregationPeriod === 'week') {
+        const weekStart = new Date(date);
+        const day = weekStart.getDay();
+        const diff = day === 0 ? -6 : 1 - day;
+        weekStart.setDate(weekStart.getDate() + diff);
+        weekStart.setHours(0, 0, 0, 0);
+        return weekStart.getTime();
       }
-      const d = periodData.get(date)!;
-      d.total += 1;
-      if (row.used_agent) d.agent += 1;
-      if (row.used_chat) d.chat += 1;
-      if (row.used_cli) d.cli += 1;
+
+      if (aggregationPeriod === 'month') {
+        return new Date(date.getFullYear(), date.getMonth(), 1).getTime();
+      }
+
+      date.setHours(0, 0, 0, 0);
+      return date.getTime();
+    };
+
+    const periodData = new Map<number, { agent: Set<string>; chat: Set<string>; cli: Set<string> }>();
+
+    data.forEach((row) => {
+      const key = getPeriodKey(row.day);
+      if (!periodData.has(key)) {
+        periodData.set(key, { agent: new Set(), chat: new Set(), cli: new Set() });
+      }
+
+      const period = periodData.get(key)!;
+      if (row.used_agent) period.agent.add(row.user_login);
+      if (row.used_chat) period.chat.add(row.user_login);
+      if (row.used_cli) period.cli.add(row.user_login);
     });
 
-    const dates = Array.from(periodData.keys()).sort();
-    const timestamps = dates.map(d => new Date(d).getTime());
+    const timestamps = Array.from(periodData.keys()).sort((a, b) => a - b);
 
     return {
       timestamps,
-      agent: dates.map(d => {
-        const p = periodData.get(d)!;
-        return p.total > 0 ? Math.round((p.agent / p.total) * 100) : 0;
-      }),
-      chat: dates.map(d => {
-        const p = periodData.get(d)!;
-        return p.total > 0 ? Math.round((p.chat / p.total) * 100) : 0;
-      }),
-      cli: dates.map(d => {
-        const p = periodData.get(d)!;
-        return p.total > 0 ? Math.round((p.cli / p.total) * 100) : 0;
-      }),
+      agent: timestamps.map((timestamp) => periodData.get(timestamp)!.agent.size),
+      chat: timestamps.map((timestamp) => periodData.get(timestamp)!.chat.size),
+      cli: timestamps.map((timestamp) => periodData.get(timestamp)!.cli.size),
     };
-  }, [data]);
+  }, [data, aggregationPeriod]);
 
   const getPeriodText = () => {
     switch (aggregationPeriod) {
@@ -61,14 +71,13 @@ export const AgentAdoptionChart = ({ data, aggregationPeriod }: AgentAdoptionCha
     xAxis: { ...getColumnChartConfig().xAxis, type: 'datetime' },
     yAxis: {
       ...getColumnChartConfig().yAxis,
-      min: 0, max: 100,
-      title: { text: 'Adoption %', style: { color: 'hsl(var(--foreground))' } },
-      labels: { formatter: function() { return this.value + '%'; } }
+      min: 0,
+      title: { text: 'Users', style: { color: 'hsl(var(--foreground))' } },
+      allowDecimals: false,
     },
     tooltip: {
       formatter: function() {
-        return `Date: ${new Date(this.x as number).toLocaleDateString()}<br/>
-                ${this.series.name}: <b>${this.y}%</b> of users`;
+        return `Date: ${new Date(this.x as number).toLocaleDateString()}<br/>${this.series.name}: <b>${this.y}</b> users`;
       }
     },
     plotOptions: {
@@ -98,8 +107,8 @@ export const AgentAdoptionChart = ({ data, aggregationPeriod }: AgentAdoptionCha
 
   return (
     <ChartContainer
-      title={`Agent/Chat/CLI Adoption (${getPeriodText()})`}
-      helpText="Percentage of users using each mode per day. Agent: autonomous multi-step coding tasks. Chat: interactive Q&A in the IDE sidebar. CLI: terminal-based assistance for shell commands."
+      title={`Agent/Chat/CLI Users (${getPeriodText()})`}
+      helpText="Distinct users who used each mode in the selected period. Agent: autonomous multi-step coding tasks. Chat: interactive Q&A in the IDE sidebar. CLI: terminal-based assistance for shell commands."
     >
       <BaseHighchart options={options} />
     </ChartContainer>
