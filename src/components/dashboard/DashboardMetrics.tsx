@@ -110,24 +110,16 @@ export const DashboardMetrics = ({ data, originalData, baseFilteredData }: Dashb
   ];
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-6">
-        {metricCards.map((metric, index) => (
-          <MetricCard
-            key={index}
-            title={metric.title}
-            value={metric.value}
-            gradient={metric.gradient}
-            tooltip={metric.tooltip}
-          />
-        ))}
-      </div>
-      <Alert variant="default" className="bg-muted/50 border-muted-foreground/20">
-        <Info className="h-4 w-4" />
-        <AlertDescription className="text-xs text-muted-foreground">
-          Line-based metrics represent Copilot suggestions and Copilot-related code added to the editor. They do not directly measure acceptance. Acceptance Rate is only available via event-based metrics (Code Acceptances / Code Generations).
-        </AlertDescription>
-      </Alert>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-6">
+      {metricCards.map((metric, index) => (
+        <MetricCard
+          key={index}
+          title={metric.title}
+          value={metric.value}
+          gradient={metric.gradient}
+          tooltip={metric.tooltip}
+        />
+      ))}
     </div>
   );
 };
