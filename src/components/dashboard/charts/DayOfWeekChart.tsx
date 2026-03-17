@@ -4,7 +4,6 @@ import { Options as HighchartsOptions } from 'highcharts';
 import { ChartContainer } from '@/components/common/ChartContainer';
 import { BaseHighchart } from '@/components/common/BaseHighchart';
 import { getColumnChartConfig, CHART_COLORS } from '@/config/chartConfigs';
-import { createCategoryTooltipFormatter } from '@/utils/chartHelpers';
 import { CopilotDataRow } from '@/pages/Index';
 
 interface DayOfWeekChartProps {
@@ -21,19 +20,32 @@ export const DayOfWeekChart = ({ data }: DayOfWeekChartProps) => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
   const chartData = useMemo(() => {
-    const dayOfWeekActivity = new Map<string, number>();
-    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    dayNames.forEach(day => dayOfWeekActivity.set(day, 0));
-    
-    data.forEach(row => {
+    const dayOfWeekActivity = new Map<string, { linesAdded: number; users: Set<string> }>();
+    dayNames.forEach((day) => dayOfWeekActivity.set(day, { linesAdded: 0, users: new Set<string>() }));
+
+    data.forEach((row) => {
       const date = new Date(row.day);
       const dayName = dayNames[date.getDay()];
-      const lines = row.loc_added_sum || 0;
-      dayOfWeekActivity.set(dayName, (dayOfWeekActivity.get(dayName) || 0) + lines);
+      const stats = dayOfWeekActivity.get(dayName)!;
+      stats.linesAdded += row.loc_added_sum || 0;
+      if (row.user_login) {
+        stats.users.add(row.user_login);
+      }
     });
 
-    return dayNames.map(day => [day, dayOfWeekActivity.get(day) || 0]);
+    return dayNames.map((day) => {
+      const stats = dayOfWeekActivity.get(day)!;
+      return {
+        name: day,
+        y: stats.linesAdded,
+        custom: {
+          uniqueUsers: stats.users.size,
+        },
+      };
+    });
   }, [data]);
 
   const options: Partial<HighchartsOptions> = {
@@ -41,21 +53,27 @@ export const DayOfWeekChart = ({ data }: DayOfWeekChartProps) => {
     chart: { ...getColumnChartConfig().chart, marginBottom: isMobile ? 120 : 100 },
     xAxis: {
       ...getColumnChartConfig().xAxis,
+      categories: dayNames,
       labels: {
         rotation: isMobile ? -45 : 0,
         style: { fontSize: isMobile ? '10px' : '12px', color: 'hsl(var(--foreground))' },
         formatter: function() { return isMobile ? (this.value as string).substring(0, 3) : (this.value as string); }
       }
     },
-    tooltip: { formatter: createCategoryTooltipFormatter('Lines Added', (value) => value.toLocaleString()) },
+    tooltip: {
+      formatter: function() {
+        const point = this as Highcharts.Point & { custom?: { uniqueUsers?: number }; category?: string };
+        return `${point.category}<br/>Added Code: <b>${Number(point.y).toLocaleString()}</b><br/>Unique Users: <b>${point.custom?.uniqueUsers ?? 0}</b>`;
+      }
+    },
     plotOptions: { column: { ...getColumnChartConfig().plotOptions?.column, color: CHART_COLORS.gradients.blue[0] } },
-    series: [{ name: 'Lines Added', type: 'column', data: chartData }]
+    series: [{ name: 'Added Code', type: 'column', data: chartData }]
   };
 
   return (
     <ChartContainer
       title="Activity by Day of Week"
-      helpText="Total lines added grouped by day of the week."
+      helpText="Total added code grouped by day of the week, with unique-user counts available in the tooltip."
     >
       <BaseHighchart options={options} />
     </ChartContainer>
