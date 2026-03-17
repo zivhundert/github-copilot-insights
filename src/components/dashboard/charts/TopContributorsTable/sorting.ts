@@ -47,16 +47,9 @@ export const useSortedContributors = (
             return sortByDirection(segmentDiff, sortConfig.direction);
           }
 
-          const adoptionDiff = b.adoptionScore - a.adoptionScore;
-          if (adoptionDiff !== 0) return adoptionDiff;
-
-          const impactDiff = b.impactScore - a.impactScore;
-          if (impactDiff !== 0) return impactDiff;
-
-          const efficiencyDiff = b.efficiencyScore - a.efficiencyScore;
-          if (efficiencyDiff !== 0) return efficiencyDiff;
-
-          return b.acceptanceRate - a.acceptanceRate;
+          return sortConfig.direction === 'asc'
+            ? a.userLogin.localeCompare(b.userLogin)
+            : b.userLogin.localeCompare(a.userLogin);
         });
         break;
       case 'acceptanceRate':

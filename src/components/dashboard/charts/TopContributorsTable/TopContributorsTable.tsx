@@ -1,8 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableHeader, TableRow } from '@/components/ui/table';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
-import { HelpCircle } from 'lucide-react';
 import { TopContributorsTableProps, columnLabels } from './types';
 import { useContributorData } from './dataProcessing';
 import { useSortedContributors } from './sorting';
@@ -39,54 +37,7 @@ export const TopContributorsTable = ({
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <CardTitle className="text-xl font-semibold">
-                Adoption Champions
-              </CardTitle>
-              <Popover>
-                <PopoverTrigger>
-                  <HelpCircle className="h-4 w-4 cursor-pointer text-muted-foreground transition-all hover:scale-110 hover:text-foreground" />
-                </PopoverTrigger>
-                <PopoverContent className="max-w-md">
-                  <div className="space-y-2 text-sm">
-                    <p>
-                      Segments now prioritize <strong>Copilot adoption</strong> and{' '}
-                      <strong>Copilot-related output</strong> so agent-heavy users are ranked
-                      fairly alongside classic suggestion-heavy users.
-                    </p>
-                    <p className="text-muted-foreground">
-                      <strong>Adoption Score</strong> = normalized (Interactions + Code
-                      Generations)
-                    </p>
-                    <p className="text-muted-foreground">
-                      <strong>Impact Score</strong> = normalized AI Code Added
-                    </p>
-                    <p className="text-muted-foreground">
-                      <strong>Efficiency</strong> = AI Code Added / Interactions
-                    </p>
-                    <p className="text-muted-foreground">
-                      <strong>Acceptance Rate</strong> = (Code Acceptances / Code
-                      Generations) × 100. It is a secondary quality signal and is marked
-                      low-confidence below 20 generations.
-                    </p>
-                    <p className="text-muted-foreground">
-                      <strong>AI Amplification</strong> = (AI Code Added / Suggested Code)
-                      × 100. It is not an acceptance metric and can exceed 100% in
-                      agent/edit-heavy workflows.
-                    </p>
-                    <div className="space-y-1 text-muted-foreground">
-                      <p>
-                        <strong>Segments:</strong>
-                      </p>
-                      <p>🚀 Champion: Strong adoption and strong impact.</p>
-                      <p>✨ Producer: Solid adoption and meaningful output.</p>
-                      <p>📈 Explorer: Growing usage and learning momentum.</p>
-                      <p>🌱 Starter: Early-stage adoption.</p>
-                    </div>
-                  </div>
-                </PopoverContent>
-              </Popover>
-            </div>
+            <CardTitle className="text-xl font-semibold">Adoption Champions</CardTitle>
             {!isFiltered && (
               <Button variant="outline" size="sm" onClick={toggleShowAll}>
                 {showAll ? 'Show Top 10' : 'Show All'}
@@ -95,22 +46,6 @@ export const TopContributorsTable = ({
           </div>
         </CardHeader>
         <CardContent>
-          <div className="mb-4 grid gap-3 text-sm md:grid-cols-2">
-            <div className="rounded-lg border bg-muted/30 p-3 text-muted-foreground">
-              <strong className="text-foreground">Fair ranking:</strong> Performance
-              segments are based primarily on Copilot adoption and Copilot-related
-              output. Acceptance Rate stays visible as a quality signal, but
-              agent-heavy workflows are not penalized when traditional acceptance is
-              lower.
-            </div>
-            <div className="rounded-lg border bg-muted/30 p-3 text-muted-foreground">
-              <strong className="text-foreground">Interpret interactions carefully:</strong>{' '}
-              Interactions measure engagement and effort, not value by themselves.
-              High interactions can mean strong usage, experimentation, or friction
-              depending on resulting output.
-            </div>
-          </div>
-
           <Table className="min-w-[1680px]">
             <TableHeader>
               <TableRow>
