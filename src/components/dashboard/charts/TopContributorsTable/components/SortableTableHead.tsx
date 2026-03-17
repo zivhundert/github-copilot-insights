@@ -26,7 +26,7 @@ export const SortableTableHead = ({
   className = "" 
 }: SortableTableHeadProps) => {
   // Determine alignment based on column type - match data cell alignment
-  const isTextColumn = column === 'email' || column === 'segment';
+  const isTextColumn = column === 'userLogin' || column === 'segment';
   const alignmentClass = isTextColumn ? 'text-left' : 'text-right';
   
   // Check if this column is currently being sorted
