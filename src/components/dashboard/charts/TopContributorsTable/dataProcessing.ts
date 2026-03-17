@@ -8,6 +8,8 @@ export const useContributorData = (data: CopilotDataRow[], linesPerMinute: numbe
   return useMemo(() => {
     const userStats = new Map<string, ContributorWithSegment>();
     
+    const ccStats = new Map<string, { ccAccepted: number; ccSuggested: number }>();
+
     data.forEach(row => {
       const userLogin = row.user_login;
       
@@ -24,20 +26,28 @@ export const useContributorData = (data: CopilotDataRow[], linesPerMinute: numbe
           userROI: 0,
           segment: 'Starter',
         });
+        ccStats.set(userLogin, { ccAccepted: 0, ccSuggested: 0 });
       }
       
       const stats = userStats.get(userLogin)!;
+      const cc = ccStats.get(userLogin)!;
       stats.acceptedLines += row.loc_added_sum || 0;
       stats.suggestedLines += row.loc_suggested_to_add_sum || 0;
       stats.interactions += row.user_initiated_interaction_count || 0;
       stats.codeGenerations += row.code_generation_activity_count || 0;
       stats.codeAcceptances += row.code_acceptance_activity_count || 0;
       stats.linesDeleted += row.loc_deleted_sum || 0;
+
+      // Track code_completion feature separately for acceptance rate
+      const codeCompletion = (row.totals_by_feature || []).find(f => f.feature === 'code_completion');
+      cc.ccAccepted += codeCompletion?.loc_added_sum || 0;
+      cc.ccSuggested += codeCompletion?.loc_suggested_to_add_sum || 0;
     });
     
-    userStats.forEach(stats => {
-      stats.acceptanceRate = stats.suggestedLines > 0
-        ? (stats.acceptedLines / stats.suggestedLines) * 100
+    userStats.forEach((stats, userLogin) => {
+      const cc = ccStats.get(userLogin)!;
+      stats.acceptanceRate = cc.ccSuggested > 0
+        ? (cc.ccAccepted / cc.ccSuggested) * 100
         : 0;
       
       const estimatedHoursSaved = Math.round(stats.acceptedLines / (linesPerMinute * 60));
