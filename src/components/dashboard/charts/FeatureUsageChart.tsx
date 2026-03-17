@@ -83,6 +83,22 @@ export const FeatureUsageChart = ({ data, aggregationPeriod }: FeatureUsageChart
       ...getColumnChartConfig().yAxis,
       title: { text: 'Interactions', style: { color: 'hsl(var(--foreground))' } }
     },
+    legend: {
+      enabled: true,
+      align: 'center',
+      verticalAlign: 'bottom',
+      layout: 'horizontal',
+      itemStyle: {
+        fontSize: '11px',
+        fontWeight: 'normal',
+        color: 'hsl(var(--foreground))',
+        textOverflow: undefined,
+      },
+      itemDistance: 12,
+      margin: 20,
+      padding: 10,
+      floating: false,
+    },
     tooltip: { formatter: createDateTooltipFormatter('Interactions') },
     plotOptions: {
       column: {
