@@ -1,16 +1,22 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Button } from '@/components/ui/button';
 import { HelpCircle } from 'lucide-react';
+import { useDashboardGuide } from '@/contexts/DashboardGuideContext';
+import { getGuideTopicIdFromTitle } from '@/content/dashboardGuide';
 
 interface MetricCardProps {
   title: string;
   value: string;
   gradient: string;
   tooltip: React.ReactNode;
+  guideTopicId?: string;
 }
 
-export const MetricCard = ({ title, value, gradient, tooltip }: MetricCardProps) => {
+export const MetricCard = ({ title, value, gradient, tooltip, guideTopicId }: MetricCardProps) => {
+  const { openGuide } = useDashboardGuide();
+  const resolvedGuideTopicId = guideTopicId || getGuideTopicIdFromTitle(title);
+
   return (
     <Card className="overflow-hidden h-full">
       <CardHeader className={`bg-gradient-to-br ${gradient} text-white pb-3 min-h-[80px] flex flex-col justify-center`}>
@@ -22,8 +28,13 @@ export const MetricCard = ({ title, value, gradient, tooltip }: MetricCardProps)
             <PopoverTrigger className="shrink-0">
               <HelpCircle className="h-4 w-4 text-white opacity-75 hover:opacity-100 hover:scale-110 transition-all cursor-pointer" />
             </PopoverTrigger>
-            <PopoverContent>
-              <p className="max-w-xs">{tooltip}</p>
+            <PopoverContent className="space-y-3">
+              <div className="max-w-xs">{tooltip}</div>
+              {resolvedGuideTopicId && (
+                <Button variant="secondary" size="sm" className="h-8 w-full" onClick={() => openGuide(resolvedGuideTopicId)}>
+                  Learn more in Guide
+                </Button>
+              )}
             </PopoverContent>
           </Popover>
         </div>

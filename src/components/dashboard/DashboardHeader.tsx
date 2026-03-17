@@ -1,5 +1,5 @@
 
-import { BarChart3, RefreshCcw, Settings, Download, Linkedin } from 'lucide-react';
+import { BarChart3, RefreshCcw, Settings, Download, Linkedin, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useState } from "react";
@@ -7,6 +7,7 @@ import { DashboardSettings } from "./DashboardSettings";
 import { useToast } from '@/hooks/use-toast';
 import { exportToImage } from '@/utils/exportUtils';
 import { analytics } from '@/services/analytics';
+import { useDashboardGuide } from '@/contexts/DashboardGuideContext';
 
 interface DashboardHeaderProps {
   showReloadButton?: boolean;
@@ -26,6 +27,7 @@ export const DashboardHeader = ({
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const { toast } = useToast();
+  const { openGuide } = useDashboardGuide();
 
   const handleExportImage = async () => {
     setIsExporting(true);
@@ -54,6 +56,17 @@ export const DashboardHeader = ({
 
   const ButtonGroup = ({ isMobile = false }: { isMobile?: boolean }) => (
     <>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button variant="ghost" size="icon" onClick={() => openGuide()} className="h-8 w-8">
+            <BookOpen className="w-4 h-4" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side={isMobile ? "bottom" : "left"}>
+          <span>How to Read This Dashboard</span>
+        </TooltipContent>
+      </Tooltip>
+
       {showReloadButton && (
         <Tooltip>
           <TooltipTrigger asChild>
@@ -136,11 +149,10 @@ export const DashboardHeader = ({
         <ul className="list-disc text-base text-left ml-6 mt-2">
           <li><b>See cost savings</b> and time saved by your developers using GitHub Copilot.</li>
           <li><b>Spot your AI Champions</b> and help others grow.</li>
-          <li><b>Adjust settings</b> for accurate ROI reporting (see top right wheel).</li>
+          <li><b>Use the Guide</b> in the top-right to understand every metric and chart correctly.</li>
         </ul>
-        <div className="text-sm mt-2">Not sure how to interpret metrics? Hover <span className="inline-block align-text-bottom"><Settings className="h-4 w-4 inline" /></span> or question marks for insights.</div>
+        <div className="text-sm mt-2">Not sure how to interpret metrics? Open <span className="inline-block align-text-bottom"><BookOpen className="h-4 w-4 inline" /></span> for the full manual, or hover question marks for quick context.</div>
       </div>
       <DashboardSettings open={settingsOpen} onOpenChange={setSettingsOpen} />
     </header>
   );
-};
