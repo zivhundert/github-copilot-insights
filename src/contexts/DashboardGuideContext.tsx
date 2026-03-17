@@ -7,7 +7,14 @@ interface DashboardGuideContextValue {
   closeGuide: () => void;
 }
 
-const DashboardGuideContext = createContext<DashboardGuideContextValue | undefined>(undefined);
+const fallbackDashboardGuideContext: DashboardGuideContextValue = {
+  isOpen: false,
+  activeTopicId: 'dashboard-overview',
+  openGuide: () => undefined,
+  closeGuide: () => undefined,
+};
+
+const DashboardGuideContext = createContext<DashboardGuideContextValue>(fallbackDashboardGuideContext);
 
 export const DashboardGuideProvider = ({ children }: { children: ReactNode }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -35,12 +42,4 @@ export const DashboardGuideProvider = ({ children }: { children: ReactNode }) =>
   return <DashboardGuideContext.Provider value={value}>{children}</DashboardGuideContext.Provider>;
 };
 
-export const useDashboardGuide = () => {
-  const context = useContext(DashboardGuideContext);
-
-  if (!context) {
-    throw new Error('useDashboardGuide must be used within DashboardGuideProvider');
-  }
-
-  return context;
-};
+export const useDashboardGuide = () => useContext(DashboardGuideContext);
