@@ -85,9 +85,6 @@ export const ModelEffectivenessChart = ({ data }: ModelEffectivenessChartProps) 
         pointPadding: 0.08,
         groupPadding: 0.12,
       },
-      series: {
-        minPointLength: 3,
-      },
     },
     series: [
       {
