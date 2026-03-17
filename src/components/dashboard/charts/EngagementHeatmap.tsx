@@ -91,7 +91,7 @@ export const EngagementHeatmap = ({ data }: EngagementHeatmapProps) => {
     tooltip: {
       formatter: function (this: any) {
         const point = this.point as any;
-        const actualDate = new Date(firstWeekStart.getTime() + (point.x * 7 + point.y) * 24 * 60 * 60 * 1000);
+        const actualDate = new Date(heatmapStart.getTime() + (point.x * 7 + point.y) * 24 * 60 * 60 * 1000);
         const dateLabel = format(actualDate, 'EEE, MMM dd yyyy');
         return `<b>${dateLabel}</b><br/>Interactions: <b>${point.value?.toLocaleString()}</b>`;
       },
