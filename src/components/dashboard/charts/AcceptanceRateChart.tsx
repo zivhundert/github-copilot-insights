@@ -18,8 +18,10 @@ export const AcceptanceRateChart = ({ data, aggregationPeriod }: AcceptanceRateC
     
     data.forEach(row => {
       const date = row.day;
-      const accepted = row.loc_added_sum || 0;
-      const suggested = row.loc_suggested_to_add_sum || 0;
+      // Only use code_completion feature for acceptance rate (suggest→accept flow)
+      const codeCompletion = (row.totals_by_feature || []).find(f => f.feature === 'code_completion');
+      const accepted = codeCompletion?.loc_added_sum || 0;
+      const suggested = codeCompletion?.loc_suggested_to_add_sum || 0;
       
       if (!periodData.has(date)) {
         periodData.set(date, { accepted: 0, suggested: 0 });

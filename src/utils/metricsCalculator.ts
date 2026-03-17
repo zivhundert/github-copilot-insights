@@ -29,12 +29,15 @@ export const calculateMetrics = (
     baseFilteredData.map(row => row.user_login)
   ).size;
 
+  // Only use code_completion for acceptance rate (suggest→accept flow)
   const filteredAcceptedLines = data.reduce((sum, row) => {
-    return sum + (row.loc_added_sum || 0);
+    const cc = (row.totals_by_feature || []).find(f => f.feature === 'code_completion');
+    return sum + (cc?.loc_added_sum || 0);
   }, 0);
 
   const filteredSuggestedLines = data.reduce((sum, row) => {
-    return sum + (row.loc_suggested_to_add_sum || 0);
+    const cc = (row.totals_by_feature || []).find(f => f.feature === 'code_completion');
+    return sum + (cc?.loc_suggested_to_add_sum || 0);
   }, 0);
 
   const acceptanceRate = filteredSuggestedLines > 0 
