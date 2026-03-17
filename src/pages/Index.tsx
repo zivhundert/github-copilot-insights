@@ -152,7 +152,7 @@ const Index = () => {
               onFiltersChange={updateFiltersWithAnalytics} 
             />
 
-            {isSingleUserSelected && (
+            {isSingleUserSelected && settings.chartVisibility.userProfileCard && (
               <UserProfileCard 
                 data={singleUserData} 
                 userName={filters.selectedUsers![0]} 

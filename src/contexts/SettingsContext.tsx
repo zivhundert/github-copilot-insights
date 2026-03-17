@@ -18,6 +18,7 @@ type ChartVisibility = {
   engagementHeatmap: boolean;
   codeChurnChart: boolean;
   insightsPanel: boolean;
+  userProfileCard: boolean;
 };
 
 type Settings = {
@@ -55,6 +56,7 @@ const DEFAULT_CHART_VISIBILITY: ChartVisibility = {
   engagementHeatmap: true,
   codeChurnChart: true,
   insightsPanel: true,
+  userProfileCard: true,
 };
 
 const DEFAULT_SETTINGS: Settings = {
