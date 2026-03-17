@@ -95,8 +95,12 @@ export const AcceptanceRateChart = ({ data, aggregationPeriod }: AcceptanceRateC
       name: 'Acceptance Rate',
       type: 'line',
       data: chartData,
-      color: 'hsl(var(--chart-2))',
-      marker: { fillColor: 'hsl(var(--chart-2))', lineColor: 'hsl(var(--chart-2))', lineWidth: 2 }
+      color: 'hsl(var(--primary))',
+      marker: {
+        fillColor: 'hsl(var(--primary))',
+        lineColor: 'hsl(var(--background))',
+        lineWidth: 2
+      }
     }]
   };
 
