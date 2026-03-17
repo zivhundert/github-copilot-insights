@@ -88,6 +88,7 @@ export const FeatureUsageChart = ({ data, aggregationPeriod }: FeatureUsageChart
       align: 'center',
       verticalAlign: 'bottom',
       layout: 'horizontal',
+      y: 0,
       itemStyle: {
         fontSize: '11px',
         fontWeight: 'normal',
