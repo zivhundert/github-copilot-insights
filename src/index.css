@@ -27,13 +27,13 @@
     --accent: 210 40% 96.1%;
     --accent-foreground: 222.2 47.4% 11.2%;
 
-    --segment-champion: 220 14% 95%;
-    --segment-champion-foreground: 222 47% 16%;
-    --segment-champion-border: 220 13% 77%;
+    --segment-champion: 214 100% 94%;
+    --segment-champion-foreground: 224 76% 47%;
+    --segment-champion-border: 214 88% 82%;
 
-    --segment-producer: 214 62% 96%;
-    --segment-producer-foreground: 222 47% 16%;
-    --segment-producer-border: 214 35% 88%;
+    --segment-producer: 141 68% 91%;
+    --segment-producer-foreground: 142 72% 28%;
+    --segment-producer-border: 141 60% 78%;
 
     --segment-explorer: 33 100% 94%;
     --segment-explorer-foreground: 24 88% 37%;
