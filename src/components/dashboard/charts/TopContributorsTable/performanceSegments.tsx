@@ -43,7 +43,7 @@ export const getSegmentCalculationExplanation = (
   const amplificationText =
     contributor.suggestedLines > 0
       ? `${contributor.aiAmplification.toFixed(1)}%`
-      : 'N/A (no suggested-line baseline)';
+      : 'N/A';
 
   const usageModeText = contributor.usageMode
     ? `Usage mode: ${contributor.usageMode}\n\n`
@@ -57,7 +57,7 @@ export const getSegmentCalculationExplanation = (
     contributor.efficiency !== null
       ? `${contributor.efficiency.toFixed(1)} AI-added lines / interaction`
       : 'N/A'
-  }\nAcceptance Rate: ${acceptanceText}\nAI Amplification: ${amplificationText}${signalsText}\n\nSegments prioritize Copilot adoption and Copilot-related output, so agent-heavy workflows are not penalized for lower traditional acceptance.`;
+  }\nAcceptance Rate: ${acceptanceText}\nAI Amplification: ${amplificationText}${signalsText}`;
 };
 
 export const getSegmentDescription = (segment: PerformanceSegment) => {
