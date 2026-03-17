@@ -96,7 +96,6 @@ export const AcceptanceRateChart = ({ data, aggregationPeriod }: AcceptanceRateC
       type: 'line',
       data: chartData,
       color: 'hsl(var(--primary))',
-      lineColor: 'hsl(var(--primary))',
       marker: {
         fillColor: 'hsl(var(--primary))',
         lineColor: 'hsl(var(--background))',
