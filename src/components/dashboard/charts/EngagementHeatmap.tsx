@@ -14,7 +14,7 @@ interface EngagementHeatmapProps {
 const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 export const EngagementHeatmap = ({ data }: EngagementHeatmapProps) => {
-  const { seriesData, weekLabels, maxVal } = useMemo(() => {
+  const { seriesData, weekLabels, maxVal, firstWeekStart: heatmapStart } = useMemo(() => {
     const dailyActivity = new Map<string, number>();
 
     data.forEach(row => {
