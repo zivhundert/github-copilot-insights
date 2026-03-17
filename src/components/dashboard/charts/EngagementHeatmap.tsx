@@ -14,7 +14,7 @@ interface EngagementHeatmapProps {
 const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 export const EngagementHeatmap = ({ data }: EngagementHeatmapProps) => {
-  const { seriesData, weekLabels, maxVal } = useMemo(() => {
+  const { seriesData, weekLabels, maxVal, firstWeekStart: heatmapStart } = useMemo(() => {
     const dailyActivity = new Map<string, number>();
 
     data.forEach(row => {
@@ -22,7 +22,7 @@ export const EngagementHeatmap = ({ data }: EngagementHeatmapProps) => {
       dailyActivity.set(day, (dailyActivity.get(day) || 0) + (row.user_initiated_interaction_count || 0));
     });
 
-    if (dailyActivity.size === 0) return { seriesData: [], weekLabels: [], maxVal: 0 };
+    if (dailyActivity.size === 0) return { seriesData: [], weekLabels: [], maxVal: 0, firstWeekStart: new Date() };
 
     const dates = Array.from(dailyActivity.keys()).sort();
     const firstDate = parseISO(dates[0]);
@@ -48,7 +48,7 @@ export const EngagementHeatmap = ({ data }: EngagementHeatmapProps) => {
 
     const maxVal = Math.max(...Array.from(dailyActivity.values()), 1);
 
-    return { seriesData, weekLabels, maxVal };
+    return { seriesData, weekLabels, maxVal, firstWeekStart };
   }, [data]);
 
   const options: Partial<HighchartsOptions> = {
@@ -91,9 +91,9 @@ export const EngagementHeatmap = ({ data }: EngagementHeatmapProps) => {
     tooltip: {
       formatter: function (this: any) {
         const point = this.point as any;
-        const weekLabel = weekLabels[point.x] || '';
-        const dayLabel = DAY_LABELS[point.y] || '';
-        return `<b>${dayLabel}, ${weekLabel}</b><br/>Interactions: <b>${point.value?.toLocaleString()}</b>`;
+        const actualDate = new Date(heatmapStart.getTime() + (point.x * 7 + point.y) * 24 * 60 * 60 * 1000);
+        const dateLabel = format(actualDate, 'EEE, MMM dd yyyy');
+        return `<b>${dateLabel}</b><br/>Interactions: <b>${point.value?.toLocaleString()}</b>`;
       },
     },
     legend: {
