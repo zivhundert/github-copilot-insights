@@ -1,4 +1,3 @@
-
 import { useMemo } from 'react';
 import { MetricCard } from '@/components/common/MetricCard';
 import { calculateMetrics } from '@/utils/metricsCalculator';
