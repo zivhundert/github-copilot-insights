@@ -5,26 +5,26 @@ import { ACCEPTANCE_RELIABILITY_THRESHOLD } from './leaderboardModel';
 export const getSegmentIcon = (segment: PerformanceSegment) => {
   switch (segment) {
     case 'Champion':
-      return <Rocket className="h-4 w-4 text-primary" />;
+      return <Rocket className="h-4 w-4 shrink-0 text-segment-champion-foreground" />;
     case 'Producer':
-      return <Sparkles className="h-4 w-4 text-foreground" />;
+      return <Sparkles className="h-4 w-4 shrink-0 text-segment-producer-foreground" />;
     case 'Explorer':
-      return <TrendingUp className="h-4 w-4 text-muted-foreground" />;
+      return <TrendingUp className="h-4 w-4 shrink-0 text-segment-explorer-foreground" />;
     case 'Starter':
-      return <Sprout className="h-4 w-4 text-secondary-foreground" />;
+      return <Sprout className="h-4 w-4 shrink-0 text-segment-starter-foreground" />;
   }
 };
 
 export const getSegmentBadgeStyle = (segment: PerformanceSegment) => {
   switch (segment) {
     case 'Champion':
-      return 'border-primary/20 bg-primary/10 text-primary';
+      return 'border-segment-champion-border bg-segment-champion text-segment-champion-foreground';
     case 'Producer':
-      return 'border-border bg-secondary text-secondary-foreground';
+      return 'border-segment-producer-border bg-segment-producer text-segment-producer-foreground';
     case 'Explorer':
-      return 'border-border bg-accent text-accent-foreground';
+      return 'border-segment-explorer-border bg-segment-explorer text-segment-explorer-foreground';
     case 'Starter':
-      return 'border-border bg-muted text-muted-foreground';
+      return 'border-segment-starter-border bg-segment-starter text-segment-starter-foreground';
   }
 };
 
