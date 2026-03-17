@@ -47,9 +47,12 @@ export const useSortedContributors = (
             return sortByDirection(segmentDiff, sortConfig.direction);
           }
 
-          return sortConfig.direction === 'asc'
-            ? a.userLogin.localeCompare(b.userLogin)
-            : b.userLogin.localeCompare(a.userLogin);
+          const generationDiff = b.codeGenerations - a.codeGenerations;
+          if (generationDiff !== 0) {
+            return generationDiff;
+          }
+
+          return a.userLogin.localeCompare(b.userLogin);
         });
         break;
       case 'acceptanceRate':
