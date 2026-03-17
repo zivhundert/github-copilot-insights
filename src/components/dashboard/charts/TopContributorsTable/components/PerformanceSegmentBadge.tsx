@@ -43,7 +43,7 @@ export const PerformanceSegmentBadge = ({
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
           >
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="inline-flex items-center gap-2 whitespace-nowrap align-middle">
               {getSegmentIcon(segment)}
               <Badge className={getSegmentBadgeStyle(segment)}>{segment}</Badge>
             </div>

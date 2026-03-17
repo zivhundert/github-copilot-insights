@@ -17,7 +17,7 @@ export default {
 				'2xl': '1400px'
 			}
 		},
-		extend: {
+			extend: {
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -51,6 +51,20 @@ export default {
 				card: {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
+				},
+				segment: {
+					champion: 'hsl(var(--segment-champion))',
+					'champion-foreground': 'hsl(var(--segment-champion-foreground))',
+					'champion-border': 'hsl(var(--segment-champion-border))',
+					producer: 'hsl(var(--segment-producer))',
+					'producer-foreground': 'hsl(var(--segment-producer-foreground))',
+					'producer-border': 'hsl(var(--segment-producer-border))',
+					explorer: 'hsl(var(--segment-explorer))',
+					'explorer-foreground': 'hsl(var(--segment-explorer-foreground))',
+					'explorer-border': 'hsl(var(--segment-explorer-border))',
+					starter: 'hsl(var(--segment-starter))',
+					'starter-foreground': 'hsl(var(--segment-starter-foreground))',
+					'starter-border': 'hsl(var(--segment-starter-border))'
 				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
