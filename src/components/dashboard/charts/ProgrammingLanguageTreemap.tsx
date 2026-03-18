@@ -11,6 +11,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { MousePointerClick } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { UserStatsDialog } from './UserStatsDialog';
 
 interface ProgrammingLanguageTreemapProps {
   data: CopilotDataRow[];
@@ -24,6 +25,7 @@ interface LangUserStats {
 
 export const ProgrammingLanguageTreemap = ({ data }: ProgrammingLanguageTreemapProps) => {
   const [selectedLang, setSelectedLang] = useState<string | null>(null);
+  const [clickedUser, setClickedUser] = useState<string | null>(null);
 
   const { treemapData, langUsers } = useMemo(() => {
     const langCounts = new Map<string, number>();
@@ -141,7 +143,7 @@ export const ProgrammingLanguageTreemap = ({ data }: ProgrammingLanguageTreemapP
               </TableHeader>
               <TableBody>
                 {selectedUsers.map(({ user, linesAdded, generations, acceptances }) => (
-                  <TableRow key={user}>
+                  <TableRow key={user} className="cursor-pointer hover:bg-muted/50" onClick={() => setClickedUser(user)}>
                     <TableCell className="text-sm font-medium py-1.5">{user}</TableCell>
                     <TableCell className="text-sm text-right py-1.5">{linesAdded.toLocaleString()}</TableCell>
                     <TableCell className="text-sm text-right py-1.5">{generations.toLocaleString()}</TableCell>
@@ -151,6 +153,7 @@ export const ProgrammingLanguageTreemap = ({ data }: ProgrammingLanguageTreemapP
               </TableBody>
             </Table>
           </ScrollArea>
+          <UserStatsDialog userName={clickedUser} allData={data} open={!!clickedUser} onOpenChange={(open) => { if (!open) setClickedUser(null); }} />
         </DialogContent>
       </Dialog>
     </ChartContainer>

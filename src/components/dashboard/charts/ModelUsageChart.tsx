@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { UserStatsDialog } from './UserStatsDialog';
 
 interface ModelUsageChartProps {
   data: CopilotDataRow[];
@@ -54,6 +55,7 @@ const SliceDonut = ({ percentage, color }: { percentage: number; color: string }
 
 export const ModelUsageChart = ({ data }: ModelUsageChartProps) => {
   const [selectedModel, setSelectedModel] = useState<string | null>(null);
+  const [clickedUser, setClickedUser] = useState<string | null>(null);
   const chartRef = useRef<HighchartsReact.RefObject>(null);
 
   const { chartData, modelUsers, totalInteractions } = useMemo(() => {
@@ -220,7 +222,7 @@ export const ModelUsageChart = ({ data }: ModelUsageChartProps) => {
               </TableHeader>
               <TableBody>
                 {selectedUsers.map(({ user, interactions, generations, acceptances }) => (
-                  <TableRow key={user}>
+                  <TableRow key={user} className="cursor-pointer hover:bg-muted/50" onClick={() => setClickedUser(user)}>
                     <TableCell className="text-sm font-medium py-1.5">{user}</TableCell>
                     <TableCell className="text-sm text-right py-1.5">{interactions.toLocaleString()}</TableCell>
                     <TableCell className="text-sm text-right py-1.5">{generations.toLocaleString()}</TableCell>
@@ -230,6 +232,7 @@ export const ModelUsageChart = ({ data }: ModelUsageChartProps) => {
               </TableBody>
             </Table>
           </ScrollArea>
+          <UserStatsDialog userName={clickedUser} allData={data} open={!!clickedUser} onOpenChange={(open) => { if (!open) setClickedUser(null); }} />
         </DialogContent>
       </Dialog>
     </ChartContainer>
