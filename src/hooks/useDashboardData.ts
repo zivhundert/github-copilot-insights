@@ -15,6 +15,8 @@ export const useDashboardData = () => {
     originalData: fileUpload.data,
     isLoading: fileUpload.isLoading,
     handleFileUpload: fileUpload.handleFileUpload,
+    fetchFromGitHub: fileUpload.fetchFromGitHub,
+    apiConfigured: fileUpload.apiConfigured,
     filteredData: dataFiltering.filteredData,
     baseFilteredData: dataFiltering.baseFilteredData,
     filters: dataFiltering.filters,

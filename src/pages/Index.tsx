@@ -87,6 +87,8 @@ const Index = () => {
     baseFilteredData,
     isLoading,
     handleFileUpload,
+    fetchFromGitHub,
+    apiConfigured,
     updateFilters,
     handleReloadCSV,
     filters
@@ -102,6 +104,11 @@ const Index = () => {
   const handleReloadCSVWithAnalytics = () => {
     handleReloadCSV();
     analytics.trackCsvReload();
+  };
+
+  const handleRefreshFromGitHub = () => {
+    handleReloadCSV();
+    fetchFromGitHub();
   };
 
   const updateFiltersWithAnalytics = (newFilters: any) => {
@@ -121,17 +128,27 @@ const Index = () => {
       <div className="container mx-auto px-4 py-8" data-export="dashboard-main">
         <DashboardHeader 
           showReloadButton={originalData.length > 0} 
-          onReloadCSV={handleReloadCSVWithAnalytics}
+          onReloadCSV={apiConfigured ? handleRefreshFromGitHub : handleReloadCSVWithAnalytics}
           showExportButton={originalData.length > 0}
           showSettingsButton={originalData.length > 0}
+          reloadLabel={apiConfigured ? 'Refresh from GitHub' : undefined}
         />
         
         {originalData.length === 0 && (
           <div className="mt-12">
-            <ExampleShowcase />
-            <div data-upload-section>
-              <FileUpload onFileUpload={handleFileUploadWithAnalytics} isLoading={isLoading} />
-            </div>
+            {isLoading && apiConfigured ? (
+              <div className="flex flex-col items-center justify-center py-24 space-y-4">
+                <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                <p className="text-muted-foreground text-lg">Fetching Copilot data from GitHub Enterprise…</p>
+              </div>
+            ) : (
+              <>
+                <ExampleShowcase />
+                <div data-upload-section>
+                  <FileUpload onFileUpload={handleFileUploadWithAnalytics} isLoading={isLoading} />
+                </div>
+              </>
+            )}
           </div>
         )}
         

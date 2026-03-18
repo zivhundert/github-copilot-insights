@@ -14,6 +14,7 @@ interface DashboardHeaderProps {
   onReloadCSV?: () => void;
   showExportButton?: boolean;
   showSettingsButton?: boolean;
+  reloadLabel?: string;
 }
 
 const LINKEDIN_URL = "https://www.linkedin.com/in/zivhundert/";
@@ -22,7 +23,8 @@ export const DashboardHeader = ({
   showReloadButton = false, 
   onReloadCSV,
   showExportButton = false,
-  showSettingsButton = true
+  showSettingsButton = true,
+  reloadLabel,
 }: DashboardHeaderProps) => {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
@@ -75,7 +77,7 @@ export const DashboardHeader = ({
             </Button>
           </TooltipTrigger>
           <TooltipContent side={isMobile ? "bottom" : "left"}>
-            <span>Load New File</span>
+            <span>{reloadLabel || 'Load New File'}</span>
           </TooltipContent>
         </Tooltip>
       )}
