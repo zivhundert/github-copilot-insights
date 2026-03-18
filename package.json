@@ -4,9 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "build:dev": "vite build --mode development",
+    "fetch-data": "node scripts/fetch-copilot-data.mjs",
+    "dev": "node scripts/fetch-copilot-data.mjs && vite",
+    "build": "node scripts/fetch-copilot-data.mjs && vite build",
+    "build:dev": "node scripts/fetch-copilot-data.mjs && vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview"
   },

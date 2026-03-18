@@ -1,53 +1,41 @@
 import { CopilotDataRow } from '@/pages/Index';
 import { parseNDJSONString } from '@/utils/ndjsonParser';
 
+const DATA_URL = '/copilot_data.ndjson';
+
 /**
- * Check whether the GitHub Enterprise integration is configured
- * (VITE_GITHUB_ENTERPRISE is the only env var exposed to the client).
+ * Check if pre-fetched data is expected to exist
+ * (the build script runs when VITE_GITHUB_ENTERPRISE is set).
  */
 export const isGitHubApiConfigured = (): boolean => {
   return !!import.meta.env.VITE_GITHUB_ENTERPRISE;
 };
 
 /**
- * Fetch Copilot 28-day user metrics via the Vite server middleware at
- * /api/copilot-data which handles the full two-step GitHub API flow
- * server-side (no CORS issues).
+ * Load the pre-fetched Copilot data from the static NDJSON file
+ * written by scripts/fetch-copilot-data.mjs at build time.
  */
 export const fetchCopilotMetrics = async (): Promise<{
   data: CopilotDataRow[];
   error?: string;
 }> => {
   try {
-    const response = await fetch('/api/copilot-data');
-
-    const contentType = response.headers.get('content-type') || '';
-
-    // If the middleware returned a JSON error envelope
-    if (contentType.includes('application/json')) {
-      const body = await response.json();
-      if (body.error) {
-        return { data: [], error: body.error };
-      }
-    }
+    const response = await fetch(DATA_URL);
 
     if (!response.ok) {
-      return {
-        data: [],
-        error: `Server returned ${response.status}: ${response.statusText}`,
-      };
+      if (response.status === 404) {
+        return { data: [], error: 'No pre-fetched data found. Upload a file manually or re-run the build with GitHub credentials configured.' };
+      }
+      return { data: [], error: `Failed to load data: ${response.status}` };
     }
 
     const text = await response.text();
+    if (!text.trim()) {
+      return { data: [], error: 'Pre-fetched data file is empty.' };
+    }
+
     return parseNDJSONString(text);
   } catch (err: any) {
-    return {
-      data: [],
-      error: `Failed to fetch Copilot data: ${err.message ?? err}`,
-    };
+    return { data: [], error: `Failed to load Copilot data: ${err.message ?? err}` };
   }
 };
-
-
-
-
