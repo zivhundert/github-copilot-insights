@@ -6,6 +6,7 @@ import { CopilotDataRow } from '@/pages/Index';
 import { Lightbulb, ChevronDown, ChevronUp, AlertTriangle, Star } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { UserStatsDialog } from './charts/UserStatsDialog';
 
 interface InsightsPanelProps {
   data: CopilotDataRow[];
@@ -27,6 +28,7 @@ const THRESHOLD = 30;
 
 export const InsightsPanel = ({ data }: InsightsPanelProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [clickedUser, setClickedUser] = useState<string | null>(null);
 
   const insights = useMemo(() => {
     const uniqueUsers = new Set(data.map(r => r.user_login));
@@ -178,7 +180,10 @@ export const InsightsPanel = ({ data }: InsightsPanelProps) => {
                           {insight.champions.map(({ user, interactions }) => (
                             <Tooltip key={user}>
                               <TooltipTrigger asChild>
-                                <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-amber-100 dark:bg-amber-900/40 border border-amber-200 dark:border-amber-800 text-xs cursor-default">
+                                <div
+                                  className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-amber-100 dark:bg-amber-900/40 border border-amber-200 dark:border-amber-800 text-xs cursor-pointer hover:bg-amber-200 dark:hover:bg-amber-900/60 transition-colors"
+                                  onClick={() => setClickedUser(user)}
+                                >
                                   <Avatar className="h-4 w-4">
                                     <AvatarFallback className="text-[8px] bg-amber-300 dark:bg-amber-700 text-amber-900 dark:text-amber-100">
                                       {user.slice(0, 2).toUpperCase()}
@@ -188,7 +193,7 @@ export const InsightsPanel = ({ data }: InsightsPanelProps) => {
                                 </div>
                               </TooltipTrigger>
                               <TooltipContent side="top">
-                                <span>{interactions} interaction{interactions !== 1 ? 's' : ''} with {insight.feature.replace(/_/g, ' ')}</span>
+                                <span>{interactions} interaction{interactions !== 1 ? 's' : ''} with {insight.feature.replace(/_/g, ' ')} · Click to view profile</span>
                               </TooltipContent>
                             </Tooltip>
                           ))}
@@ -202,6 +207,12 @@ export const InsightsPanel = ({ data }: InsightsPanelProps) => {
           </CardContent>
         </CollapsibleContent>
       </Card>
+      <UserStatsDialog
+        userName={clickedUser}
+        allData={data}
+        open={!!clickedUser}
+        onOpenChange={(open) => { if (!open) setClickedUser(null); }}
+      />
     </Collapsible>
   );
 };
