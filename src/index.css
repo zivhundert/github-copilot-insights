@@ -117,3 +117,10 @@
     @apply bg-background text-foreground antialiased;
   }
 }
+
+/* Landing page hero dot pattern */
+.landing-hero-pattern {
+  background-color: #f9f9fe;
+  background-image: radial-gradient(#c1c6d7 0.5px, transparent 0.5px);
+  background-size: 24px 24px;
+}

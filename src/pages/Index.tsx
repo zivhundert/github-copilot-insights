@@ -1,14 +1,13 @@
 
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
-import { FileUpload } from '@/components/dashboard/FileUpload';
 import { DashboardMetrics } from '@/components/dashboard/DashboardMetrics';
 import { DashboardCharts } from '@/components/dashboard/DashboardCharts';
 import { DashboardFilters } from '@/components/dashboard/DashboardFilters';
-import { ExampleShowcase } from '@/components/dashboard/ExampleShowcase';
 import { UserProfileCard } from '@/components/dashboard/UserProfileCard';
 import { InsightsPanel } from '@/components/dashboard/InsightsPanel';
 import { UserCompareDialog } from '@/components/dashboard/UserCompareDialog';
 import { PrivacyFooter } from '@/components/common/PrivacyFooter';
+import { LandingPage } from '@/components/landing/LandingPage';
 import { useDashboardData } from '@/hooks/useDashboardData';
 import { useSettings } from '@/contexts/SettingsContext';
 import { analytics } from '@/services/analytics';
@@ -125,6 +124,11 @@ const Index = () => {
     ? filteredData.filter(r => r.user_login === filters.selectedUsers![0])
     : [];
 
+  // Show the full-screen landing page when no data is loaded
+  if (originalData.length === 0 && !(isLoading && apiConfigured)) {
+    return <LandingPage onFileUpload={handleFileUploadWithAnalytics} isLoading={isLoading} />;
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4" data-export="dashboard-main">
@@ -138,21 +142,10 @@ const Index = () => {
           reloadLabel={apiConfigured ? 'Refresh from GitHub' : undefined}
         />
         
-        {originalData.length === 0 && (
-          <div className="mt-8">
-            {isLoading && apiConfigured ? (
-              <div className="flex flex-col items-center justify-center py-24 space-y-3">
-                <div className="w-8 h-8 border-2 border-foreground/20 border-t-foreground rounded-full animate-spin" />
-                <p className="text-muted-foreground text-sm">Fetching Copilot data from GitHub Enterprise…</p>
-              </div>
-            ) : (
-              <>
-                <ExampleShowcase />
-                <div data-upload-section>
-                  <FileUpload onFileUpload={handleFileUploadWithAnalytics} isLoading={isLoading} />
-                </div>
-              </>
-            )}
+        {originalData.length === 0 && isLoading && apiConfigured && (
+          <div className="flex flex-col items-center justify-center py-24 space-y-3 mt-8">
+            <div className="w-8 h-8 border-2 border-foreground/20 border-t-foreground rounded-full animate-spin" />
+            <p className="text-muted-foreground text-sm">Fetching Copilot data from GitHub Enterprise…</p>
           </div>
         )}
         

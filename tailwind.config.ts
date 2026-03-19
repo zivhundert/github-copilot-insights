@@ -18,7 +18,15 @@ export default {
 			}
 		},
 			extend: {
+			fontFamily: {
+				headline: ['Manrope', 'sans-serif'],
+				body: ['Inter', 'sans-serif'],
+				label: ['Inter', 'sans-serif'],
+			},
 			colors: {
+				'landing-surface': '#f9f9fe',
+				'landing-on-surface': '#1a1c1f',
+				'landing-on-surface-variant': '#414755',
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
