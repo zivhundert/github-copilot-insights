@@ -7,10 +7,12 @@ import { DashboardFilters } from '@/components/dashboard/DashboardFilters';
 import { ExampleShowcase } from '@/components/dashboard/ExampleShowcase';
 import { UserProfileCard } from '@/components/dashboard/UserProfileCard';
 import { InsightsPanel } from '@/components/dashboard/InsightsPanel';
+import { UserCompareDialog } from '@/components/dashboard/UserCompareDialog';
 import { PrivacyFooter } from '@/components/common/PrivacyFooter';
 import { useDashboardData } from '@/hooks/useDashboardData';
 import { useSettings } from '@/contexts/SettingsContext';
 import { analytics } from '@/services/analytics';
+import { useState } from 'react';
 
 export interface CopilotDataRow {
   day: string;
@@ -94,6 +96,7 @@ const Index = () => {
   } = useDashboardData();
 
   const { settings } = useSettings();
+  const [compareOpen, setCompareOpen] = useState(false);
 
   const handleFileUploadWithAnalytics = (data: any) => {
     handleFileUpload(data);
@@ -130,6 +133,8 @@ const Index = () => {
           onReloadCSV={apiConfigured ? handleRefreshFromGitHub : handleReloadCSVWithAnalytics}
           showExportButton={originalData.length > 0}
           showSettingsButton={originalData.length > 0}
+          showCompareButton={originalData.length > 0}
+          onCompareOpen={() => setCompareOpen(true)}
           reloadLabel={apiConfigured ? 'Refresh from GitHub' : undefined}
         />
         
@@ -187,6 +192,11 @@ const Index = () => {
           </div>
         )}
       </div>
+      <UserCompareDialog
+        allData={originalData}
+        open={compareOpen}
+        onOpenChange={setCompareOpen}
+      />
       <PrivacyFooter />
     </div>
   );

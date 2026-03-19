@@ -1,4 +1,4 @@
-import { RefreshCcw, Settings, Download, Linkedin, BookOpen, BarChart3 } from 'lucide-react';
+import { RefreshCcw, Settings, Download, Linkedin, BookOpen, BarChart3, ArrowLeftRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useState } from "react";
@@ -13,6 +13,8 @@ interface DashboardHeaderProps {
   onReloadCSV?: () => void;
   showExportButton?: boolean;
   showSettingsButton?: boolean;
+  showCompareButton?: boolean;
+  onCompareOpen?: () => void;
   reloadLabel?: string;
 }
 
@@ -23,6 +25,8 @@ export const DashboardHeader = ({
   onReloadCSV,
   showExportButton = false,
   showSettingsButton = true,
+  showCompareButton = false,
+  onCompareOpen,
   reloadLabel,
 }: DashboardHeaderProps) => {
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -95,6 +99,18 @@ export const DashboardHeader = ({
               </Button>
             </TooltipTrigger>
             <TooltipContent>{isExporting ? 'Exporting...' : 'Export as Image'}</TooltipContent>
+          </Tooltip>
+        )}
+
+        {showCompareButton && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="outline" size="sm" onClick={onCompareOpen} className="h-8 gap-1.5 text-muted-foreground hover:text-foreground ml-1">
+                <ArrowLeftRight className="w-3.5 h-3.5" />
+                <span className="text-xs">Compare</span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Compare Users</TooltipContent>
           </Tooltip>
         )}
 
