@@ -85,7 +85,7 @@ export const UserStatsDialog = ({ userName, allData, open, onOpenChange }: UserS
               <span className="text-lg">{userName}</span>
               <div className="flex items-center gap-1.5 mt-0.5">
                 <Badge variant="outline" className="text-[10px] font-normal gap-1"><Calendar className="h-2.5 w-2.5" />{profile.activeDays} active day{profile.activeDays !== 1 ? 's' : ''}</Badge>
-                <Badge variant="outline" className="text-[10px] font-normal">{profile.firstDay} \u2192 {profile.lastDay}</Badge>
+                <Badge variant="outline" className="text-[10px] font-normal">{profile.firstDay} → {profile.lastDay}</Badge>
               </div>
             </div>
           </DialogTitle>
