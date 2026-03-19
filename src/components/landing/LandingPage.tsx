@@ -61,9 +61,11 @@ export const LandingPage = ({ onFileUpload, isLoading }: LandingPageProps) => {
             Master your GitHub Copilot adoption.
           </h1>
           <p className="text-landing-on-surface-variant text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
-            Unlock the true potential of AI-assisted engineering. Transform raw
-            .ndjson data into actionable intelligence without ever compromising
-            privacy.
+            Unlock the true potential of AI-assisted engineering.
+            <br />
+            Transform raw .ndjson data into actionable intelligence
+            <br />
+            without ever compromising privacy.
           </p>
 
           {/* Privacy Banner */}
@@ -368,13 +370,7 @@ export const LandingPage = ({ onFileUpload, isLoading }: LandingPageProps) => {
       <footer className="w-full py-12 border-t border-slate-100 bg-slate-50">
         <div className="flex flex-col md:flex-row justify-between items-center px-8 max-w-7xl mx-auto gap-4">
           <div className="text-xs text-slate-500">
-            © 2024 AI Development Intelligence. Local-only processing.
-          </div>
-          <div className="flex gap-8">
-            <span className="text-xs text-slate-500 opacity-80">Privacy Policy</span>
-            <span className="text-xs text-slate-500 opacity-80">Security Whitepaper</span>
-            <span className="text-xs text-slate-500 opacity-80">GitHub</span>
-            <span className="text-xs text-slate-500 opacity-80">Terms</span>
+            © 2025 AI Development Intelligence. Powered by <a href="https://thetaray.com/" target="_blank" rel="noopener noreferrer" className="hover:text-slate-900 underline">Thetaray</a>
           </div>
         </div>
       </footer>
