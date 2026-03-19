@@ -1,8 +1,5 @@
-
-import { Download, Sparkles, TrendingUp, Users, DollarSign, Lock } from 'lucide-react';
+import { Download, ArrowDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { analytics } from '@/services/analytics';
 
 export const ExampleShowcase = () => {
@@ -17,119 +14,64 @@ export const ExampleShowcase = () => {
   };
 
   return (
-    <Card className="w-full mx-auto mb-8 overflow-hidden bg-gradient-to-br from-blue-50 via-white to-teal-50 border-2 border-blue-200 shadow-xl">
-      <div className="p-8">
-        <div className="text-center mb-6">
-          <div className="flex items-center justify-center gap-2 mb-3">
-            <Sparkles className="w-6 h-6 text-blue-600" />
-            <Badge variant="secondary" className="bg-blue-100 text-blue-800 font-semibold">
-              Real Success Story
-            </Badge>
-          </div>
-          <h3 className="text-3xl font-bold text-gray-900 mb-2">
-            Real Results from a Mid-Size Company
-          </h3>
-          <p className="text-lg text-gray-600">
-            After deploying GitHub Copilot - this could be your team's dashboard!
-          </p>
-        </div>
+    <div className="max-w-2xl mx-auto text-center space-y-6 mb-8">
+      <div className="space-y-2">
+        <h3 className="text-lg font-semibold text-foreground">
+          See what your dashboard could look like
+        </h3>
+        <p className="text-sm text-muted-foreground">
+          Real results from a mid-size engineering team using GitHub Copilot
+        </p>
+      </div>
 
-        <div className="relative mb-6 group">
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-teal-400 rounded-xl blur opacity-20 group-hover:opacity-30 transition-opacity"></div>
-          <div className="relative bg-white p-2 rounded-xl shadow-lg overflow-hidden">
-            <div className="relative">
-              <img 
-                src="/example.png" 
-                alt="Copilot Dashboard Example - Partial View"
-                className="w-full rounded-lg shadow-md"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-gray-900/90 via-gray-900/50 to-transparent pointer-events-none rounded-lg"></div>
-              <div 
-                className="absolute bottom-0 left-0 right-0 h-1/2 backdrop-blur-md rounded-b-lg"
-                style={{ background: 'linear-gradient(to top, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.6) 50%, transparent 100%)' }}
-              ></div>
-            </div>
-            
-            <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-2 rounded-full shadow-lg flex items-center gap-1">
-              <TrendingUp className="w-4 h-4" />
-              <span className="font-semibold text-sm">Proven ROI</span>
-            </div>
-
-            <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-sm border border-blue-200 rounded-lg p-4 shadow-xl">
-              <div className="flex items-center justify-center mb-2">
-                <Lock className="w-5 h-5 text-blue-600 mr-2" />
-                <h4 className="font-bold text-gray-900 text-center">📊 This is just the beginning...</h4>
-              </div>
-              <div className="text-sm text-gray-700 space-y-1 mb-3">
-                <p className="font-semibold text-center">The full dashboard includes:</p>
-                <div className="grid grid-cols-1 gap-1 text-xs">
-                  <span>✓ 15+ detailed charts</span>
-                  <span>✓ Team performance analysis</span>
-                  <span>✓ Cost breakdown by user</span>
-                  <span>✓ Programming language insights</span>
-                  <span>✓ Export to PDF & images</span>
-                </div>
-              </div>
-              <Button 
-                onClick={handleDownloadExample}
-                className="w-full bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all"
-                size="sm"
-              >
-                <Download className="w-4 h-4 mr-2" />
-                Download Full Report Example
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4 text-center border border-blue-100">
-            <div className="flex items-center justify-center mb-2">
-              <Users className="w-5 h-5 text-blue-600 mr-2" />
-              <span className="font-bold text-2xl text-gray-900">107K+</span>
-            </div>
-            <p className="text-sm text-gray-600">Code lines accepted</p>
-          </div>
-          <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4 text-center border border-green-100">
-            <div className="flex items-center justify-center mb-2">
-              <DollarSign className="w-5 h-5 text-green-600 mr-2" />
-              <span className="font-bold text-2xl text-gray-900">$59K+</span>
-            </div>
-            <p className="text-sm text-gray-600">Development cost savings</p>
-          </div>
-          <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4 text-center border border-purple-100">
-            <div className="flex items-center justify-center mb-2">
-              <TrendingUp className="w-5 h-5 text-purple-600 mr-2" />
-              <span className="font-bold text-2xl text-gray-900">480%</span>
-            </div>
-            <p className="text-sm text-gray-600">Return on investment</p>
-          </div>
-        </div>
-
-        <div className="text-center space-y-4">
-          <p className="text-lg font-semibold text-gray-800">
-            📊 Want to see insights like these for your team?
-          </p>
-          <p className="text-gray-600 mb-4">
-            Upload your team's GitHub Copilot data to get started instantly
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
-            <Button 
-              className="bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700 text-white font-semibold px-6 py-2 shadow-lg hover:shadow-xl transition-all"
-              onClick={() => {
-                const uploadSection = document.querySelector('[data-upload-section]');
-                if (uploadSection) {
-                  uploadSection.scrollIntoView({ behavior: 'smooth' });
-                }
-              }}
-            >
-              <Sparkles className="w-4 h-4 mr-2" />
-              Upload Your Data Now
-            </Button>
-          </div>
+      <div className="rounded-lg border overflow-hidden bg-card">
+        <div className="relative">
+          <img
+            src="/example.png"
+            alt="Dashboard preview"
+            className="w-full"
+          />
+          <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-card to-transparent" />
         </div>
       </div>
-    </Card>
+
+      <div className="grid grid-cols-3 gap-4 text-center">
+        <div>
+          <div className="text-2xl font-semibold text-foreground">107K+</div>
+          <div className="text-xs text-muted-foreground">Lines accepted</div>
+        </div>
+        <div>
+          <div className="text-2xl font-semibold text-foreground">$59K+</div>
+          <div className="text-xs text-muted-foreground">Cost savings</div>
+        </div>
+        <div>
+          <div className="text-2xl font-semibold text-foreground">480%</div>
+          <div className="text-xs text-muted-foreground">ROI</div>
+        </div>
+      </div>
+
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleDownloadExample}
+        >
+          <Download className="w-3.5 h-3.5 mr-2" />
+          Download full report
+        </Button>
+        <Button
+          size="sm"
+          onClick={() => {
+            const uploadSection = document.querySelector('[data-upload-section]');
+            if (uploadSection) {
+              uploadSection.scrollIntoView({ behavior: 'smooth' });
+            }
+          }}
+        >
+          <ArrowDown className="w-3.5 h-3.5 mr-2" />
+          Upload your data
+        </Button>
+      </div>
+    </div>
   );
 };

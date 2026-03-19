@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { HelpCircle } from 'lucide-react';
@@ -13,23 +13,34 @@ interface MetricCardProps {
   guideTopicId?: string;
 }
 
+const gradientToAccent: Record<string, string> = {
+  'from-blue-500 to-blue-600': 'border-l-blue-500',
+  'from-emerald-500 to-emerald-600': 'border-l-emerald-500',
+  'from-amber-500 to-amber-600': 'border-l-amber-500',
+  'from-teal-500 to-teal-600': 'border-l-teal-500',
+  'from-green-500 to-green-600': 'border-l-green-500',
+  'from-purple-500 to-purple-600': 'border-l-purple-500',
+  'from-indigo-500 to-indigo-600': 'border-l-indigo-500',
+};
+
 export const MetricCard = ({ title, value, gradient, tooltip, guideTopicId }: MetricCardProps) => {
   const { openGuide } = useDashboardGuide();
   const resolvedGuideTopicId = guideTopicId || getGuideTopicIdFromTitle(title);
+  const accentClass = gradientToAccent[gradient] || 'border-l-primary';
 
   return (
-    <Card className="overflow-hidden h-full">
-      <CardHeader className={`bg-gradient-to-br ${gradient} text-white pb-3 min-h-[80px] flex flex-col justify-center`}>
+    <Card className={`border-l-[3px] ${accentClass} h-full`}>
+      <div className="p-4 flex flex-col justify-between h-full gap-1">
         <div className="flex items-start justify-between gap-2">
-          <CardTitle className="text-sm font-medium opacity-90 leading-tight flex-1">
+          <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide leading-tight">
             {title}
-          </CardTitle>
+          </span>
           <Popover>
             <PopoverTrigger className="shrink-0">
-              <HelpCircle className="h-4 w-4 text-white opacity-75 hover:opacity-100 hover:scale-110 transition-all cursor-pointer" />
+              <HelpCircle className="h-3.5 w-3.5 text-muted-foreground/50 hover:text-muted-foreground transition-colors cursor-pointer" />
             </PopoverTrigger>
             <PopoverContent className="space-y-3">
-              <div className="max-w-xs">{tooltip}</div>
+              <div className="max-w-xs text-sm">{tooltip}</div>
               {resolvedGuideTopicId && (
                 <Button variant="secondary" size="sm" className="h-8 w-full" onClick={() => openGuide(resolvedGuideTopicId)}>
                   Learn more in Guide
@@ -38,12 +49,10 @@ export const MetricCard = ({ title, value, gradient, tooltip, guideTopicId }: Me
             </PopoverContent>
           </Popover>
         </div>
-      </CardHeader>
-      <CardContent className="pt-6 pb-6 flex items-center justify-center min-h-[80px]">
-        <div className="text-3xl font-bold text-foreground text-center">
+        <div className="text-2xl font-semibold text-foreground tracking-tight">
           {value}
         </div>
-      </CardContent>
+      </div>
     </Card>
   );
 };

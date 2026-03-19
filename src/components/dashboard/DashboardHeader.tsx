@@ -1,5 +1,4 @@
-
-import { BarChart3, RefreshCcw, Settings, Download, Linkedin, BookOpen } from 'lucide-react';
+import { RefreshCcw, Settings, Download, Linkedin, BookOpen, BarChart3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useState } from "react";
@@ -56,105 +55,70 @@ export const DashboardHeader = ({
     analytics.trackSettingsOpen();
   };
 
-  const ButtonGroup = ({ isMobile = false }: { isMobile?: boolean }) => (
-    <>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button variant="ghost" size="icon" onClick={() => openGuide()} className="h-8 w-8">
-            <BookOpen className="w-4 h-4" />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent side={isMobile ? "bottom" : "left"}>
-          <span>How to Read This Dashboard</span>
-        </TooltipContent>
-      </Tooltip>
-
-      {showReloadButton && (
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button variant="ghost" size="icon" onClick={onReloadCSV} className="h-8 w-8">
-              <RefreshCcw className="w-4 h-4" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent side={isMobile ? "bottom" : "left"}>
-            <span>{reloadLabel || 'Load New File'}</span>
-          </TooltipContent>
-        </Tooltip>
-      )}
-      
-      {showExportButton && (
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button variant="ghost" size="icon" disabled={isExporting} onClick={handleExportImage} className="h-8 w-8">
-              <Download className="w-4 h-4" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent side={isMobile ? "bottom" : "left"}>
-            <span>{isExporting ? 'Exporting...' : 'Export as Image'}</span>
-          </TooltipContent>
-        </Tooltip>
-      )}
-      
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => window.open(LINKEDIN_URL, "_blank", "noopener,noreferrer")}>
-            <Linkedin className="w-4 h-4" />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent side={isMobile ? "bottom" : "left"}>
-          <span>Follow on LinkedIn</span>
-        </TooltipContent>
-      </Tooltip>
-      
-      {showSettingsButton && (
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button variant="ghost" size="icon" onClick={handleSettingsOpen} className="h-8 w-8">
-              <Settings className="w-4 h-4" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent side={isMobile ? "bottom" : "left"}>
-            <span>Dashboard Settings</span>
-          </TooltipContent>
-        </Tooltip>
-      )}
-    </>
-  );
-
   return (
-    <header className="text-center relative">
-      <div className="sm:hidden flex justify-center gap-2 mb-4">
-        <div className="flex bg-background/80 backdrop-blur-sm border rounded-lg p-2 shadow-sm gap-2">
-          <ButtonGroup isMobile={true} />
+    <header className="flex items-center justify-between py-6">
+      <div className="flex items-center gap-3">
+        <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-foreground text-background">
+          <BarChart3 className="w-[18px] h-[18px]" />
         </div>
-      </div>
-
-      <div className="hidden sm:block absolute top-0 right-0 z-10">
-        <div className="flex flex-col bg-background/80 backdrop-blur-sm border rounded-lg p-2 shadow-sm gap-1">
-          <ButtonGroup isMobile={false} />
-        </div>
-      </div>
-      
-      <div className="flex items-center justify-center gap-3 mb-4">
-        <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-primary text-primary-foreground">
-          <BarChart3 className="w-6 h-6" />
-        </div>
-        <h1 className="text-4xl font-bold text-foreground">
+        <h1 className="text-xl font-semibold text-foreground tracking-tight">
           AI Development Intelligence
         </h1>
       </div>
-      <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-        Unlock your team's full coding potential. Track real, business-driven metrics, improve productivity, and maximize the ROI of AI-assisted development with GitHub Copilot.
-      </p>
-      <div className="bg-card border border-border rounded-lg p-4 max-w-xl mx-auto mt-4 mb-2 text-foreground">
-        <strong>Welcome!</strong> This dashboard reveals how AI accelerates your team. 
-        <ul className="list-disc text-base text-left ml-6 mt-2">
-          <li><b>See cost savings</b> and time saved by your developers using GitHub Copilot.</li>
-          <li><b>Spot your AI Champions</b> and help others grow.</li>
-          <li><b>Use the Guide</b> in the top-right to understand every metric and chart correctly.</li>
-        </ul>
-        <div className="text-sm mt-2">Not sure how to interpret metrics? Open <span className="inline-block align-text-bottom"><BookOpen className="h-4 w-4 inline" /></span> for the full manual, or hover question marks for quick context.</div>
+
+      <div className="flex items-center gap-1">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button variant="ghost" size="icon" onClick={() => openGuide()} className="h-8 w-8 text-muted-foreground hover:text-foreground">
+              <BookOpen className="w-4 h-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>Guide</TooltipContent>
+        </Tooltip>
+
+        {showReloadButton && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" size="icon" onClick={onReloadCSV} className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                <RefreshCcw className="w-4 h-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>{reloadLabel || 'Load New File'}</TooltipContent>
+          </Tooltip>
+        )}
+
+        {showExportButton && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" size="icon" disabled={isExporting} onClick={handleExportImage} className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                <Download className="w-4 h-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>{isExporting ? 'Exporting...' : 'Export as Image'}</TooltipContent>
+          </Tooltip>
+        )}
+
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground" onClick={() => window.open(LINKEDIN_URL, "_blank", "noopener,noreferrer")}>
+              <Linkedin className="w-4 h-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>Follow on LinkedIn</TooltipContent>
+        </Tooltip>
+
+        {showSettingsButton && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" size="icon" onClick={handleSettingsOpen} className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                <Settings className="w-4 h-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Settings</TooltipContent>
+          </Tooltip>
+        )}
       </div>
+
       <DashboardSettings open={settingsOpen} onOpenChange={setSettingsOpen} />
     </header>
   );

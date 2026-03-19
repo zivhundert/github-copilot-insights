@@ -11,7 +11,6 @@ import { PrivacyFooter } from '@/components/common/PrivacyFooter';
 import { useDashboardData } from '@/hooks/useDashboardData';
 import { useSettings } from '@/contexts/SettingsContext';
 import { analytics } from '@/services/analytics';
-import { Settings } from 'lucide-react';
 
 export interface CopilotDataRow {
   day: string;
@@ -125,8 +124,8 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8" data-export="dashboard-main">
-        <DashboardHeader 
+      <div className="container mx-auto px-4" data-export="dashboard-main">
+        <DashboardHeader
           showReloadButton={originalData.length > 0} 
           onReloadCSV={apiConfigured ? handleRefreshFromGitHub : handleReloadCSVWithAnalytics}
           showExportButton={originalData.length > 0}
@@ -135,11 +134,11 @@ const Index = () => {
         />
         
         {originalData.length === 0 && (
-          <div className="mt-12">
+          <div className="mt-8">
             {isLoading && apiConfigured ? (
-              <div className="flex flex-col items-center justify-center py-24 space-y-4">
-                <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
-                <p className="text-muted-foreground text-lg">Fetching Copilot data from GitHub Enterprise…</p>
+              <div className="flex flex-col items-center justify-center py-24 space-y-3">
+                <div className="w-8 h-8 border-2 border-foreground/20 border-t-foreground rounded-full animate-spin" />
+                <p className="text-muted-foreground text-sm">Fetching Copilot data from GitHub Enterprise…</p>
               </div>
             ) : (
               <>
@@ -153,8 +152,8 @@ const Index = () => {
         )}
         
         {originalData.length > 0 && (
-          <div className="mt-8 space-y-8">
-            <DashboardMetrics 
+          <div className="space-y-6">
+            <DashboardMetrics
               data={filteredData} 
               originalData={originalData} 
               baseFilteredData={baseFilteredData} 

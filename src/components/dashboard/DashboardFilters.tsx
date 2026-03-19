@@ -1,7 +1,4 @@
-
 import { useState } from 'react';
-import { Filter } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DateRangePicker } from './filters/DateRangePicker';
 import { UserSelector } from './filters/UserSelector';
 import { AggregationPeriodSelector } from './filters/AggregationPeriodSelector';
@@ -49,38 +46,28 @@ export const DashboardFilters = ({ data, onFiltersChange }: DashboardFiltersProp
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Filter className="w-5 h-5" />
-          Filters
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <DateRangePicker
-            data={data}
-            value={dateRange}
-            onChange={setDateRange}
-          />
-          
-          <AggregationPeriodSelector
-            value={aggregationPeriod}
-            onChange={setAggregationPeriod}
-          />
-          
-          <UserSelector
-            users={uniqueUsers}
-            selectedUsers={selectedUsers}
-            onChange={setSelectedUsers}
-          />
-          
-          <FilterActions
-            onApply={handleFilterChange}
-            onClear={clearFilters}
-          />
-        </div>
-      </CardContent>
-    </Card>
+    <div className="flex flex-col md:flex-row items-start md:items-end gap-3 rounded-lg border bg-card p-3">
+      <DateRangePicker
+        data={data}
+        value={dateRange}
+        onChange={setDateRange}
+      />
+
+      <AggregationPeriodSelector
+        value={aggregationPeriod}
+        onChange={setAggregationPeriod}
+      />
+
+      <UserSelector
+        users={uniqueUsers}
+        selectedUsers={selectedUsers}
+        onChange={setSelectedUsers}
+      />
+
+      <FilterActions
+        onApply={handleFilterChange}
+        onClear={clearFilters}
+      />
+    </div>
   );
 };

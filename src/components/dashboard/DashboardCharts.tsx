@@ -178,7 +178,7 @@ export const DashboardCharts = React.memo(({
       return (
         <div key={rowConfig.key}>
           {visibleCharts.map((chart, index) => (
-            <div key={index} className={chart.colSpan === 'full' ? 'mb-8 last:mb-0' : ''}>
+            <div key={index} className={chart.colSpan === 'full' ? 'mb-6 last:mb-0' : ''}>
               {chart.component}
             </div>
           ))}
@@ -187,7 +187,7 @@ export const DashboardCharts = React.memo(({
     }
 
     return (
-      <div key={rowConfig.key} className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div key={rowConfig.key} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {visibleCharts.map((chart, index) => (
           <div key={index}>
             {chart.component}
@@ -200,7 +200,7 @@ export const DashboardCharts = React.memo(({
   const renderedRows = chartRows.map(renderChartRow).filter(row => row !== null);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {renderedRows}
     </div>
   );

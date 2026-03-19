@@ -20,15 +20,15 @@ export const ChartContainer = ({ title, helpText, children, className, guideTopi
 
   return (
     <Card className={className}>
-      <CardHeader>
+      <CardHeader className="pb-2">
         <div className="flex items-center gap-2">
-          <CardTitle className="text-xl font-semibold">{title}</CardTitle>
+          <CardTitle className="text-sm font-medium text-foreground">{title}</CardTitle>
           <Popover>
             <PopoverTrigger>
-              <HelpCircle className="h-4 w-4 text-muted-foreground hover:text-foreground hover:scale-110 transition-all cursor-pointer" />
+              <HelpCircle className="h-3.5 w-3.5 text-muted-foreground/50 hover:text-muted-foreground transition-colors cursor-pointer" />
             </PopoverTrigger>
             <PopoverContent className="space-y-3">
-              <p>{helpText}</p>
+              <p className="text-sm">{helpText}</p>
               {resolvedGuideTopicId && (
                 <Button variant="secondary" size="sm" className="h-8 w-full" onClick={() => openGuide(resolvedGuideTopicId)}>
                   Learn more in Guide
@@ -39,7 +39,7 @@ export const ChartContainer = ({ title, helpText, children, className, guideTopi
         </div>
       </CardHeader>
       <CardContent>
-        <div className="h-[420px]">
+        <div className="h-[400px]">
           {children}
         </div>
       </CardContent>
