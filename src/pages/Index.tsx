@@ -140,6 +140,8 @@ const Index = () => {
           showCompareButton={originalData.length > 0}
           onCompareOpen={() => setCompareOpen(true)}
           reloadLabel={apiConfigured ? 'Refresh from GitHub' : undefined}
+          showChatButton={originalData.length > 0}
+          chatData={originalData}
         />
         
         {originalData.length === 0 && isLoading && apiConfigured && (

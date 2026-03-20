@@ -1,12 +1,14 @@
-import { RefreshCcw, Settings, Download, Linkedin, BookOpen, BarChart3, ArrowLeftRight } from 'lucide-react';
+import { RefreshCcw, Settings, Download, Linkedin, BookOpen, BarChart3, ArrowLeftRight, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DashboardSettings } from "./DashboardSettings";
 import { useToast } from '@/hooks/use-toast';
 import { exportToImage } from '@/utils/exportUtils';
 import { analytics } from '@/services/analytics';
 import { useDashboardGuide } from '@/contexts/DashboardGuideContext';
+import { ChatPanel } from './ChatPanel';
+import type { CopilotDataRow } from '@/pages/Index';
 
 interface DashboardHeaderProps {
   showReloadButton?: boolean;
@@ -16,6 +18,8 @@ interface DashboardHeaderProps {
   showCompareButton?: boolean;
   onCompareOpen?: () => void;
   reloadLabel?: string;
+  showChatButton?: boolean;
+  chatData?: CopilotDataRow[];
 }
 
 const LINKEDIN_URL = "https://www.linkedin.com/in/zivhundert/";
@@ -28,11 +32,35 @@ export const DashboardHeader = ({
   showCompareButton = false,
   onCompareOpen,
   reloadLabel,
+  showChatButton = false,
+  chatData = [],
 }: DashboardHeaderProps) => {
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+  const [chatConfigured, setChatConfigured] = useState<boolean | null>(null);
   const { toast } = useToast();
   const { openGuide } = useDashboardGuide();
+
+  useEffect(() => {
+    if (!showChatButton) return;
+    fetch("/api/chat/status")
+      .then((res) => res.json())
+      .then((data) => setChatConfigured(data.configured))
+      .catch(() => setChatConfigured(false));
+  }, [showChatButton]);
+
+  const handleChatClick = () => {
+    if (chatConfigured === false) {
+      toast({
+        title: "AI Chat Not Configured",
+        description: "Add your Gemini API key to the .env file to enable AI Chat. See .env.example for details.",
+        variant: "destructive",
+      });
+      return;
+    }
+    setChatOpen(true);
+  };
 
   const handleExportImage = async () => {
     setIsExporting(true);
@@ -114,6 +142,24 @@ export const DashboardHeader = ({
           </Tooltip>
         )}
 
+        {showChatButton && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleChatClick}
+                className={`h-8 w-8 ${chatConfigured === false ? 'text-muted-foreground/40' : 'text-muted-foreground hover:text-foreground'}`}
+              >
+                <MessageSquare className="w-4 h-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              {chatConfigured === false ? 'AI Chat (API key not configured)' : 'AI Chat'}
+            </TooltipContent>
+          </Tooltip>
+        )}
+
         <Tooltip>
           <TooltipTrigger asChild>
             <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground" onClick={() => window.open(LINKEDIN_URL, "_blank", "noopener,noreferrer")}>
@@ -136,6 +182,7 @@ export const DashboardHeader = ({
       </div>
 
       <DashboardSettings open={settingsOpen} onOpenChange={setSettingsOpen} />
+      <ChatPanel open={chatOpen} onOpenChange={setChatOpen} data={chatData} />
     </header>
   );
 };
