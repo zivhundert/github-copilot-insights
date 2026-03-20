@@ -26,7 +26,7 @@ export const IDEDistributionChart = ({ data }: IDEDistributionChartProps) => {
   const [clickedUser, setClickedUser] = useState<string | null>(null);
 
   const { chartData, ideUsers } = useMemo(() => {
-    const ideCounts = new Map<string, number>();
+    const ideUniqueUsers = new Map<string, Set<string>>();
     const usersByIDE = new Map<string, Map<string, IDEUserStats>>();
 
     data.forEach(row => {
@@ -36,7 +36,8 @@ export const IDEDistributionChart = ({ data }: IDEDistributionChartProps) => {
         const generations = ide.code_generation_activity_count || 0;
         const acceptances = ide.code_acceptance_activity_count || 0;
 
-        ideCounts.set(name, (ideCounts.get(name) || 0) + interactions);
+        if (!ideUniqueUsers.has(name)) ideUniqueUsers.set(name, new Set());
+        ideUniqueUsers.get(name)!.add(row.user_login);
 
         if (!usersByIDE.has(name)) usersByIDE.set(name, new Map());
         const users = usersByIDE.get(name)!;
@@ -49,10 +50,10 @@ export const IDEDistributionChart = ({ data }: IDEDistributionChartProps) => {
       });
     });
 
-    const points = Array.from(ideCounts.entries())
-      .map(([name, y], index) => ({
+    const points = Array.from(ideUniqueUsers.entries())
+      .map(([name, users], index) => ({
         name,
-        y,
+        y: users.size,
         color: CHART_COLORS.primary[index % CHART_COLORS.primary.length],
       }))
       .sort((a, b) => b.y - a.y);
@@ -76,7 +77,7 @@ export const IDEDistributionChart = ({ data }: IDEDistributionChartProps) => {
   const options: Partial<HighchartsOptions> = {
     ...getPieChartConfig(),
     tooltip: {
-      pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b><br/><span style="font-size:10px;color:gray">Click to see users</span>',
+      pointFormat: '{series.name}: <b>{point.y} users ({point.percentage:.1f}%)</b><br/><span style="font-size:10px;color:gray">Click to see users</span>',
     },
     plotOptions: {
       pie: {
