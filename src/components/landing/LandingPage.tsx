@@ -259,22 +259,25 @@ export const LandingPage = ({ onFileUpload, isLoading }: LandingPageProps) => {
                     Activity by Day of Week
                   </h4>
                 </div>
-                <div className="flex items-end justify-between h-48 gap-3 px-2">
+                <div className="flex items-end justify-between h-48 gap-1 sm:gap-3 px-1 sm:px-2 overflow-hidden">
                   {[
-                    { day: 'Sunday', h: 38 },
-                    { day: 'Monday', h: 140 },
-                    { day: 'Tuesday', h: 95 },
-                    { day: 'Wednesday', h: 155 },
-                    { day: 'Thursday', h: 90 },
-                    { day: 'Friday', h: 53 },
-                    { day: 'Saturday', h: 12 },
+                    { day: 'Sunday', short: 'Sun', h: 38 },
+                    { day: 'Monday', short: 'Mon', h: 140 },
+                    { day: 'Tuesday', short: 'Tue', h: 95 },
+                    { day: 'Wednesday', short: 'Wed', h: 155 },
+                    { day: 'Thursday', short: 'Thu', h: 90 },
+                    { day: 'Friday', short: 'Fri', h: 53 },
+                    { day: 'Saturday', short: 'Sat', h: 12 },
                   ].map((bar) => (
-                    <div key={bar.day} className="flex flex-col items-center gap-2 w-full">
+                    <div key={bar.day} className="flex flex-col items-center gap-2 w-full min-w-0">
                       <div
                         className="w-full rounded-t bg-[#2a9d8f]"
                         style={{ height: `${bar.h}px` }}
                       />
-                      <span className="text-[10px] text-[#717786] font-medium">{bar.day}</span>
+                      <span className="text-[10px] text-[#717786] font-medium truncate w-full text-center">
+                        <span className="hidden sm:inline">{bar.day}</span>
+                        <span className="sm:hidden">{bar.short}</span>
+                      </span>
                     </div>
                   ))}
                 </div>
