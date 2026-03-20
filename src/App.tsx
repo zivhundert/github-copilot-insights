@@ -16,7 +16,7 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <SettingsProvider>
-      <ThemeProvider defaultTheme="light" storageKey="cursor-dashboard-theme">
+      <ThemeProvider defaultTheme="light" storageKey="copilot-dashboard-theme">
         <TooltipProvider>
           <DashboardGuideProvider>
             <Toaster />

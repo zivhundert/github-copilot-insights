@@ -25,7 +25,7 @@ This is a **frontend-only** project with the following stack:
 | State / Data | TanStack React Query, React Context |
 | UI | ShadCN / Radix UI, Tailwind CSS |
 | Charts | Highcharts |
-| Upload | Custom `useFileUpload` hook accepting NDJSON / CSV |
+| Upload | Custom `useFileUpload` hook accepting NDJSON |
 | Styling | Tailwind CSS with `class-variance-authority` |
 | Path alias | `@/` → `src/` |
 
