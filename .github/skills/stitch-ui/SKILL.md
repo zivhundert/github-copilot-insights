@@ -29,16 +29,74 @@ If you believe something in the Stitch design could be better, you MUST:
 ### Step 1: Fetch the screen
 Use `mcp_stitch_get_screen` to retrieve the screen metadata (screenshot URL, HTML download URL, dimensions).
 
-### Step 2: Download and analyze the HTML
-Use the `fetch_webpage` tool to download the HTML from the `htmlCode.downloadUrl`. Parse it carefully:
-- Extract exact CSS values (colors as hex, spacing in px, border-radius, font-size, font-weight, opacity)
-- Note the exact layout structure (flex direction, alignment, gaps)
-- Identify all icons and their positions
-- Map the color palette to project design tokens where exact matches exist
-- Document any value without a project token match — use the literal value
+### Step 2: Download and analyze the raw HTML
+
+**IMPORTANT:** The `fetch_webpage` tool strips CSS and returns text-only content. You MUST download the raw HTML using Node.js in the terminal to get the full Tailwind classes, inline styles, and Tailwind config.
+
+Run in terminal:
+```bash
+node -e "const https=require('https'); https.get('DOWNLOAD_URL', r => { let d=''; r.on('data',c=>d+=c); r.on('end',()=>{ require('fs').writeFileSync('/tmp/stitch-screen.html',d); console.log('Downloaded',d.length,'bytes'); }); });"
+```
+
+Then read `/tmp/stitch-screen.html` to extract:
+- The `<script id="tailwind-config">` block — this contains **custom Tailwind config overrides** (e.g. `borderRadius`, `colors`, `fontFamily`). Stitch screens often redefine values like `rounded-xl = 3rem` which differs from Tailwind defaults.
+- Exact CSS classes on every element (colors as hex, spacing, border-radius, font sizes, font weights, opacity)
+- Layout structure (flex direction, alignment, gaps)
+- All icons and their exact positions
+- Color palette — map to project design tokens where exact matches exist; use literal hex values for non-matching colors
+- **Custom Tailwind token names** (e.g. `bg-surface-container-low` → resolve to the hex in the config, then use the hex in your React code since the project uses standard Tailwind)
 
 ### Step 3: Map to project components
-See [component mapping reference](./references/component-mapping.md) for the standard mapping table. Prefer reusing existing ShadCN/Radix components over raw HTML.
+Prefer reusing existing ShadCN/Radix components over raw HTML. Use the standard mapping table below:
+
+| Stitch Element | Project Component | Import |
+|---|---|---|
+| Button / CTA | `<Button>` with variant | `@/components/ui/button` |
+| Text input | `<Input>` | `@/components/ui/input` |
+| Multiline input | `<textarea>` with Tailwind classes | native |
+| Card / Panel | `<Card>`, `<CardHeader>`, `<CardContent>` | `@/components/ui/card` |
+| Scrollable area | `<ScrollArea>` | `@/components/ui/scroll-area` |
+| Side drawer | `<Sheet>`, `<SheetContent>` | `@/components/ui/sheet` |
+| Bottom drawer | `<Drawer>` | `@/components/ui/drawer` |
+| Dialog / Modal | `<Dialog>` | `@/components/ui/dialog` |
+| Tabs | `<Tabs>`, `<TabsList>`, `<TabsTrigger>`, `<TabsContent>` | `@/components/ui/tabs` |
+| Dropdown | `<Select>` or `<DropdownMenu>` | `@/components/ui/select` |
+| Checkbox | `<Checkbox>` | `@/components/ui/checkbox` |
+| Toggle | `<Switch>` | `@/components/ui/switch` |
+| Badge / Chip | `<Badge>` | `@/components/ui/badge` |
+| Separator | `<Separator>` | `@/components/ui/separator` |
+| Avatar | `<Avatar>` | `@/components/ui/avatar` |
+| Tooltip | `<Tooltip>` | `@/components/ui/tooltip` |
+| Progress bar | `<Progress>` | `@/components/ui/progress` |
+| Accordion | `<Accordion>` | `@/components/ui/accordion` |
+
+#### Icons
+
+Use `lucide-react` for all icons. Match by visual similarity to the Stitch design.
+
+Common mappings:
+- Sparkle / star icon → `Sparkles`
+- Person icon → `User`
+- Group icon → `Users`
+- Arrow up → `TrendingUp`
+- Screen / monitor → `Monitor`
+- Bar chart → `BarChart3`
+- Send / arrow → `Send`
+- Trash → `Trash2`
+- Close / X → `X`
+- Search → `Search`
+- Settings / gear → `Settings`
+
+#### Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Build | Vite |
+| Framework | React 18, TypeScript |
+| UI Library | ShadCN / Radix UI |
+| Styling | Tailwind CSS |
+| Icons | lucide-react |
+| Path alias | `@/` → `src/` |
 
 ### Step 4: Implement with exact styles
 Write React components using Tailwind classes that reproduce the Stitch CSS values:
