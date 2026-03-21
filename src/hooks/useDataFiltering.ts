@@ -21,7 +21,10 @@ export const useDataFiltering = (originalData: CopilotDataRow[]) => {
 
     if (filters.dateRange.from || filters.dateRange.to) {
       filtered = filtered.filter(row => {
-        const rowDate = new Date(row.day);
+        // Parse as local date to match the calendar picker's local-midnight dates.
+        // new Date("YYYY-MM-DD") parses as UTC, causing timezone mismatches.
+        const [y, m, d] = row.day.split('-').map(Number);
+        const rowDate = new Date(y, m - 1, d);
         if (filters.dateRange.from && rowDate < filters.dateRange.from) return false;
         if (filters.dateRange.to && rowDate > filters.dateRange.to) return false;
         return true;

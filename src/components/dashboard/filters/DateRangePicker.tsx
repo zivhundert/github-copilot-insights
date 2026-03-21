@@ -18,7 +18,8 @@ interface DateRangePickerProps {
 function extractDateRange(data: CopilotDataRow[]) {
   const validDates = data
     .map(row => {
-      const date = new Date(row.day);
+      const [y, m, d] = row.day.split('-').map(Number);
+      const date = new Date(y, m - 1, d);
       return isValid(date) ? date : null;
     })
     .filter(Boolean) as Date[];
