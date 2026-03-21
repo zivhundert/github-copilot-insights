@@ -32,7 +32,14 @@ export const LandingPage = ({ onFileUpload, isLoading }: LandingPageProps) => {
       <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-[20px] shadow-sm">
         <div className="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto">
           <div className="text-2xl font-black tracking-tight text-slate-900">
-            DevIntelligence
+            <div className="flex items-center gap-3">
+              <img
+                alt="DevIntelligence Icon"
+                className="h-8 w-8 rounded-lg object-contain"
+                src="/brand-icon.png"
+              />
+              <span>DevIntelligence</span>
+            </div>
           </div>
           <button
               className="bg-[#0051d5] text-white px-6 py-2.5 rounded-xl text-sm font-semibold shadow-sm shadow-[#0051d5]/20"
