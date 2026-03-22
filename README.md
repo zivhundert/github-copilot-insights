@@ -1,44 +1,113 @@
 # AI Development Intelligence Dashboard
 
-A modern analytics dashboard for tracking GitHub Copilot adoption and ROI across your engineering team. Upload your Copilot usage data or connect directly to the GitHub Enterprise API to get actionable insights.
+A modern analytics dashboard for tracking GitHub Copilot adoption and ROI across your engineering team. Upload your Copilot usage data or connect directly to the GitHub Enterprise API to get actionable insights — with an AI-powered chat assistant to explore your data conversationally.
+
+![Dashboard Screenshot](public/dashboardimage.jpg)
+
+---
+
+## Table of Contents
+
+- [Features](#features)
+- [Screenshots](#screenshots)
+- [Getting Started](#getting-started)
+- [Environment Variables](#environment-variables)
+- [Available Scripts](#available-scripts)
+- [Configuration](#configuration)
+- [Project Structure](#project-structure)
+- [Tech Stack](#tech-stack)
+
+---
 
 ## Features
 
 ### 📊 Metrics at a Glance
 - **Total AI Code Added** — lines accepted through Copilot workflows
 - **Acceptance Rate** — developer trust in AI suggestions
-- **AI Code Amplification** — ratio of code added vs. suggested
-- **Development Time Saved** — estimated hours saved (configurable)
-- **Cost Savings & ROI** — financial impact of Copilot adoption
+- **AI Code Amplification** — ratio of code added vs. suggested (can exceed 100%)
+- **Development Time Saved** — estimated hours saved (configurable coding speed)
+- **Development Cost Savings** — dollar value based on configurable hourly rate
+- **ROI – Copilot Investment Return** — savings vs. license cost
+- **Active Users** — total unique users in the dataset
 
-### 📈 15+ Interactive Charts
-- Cumulative code trends over time
-- Acceptance rate tracking
-- Model usage distribution (GPT-4, Codex, etc.)
-- Feature usage breakdown (chat, agent, completions, CLI)
-- IDE distribution and version tracking
-- Programming language treemap
-- Agent adoption trends
-- Model effectiveness comparison
-- Language × Feature matrix heatmap
-- Engagement heatmap
-- Code churn analysis
-- Day-of-week activity patterns
-- Top contributors leaderboard with performance segments
+### 📈 17 Interactive Charts
+- AI Code Generation Growth (daily/weekly/monthly)
+- Acceptance Rate Trend
+- Model Usage Distribution (GPT-4o, Claude, etc.)
+- Feature Usage Breakdown (chat, agent, completions, CLI, plan mode)
+- Model Effectiveness Comparison
+- Code Churn Analysis
+- Average Interactions Trend
+- IDE Distribution (pie chart)
+- Programming Language Treemap
+- Agent Adoption Trend
+- Language × Feature Matrix (heatmap)
+- Engagement Heatmap
+- Day-of-Week Activity Patterns
+- IDE Version Tracking
+- Top Contributors Leaderboard with performance segments
+
+All charts are powered by **Highcharts**, support responsive layouts, and respect the current light/dark theme.
+
+### 🤖 AI Chat Assistant (DevIntelligence)
+
+An integrated AI chat panel where you can ask **any question** about your Copilot adoption data in natural language. The assistant understands your full dataset and can answer anything from high-level summaries to specific user-level breakdowns.
+
+A few example prompts to get started:
+
+- *"Who are the most active Copilot users?"*
+- *"What is the overall acceptance rate?"*
+- *"Which IDEs are most popular?"*
+- *"Show me the feature adoption breakdown"*
+- *"Compare agent mode usage across teams"*
+- *"Which users have low acceptance rates and why?"*
+
+Powered by **Google Gemini** with real-time streaming responses. The assistant receives your dashboard data as context and compares metrics against industry benchmarks automatically. Responses are rendered with markdown formatting and streamed in real time.
+
+### 🎨 Stitch Design Integration
+
+The project includes a **Stitch MCP integration** for design-to-code workflows:
+
+- Design screens in [Stitch](https://stitch.withgoogle.com/) and convert them to React/TypeScript components
+- Sync finalized local code back to Stitch (bidirectional)
+- Generate design variants via MCP functions
+- Pixel-faithful translation with no unauthorized UI enhancements
 
 ### 🔍 Advanced Analysis
-- **Adoption Insights Panel** — automated suggestions for underused features, with champion users highlighted
-- **User Profile Cards** — click any user to see their detailed Copilot stats
+- **Adoption Insights Panel** — automated suggestions for underused features (< 30% adoption), with champion users highlighted per feature
+- **Non-Adopter Analysis** — identifies users with low engagement, sporadic activity, or missing features
+- **User Profile Cards** — click any user to see their preferred model, IDE, top languages, acceptance rate, features used, and active days
 - **User Comparison** — compare 2–5 users side by side across all metrics (key stats, modes, IDEs, models, languages, features)
 - **Performance Segments** — Champion, Producer, Explorer, Starter classifications
 
 ### 🎛️ Filters & Settings
-- Date range picker
-- User selector (multi-select)
-- Aggregation period (day / week / month)
-- Configurable coding speed, hourly rate, and Copilot license cost
-- Toggle visibility of individual charts
-- Export dashboard as image
+- **Date range picker** — filter data to a specific time window
+- **User selector** — multi-select to focus on specific users
+- **Aggregation period** — daily, weekly, or monthly grouping
+- **Configurable metrics** — team coding speed (lines/min), developer hourly rate, Copilot license cost
+- **Chart visibility toggles** — show/hide any of the 17 charts individually
+- **Export** — save the full dashboard as a PNG image
+
+### 🎨 Theming
+- Full **dark mode** support with a one-click toggle in the header
+- Theme preference is persisted across sessions
+
+### 📖 Interactive Dashboard Guide
+- Built-in guide explaining every metric, chart, and KPI
+- Includes formulas, interpretation guidance, caveats, and recommended actions
+- Navigate directly to any topic from the header
+
+---
+
+## Screenshots
+
+### Dashboard Overview
+![Dashboard](public/dashboardimage.jpg)
+
+### AI Chat Panel
+![DevIntelligence Chat](public/copilotimage.jpg)
+
+---
 
 ## Getting Started
 
@@ -60,21 +129,18 @@ bun install     # or: npm install
 bun run dev     # or: npm run dev
 ```
 
-This starts the Vite dev server (default: `http://localhost:5173`).
+This starts the Vite dev server at `http://localhost:8080`.
 
 ### Option A: Upload Data Manually
 
-No configuration needed — just start the app and drag & drop your GitHub Copilot admin export (`.ndjson` or `.json` file) into the upload area.
+No configuration needed — just start the app and drag & drop your GitHub Copilot admin export (`.ndjson` or `.json` file, up to 500 MB) into the upload area. All data is processed locally in your browser.
 
 ### Option B: Auto-Fetch from GitHub Enterprise API
 
-Create a `.env.local` file in the project root:
+Create a `.env.local` file in the project root (see [Environment Variables](#environment-variables)):
 
 ```env
-# Enterprise slug (exposed to client for display purposes)
 VITE_GITHUB_ENTERPRISE=your-enterprise-slug
-
-# Server-side only (used by the build-time fetch script)
 GITHUB_BASE_URL=https://api.your-enterprise.ghe.com
 GITHUB_PAT=ghp_your_personal_access_token
 ```
@@ -89,80 +155,172 @@ Your Personal Access Token needs:
 - `manage_billing:copilot` (or enterprise admin access)
 - Read access to the Copilot usage reports endpoint
 
-### Data Fetch Only
+---
 
-To fetch data without starting the dev server:
+## Environment Variables
 
-```bash
-bun run fetch-data
+Create a `.env.local` file in the project root. No variables are required — the app works with manual file upload out of the box.
+
+| Variable | Side | Default | Description |
+|----------|------|---------|-------------|
+| `VITE_GITHUB_ENTERPRISE` | Client | — | Enterprise slug; when set, the app auto-fetches data from the GitHub API on load |
+| `GITHUB_BASE_URL` | Server | — | GitHub Enterprise API base URL (e.g. `https://api.github.com` or your GHE URL) |
+| `GITHUB_PAT` | Server | — | Personal Access Token with `manage_billing:copilot` scope |
+| `GEMINI_API_KEY` | Server | — | Google Gemini API key; enables the AI chat assistant. Get one at [Google AI Studio](https://aistudio.google.com/apikey) |
+| `CHAT_MODEL` | Server | `gemini-2.0-flash` | Gemini model to use for chat responses |
+| `STITCH_API_KEY` | Server | — | Stitch MCP API key; enables design-to-code integration with [Stitch](https://stitch.withgoogle.com/) |
+
+**Example `.env.local`:**
+
+```env
+# GitHub Enterprise API (optional — for auto-fetching data)
+VITE_GITHUB_ENTERPRISE=your-enterprise-slug
+GITHUB_BASE_URL=https://api.your-enterprise.ghe.com
+GITHUB_PAT=ghp_your_personal_access_token
+
+# AI Chat (optional — enables DevIntelligence chat panel)
+GEMINI_API_KEY=your-gemini-api-key
+CHAT_MODEL=gemini-2.0-flash
+
+# Stitch MCP (optional — enables design-to-code integration)
+STITCH_API_KEY=your-stitch-api-key
 ```
 
-## Building for Production
+---
 
-```bash
-bun run build      # outputs to dist/
-bun run preview    # preview the production build locally
-```
+## Available Scripts
+
+| Script | Command | Description |
+|--------|---------|-------------|
+| **dev** | `bun run dev` | Fetch data (if configured) and start the Vite dev server |
+| **build** | `bun run build` | Fetch data and create a production build in `dist/` |
+| **build:dev** | `bun run build:dev` | Build in development mode (unminified, with source maps) |
+| **preview** | `bun run preview` | Preview the production build locally |
+| **fetch-data** | `bun run fetch-data` | Fetch Copilot data from the GitHub API without starting the server |
+| **lint** | `bun run lint` | Run ESLint across the project |
+
+---
+
+## Configuration
+
+### Dashboard Settings
+
+Open the settings panel via the gear icon in the dashboard header. All settings are persisted to `localStorage`.
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| **Team Coding Speed** | 10 lines/min | Used to calculate Development Time Saved. Adjust based on your team's average. |
+| **Developer Hourly Rate** | $55/hr | Used for cost savings calculation. US average ~$55; adjust for your region. |
+| **Copilot License Cost** | $39/user/month | Monthly per-seat cost. Business plan: $19, Enterprise: $39. |
+
+### Chart Visibility
+
+All 17 charts are visible by default. Toggle individual charts on/off from the settings panel, or use **Show All / Hide All** for bulk control. Visibility preferences persist across sessions.
+
+### Aggregation Periods
+
+Use the **Time Period** filter to switch between:
+- **Daily** — most granular; best for spotting day-to-day trends
+- **Weekly** — smooths out daily variance; good for sprint reviews
+- **Monthly** — high-level overview; best for executive reporting
+
+> **Note:** The Day-of-Week Activity chart is only available in daily aggregation mode.
+
+---
 
 ## Project Structure
 
 ```
-src/
-├── pages/              # Page components (Index, NotFound)
-├── components/
-│   ├── common/         # Shared components (MetricCard, ChartContainer, PrivacyFooter)
-│   ├── dashboard/      # Dashboard-specific components
-│   │   ├── charts/     # All chart components (15+ charts)
-│   │   ├── filters/    # Filter components (date, user, aggregation)
-│   │   ├── DashboardHeader.tsx
-│   │   ├── DashboardMetrics.tsx
-│   │   ├── DashboardCharts.tsx
-│   │   ├── DashboardFilters.tsx
-│   │   ├── InsightsPanel.tsx
-│   │   ├── UserCompareDialog.tsx
-│   │   └── ...
-│   └── ui/             # shadcn/ui primitives
-├── hooks/              # Custom hooks (data loading, filtering, file upload)
-├── contexts/           # React contexts (settings, dashboard guide)
-├── services/           # GitHub API service, analytics
-├── utils/              # Data aggregation, metrics calculation, export, parsing
-├── config/             # Chart configurations
-└── content/            # Dashboard guide content
-scripts/
-└── fetch-copilot-data.mjs   # Build-time data fetcher
-public/
-└── copilot_data.ndjson       # Pre-fetched data (auto-generated, gitignored)
+├── .github/
+│   ├── agents/                 # Copilot agent definitions
+│   └── skills/                 # Copilot skill definitions (Stitch, etc.)
+├── public/
+│   ├── copilot_data.ndjson     # Auto-generated data file (gitignored)
+│   └── robots.txt
+├── scripts/
+│   └── fetch-copilot-data.mjs  # Build-time GitHub API data fetcher
+├── server/
+│   ├── promptBuilder.ts        # AI chat system prompt with benchmarks
+│   ├── vite-plugin-chat.ts     # Vite plugin: /api/chat SSE endpoint
+│   └── providers/
+│       ├── gemini.ts           # Google Gemini streaming provider
+│       └── types.ts            # Provider type definitions
+├── src/
+│   ├── pages/                  # Route pages (Index, NotFound)
+│   ├── components/
+│   │   ├── common/             # Shared: MetricCard, ChartContainer, PrivacyFooter
+│   │   ├── dashboard/
+│   │   │   ├── charts/         # All 17 chart components
+│   │   │   ├── filters/        # Date range, user, aggregation filters
+│   │   │   ├── ChatPanel.tsx   # AI chat assistant UI
+│   │   │   ├── DashboardHeader.tsx
+│   │   │   ├── DashboardMetrics.tsx
+│   │   │   ├── DashboardCharts.tsx
+│   │   │   ├── DashboardFilters.tsx
+│   │   │   ├── DashboardSettings.tsx
+│   │   │   ├── InsightsPanel.tsx
+│   │   │   ├── UserProfileCard.tsx
+│   │   │   ├── UserCompareDialog.tsx
+│   │   │   ├── ExportButton.tsx
+│   │   │   └── ExampleShowcase.tsx
+│   │   ├── landing/            # Landing page with upload zone
+│   │   └── ui/                 # shadcn/ui primitives (50+ components)
+│   ├── hooks/
+│   │   ├── useChat.ts          # AI chat state management
+│   │   ├── useDashboardData.ts # Data loading & transformation
+│   │   ├── useDataFiltering.ts # Filter logic (date, users, aggregation)
+│   │   ├── useFileUpload.ts    # File upload + API fetch logic
+│   │   ├── use-mobile.tsx      # Responsive breakpoint hook
+│   │   └── use-toast.ts        # Toast notification hook
+│   ├── contexts/
+│   │   ├── SettingsContext.tsx  # Global settings (metrics, theme, chart visibility)
+│   │   └── DashboardGuideContext.tsx # Interactive guide state
+│   ├── services/
+│   │   ├── chatApi.ts          # Chat API client (SSE streaming)
+│   │   ├── githubApi.ts        # GitHub data loading service
+│   │   └── analytics.ts        # Google Analytics event tracking
+│   ├── utils/
+│   │   ├── chartHelpers.ts     # Chart formatting utilities
+│   │   ├── chatContextBuilder.ts # Builds data context for AI chat
+│   │   ├── dataAggregation.ts  # Weekly/monthly aggregation logic
+│   │   ├── exportUtils.ts      # Dashboard PNG export
+│   │   ├── metricsCalculator.ts # KPI calculation engine
+│   │   └── ndjsonParser.ts     # NDJSON file parser
+│   ├── config/
+│   │   └── chartConfigs.ts     # Highcharts theme & base configurations
+│   └── content/
+│       └── dashboardGuide.ts   # In-app guide content & definitions
+├── vite.config.ts              # Vite config (port 8080, SWC, chat plugin)
+├── tailwind.config.ts          # Tailwind CSS configuration
+├── tsconfig.json               # TypeScript configuration
+└── package.json
 ```
+
+---
 
 ## Tech Stack
 
 | Category | Technology |
 |----------|-----------|
 | Framework | [React](https://react.dev/) 18 |
-| Build Tool | [Vite](https://vite.dev/) |
+| Build Tool | [Vite](https://vite.dev/) with SWC |
 | Language | [TypeScript](https://www.typescriptlang.org/) |
 | Styling | [Tailwind CSS](https://tailwindcss.com/) |
 | UI Components | [shadcn/ui](https://ui.shadcn.com/) + [Radix UI](https://www.radix-ui.com/) |
 | Charts | [Highcharts](https://www.highcharts.com/) |
+| AI Chat | [Google Gemini](https://ai.google.dev/) (streaming via SSE) |
+| Design-to-Code | [Stitch](https://stitch.withgoogle.com/) via MCP |
 | Data Fetching | [TanStack Query](https://tanstack.com/query) |
+| Forms | [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/) |
 | Routing | [React Router](https://reactrouter.com/) |
+| File Upload | [react-dropzone](https://react-dropzone.js.org/) |
+| Export | [html2canvas](https://html2canvas.hertzen.com/) |
+| Theming | [next-themes](https://github.com/pacocoursey/next-themes) |
+| Notifications | [Sonner](https://sonner.emilkowal.dev/) |
 | Runtime | [Bun](https://bun.sh/) (or Node.js) |
 
-## Configuration
-
-Dashboard settings are persisted in `localStorage` and can be adjusted via the ⚙️ Settings button:
-
-| Setting | Default | Description |
-|---------|---------|-------------|
-| Coding Speed | 10 lines/min | Used to estimate time saved |
-| Hourly Rate | $55/hr | Used to estimate cost savings |
-| Copilot License Cost | $39/user/month | Used to calculate ROI |
-| Chart Visibility | All on | Toggle individual charts on/off |
+---
 
 ## Privacy
 
-This dashboard runs entirely in the browser. No data is sent to external servers. The only network request is the optional GitHub Enterprise API fetch at build time. Anonymous usage analytics can be collected for improving the dashboard experience — no personal information is stored.
-
-## License
-
-Private project.
+All uploaded data is processed **entirely in your browser**. No source code, user data, or sensitive information leaves your machine. When the AI chat is enabled, only aggregated summary statistics (not raw data) are sent to the Gemini API to answer your questions.
