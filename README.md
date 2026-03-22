@@ -2,8 +2,6 @@
 
 A modern analytics dashboard for tracking GitHub Copilot adoption and ROI across your engineering team. Upload your Copilot usage data or connect directly to the GitHub Enterprise API to get actionable insights.
 
-![Dashboard Preview](public/example.png)
-
 ## Features
 
 ### 📊 Metrics at a Glance
