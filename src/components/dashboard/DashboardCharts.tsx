@@ -54,12 +54,12 @@ export const DashboardCharts = React.memo(({
         {
           component: <CumulativeChart baseFilteredData={baseFilteredData} aggregationPeriod={aggregationPeriod} />,
           visible: chartVisibility.cumulativeChart,
-          colSpan: 'full'
+          colSpan: 'half'
         },
         {
           component: <AcceptanceRateChart data={data} aggregationPeriod={aggregationPeriod} />,
           visible: chartVisibility.acceptanceRateChart,
-          colSpan: 'full'
+          colSpan: 'half'
         }
       ]
     },
@@ -124,22 +124,17 @@ export const DashboardCharts = React.memo(({
       ]
     },
     {
-      key: 'language-feature-matrix',
+      key: 'language-and-engagement',
       charts: [
         {
           component: <LanguageFeatureMatrix data={data} />,
           visible: chartVisibility.languageFeatureMatrix,
-          colSpan: 'full'
-        }
-      ]
-    },
-    {
-      key: 'engagement-heatmap',
-      charts: [
+          colSpan: 'half'
+        },
         {
           component: <EngagementHeatmap data={data} />,
           visible: chartVisibility.engagementHeatmap,
-          colSpan: 'full'
+          colSpan: 'half'
         }
       ]
     },
