@@ -14,6 +14,7 @@ import { useSettings } from '@/contexts/SettingsContext';
 
 export const TopContributorsTable = ({
   data,
+  originalData,
   isFiltered = false,
 }: TopContributorsTableProps) => {
   const { showAll, toggleShowAll } = useDisplaySettings();
@@ -24,7 +25,8 @@ export const TopContributorsTable = ({
     data,
     settings.linesPerMinute,
     settings.pricePerHour,
-    settings.copilotPricePerUser
+    settings.copilotPricePerUser,
+    originalData
   );
   const sortedContributors = useSortedContributors(allContributors, sortConfig);
 

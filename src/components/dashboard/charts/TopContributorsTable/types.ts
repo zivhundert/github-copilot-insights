@@ -60,6 +60,7 @@ export type SortableColumn =
 
 export interface TopContributorsTableProps {
   data: CopilotDataRow[];
+  originalData: CopilotDataRow[];
   isFiltered?: boolean;
 }
 

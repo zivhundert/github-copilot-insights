@@ -157,7 +157,7 @@ export const DashboardCharts = React.memo(({
       key: 'contributors-table',
       charts: [
         {
-          component: <TopContributorsTable data={data} isFiltered={isFiltered} />,
+          component: <TopContributorsTable data={data} originalData={originalData} isFiltered={isFiltered} />,
           visible: chartVisibility.topContributorsTable,
           colSpan: 'full'
         }

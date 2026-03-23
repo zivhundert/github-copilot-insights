@@ -14,7 +14,8 @@ export const useContributorData = (
   data: CopilotDataRow[],
   linesPerMinute: number,
   pricePerHour: number,
-  copilotPricePerUser: number
+  copilotPricePerUser: number,
+  originalData?: CopilotDataRow[]
 ) => {
   return useMemo(() => {
     const userStats = new Map<string, ContributorWithSegment>();
@@ -62,21 +63,35 @@ export const useContributorData = (
     });
 
     const contributors = Array.from(userStats.values());
+
+    // Compute normalization maxes from the original (unfiltered) dataset
+    // so that segment classifications remain stable regardless of user filtering.
+    const referenceData = originalData ?? data;
+    const refStats = new Map<string, { interactions: number; codeGenerations: number; addedLines: number }>();
+    referenceData.forEach((row) => {
+      const login = row.user_login;
+      if (!refStats.has(login)) {
+        refStats.set(login, { interactions: 0, codeGenerations: 0, addedLines: 0 });
+      }
+      const s = refStats.get(login)!;
+      s.interactions += row.user_initiated_interaction_count || 0;
+      s.codeGenerations += row.code_generation_activity_count || 0;
+      s.addedLines += row.loc_added_sum || 0;
+    });
+    const refContributors = Array.from(refStats.values());
     const maxAdoptionRaw = Math.max(
       0,
-      ...contributors.map(
-        (contributor) => contributor.interactions + contributor.codeGenerations
-      )
+      ...refContributors.map((c) => c.interactions + c.codeGenerations)
     );
     const maxImpactRaw = Math.max(
       0,
-      ...contributors.map((contributor) => contributor.addedLines)
+      ...refContributors.map((c) => c.addedLines)
     );
     const maxEfficiencyRaw = Math.max(
       0,
-      ...contributors.map((contributor) =>
-        contributor.interactions > 0
-          ? contributor.addedLines / contributor.interactions
+      ...refContributors.map((c) =>
+        c.interactions > 0
+          ? c.addedLines / c.interactions
           : 0
       )
     );
@@ -138,5 +153,5 @@ export const useContributorData = (
     });
 
     return contributors;
-  }, [data, linesPerMinute, pricePerHour, copilotPricePerUser]);
+  }, [data, linesPerMinute, pricePerHour, copilotPricePerUser, originalData]);
 };
