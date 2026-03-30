@@ -5,7 +5,7 @@
  * Runs at build time — the result is a static file, no middleware needed.
  *
  * Env vars (from .env.local or hosting platform):
- *   GITHUB_BASE_URL   – e.g. https://api.ttrrndorganization.ghe.com
+ *   GITHUB_BASE_URL   – e.g. https://api.github.example.com
  *   GITHUB_PAT        – Personal access token
  *   GITHUB_ENTERPRISE  (or VITE_GITHUB_ENTERPRISE) – Enterprise slug
  */

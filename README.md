@@ -113,20 +113,20 @@ The project includes a **Stitch MCP integration** for design-to-code workflows:
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) 18+ or [Bun](https://bun.sh/)
+- [Node.js](https://nodejs.org/) 18+
 
 ### Installation
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/amitrok1/remix-of-github-adoption-insights.git
 cd remix-of-github-adoption-insights
-bun install     # or: npm install
+npm install
 ```
 
 ### Running Locally
 
 ```bash
-bun run dev     # or: npm run dev
+npm run dev
 ```
 
 This starts the Vite dev server at `http://localhost:8080`.
@@ -145,7 +145,7 @@ GITHUB_BASE_URL=https://api.your-enterprise.ghe.com
 GITHUB_PAT=ghp_your_personal_access_token
 ```
 
-With these set, `bun run dev` and `bun run build` will automatically fetch the latest 28-day Copilot metrics report and write it to `public/copilot_data.ndjson`. The app then loads this file on startup.
+With these set, `npm run dev` and `npm run build` will automatically fetch the latest 28-day Copilot metrics report and write it to `public/copilot_data.ndjson`. The app then loads this file on startup.
 
 > **Note:** The GitHub Copilot Metrics API has a ~2 day processing delay. Data for today/yesterday may not be available yet.
 
@@ -192,12 +192,12 @@ STITCH_API_KEY=your-stitch-api-key
 
 | Script | Command | Description |
 |--------|---------|-------------|
-| **dev** | `bun run dev` | Fetch data (if configured) and start the Vite dev server |
-| **build** | `bun run build` | Fetch data and create a production build in `dist/` |
-| **build:dev** | `bun run build:dev` | Build in development mode (unminified, with source maps) |
-| **preview** | `bun run preview` | Preview the production build locally |
-| **fetch-data** | `bun run fetch-data` | Fetch Copilot data from the GitHub API without starting the server |
-| **lint** | `bun run lint` | Run ESLint across the project |
+| **dev** | `npm run dev` | Fetch data (if configured) and start the Vite dev server |
+| **build** | `npm run build` | Fetch data and create a production build in `dist/` |
+| **build:dev** | `npm run build:dev` | Build in development mode (unminified, with source maps) |
+| **preview** | `npm run preview` | Preview the production build locally |
+| **fetch-data** | `npm run fetch-data` | Fetch Copilot data from the GitHub API without starting the server |
+| **lint** | `npm run lint` | Run ESLint across the project |
 
 ---
 
@@ -317,10 +317,28 @@ Use the **Time Period** filter to switch between:
 | Export | [html2canvas](https://html2canvas.hertzen.com/) |
 | Theming | [next-themes](https://github.com/pacocoursey/next-themes) |
 | Notifications | [Sonner](https://sonner.emilkowal.dev/) |
-| Runtime | [Bun](https://bun.sh/) (or Node.js) |
+| Runtime | [Node.js](https://nodejs.org/) 18+ |
 
 ---
 
-## Privacy
+## Privacy & Data Flow
 
-All uploaded data is processed **entirely in your browser**. No source code, user data, or sensitive information leaves your machine. When the AI chat is enabled, only aggregated summary statistics (not raw data) are sent to the Gemini API to answer your questions.
+This dashboard is designed with privacy in mind. Here is exactly what happens with your data:
+
+| Data flow | Where it goes | When |
+|-----------|---------------|------|
+| Uploaded NDJSON/JSON files | Stays in your browser (no server upload) | Always |
+| Dashboard rendering & charts | Local browser only | Always |
+| Chat questions + aggregated data summary | Google Gemini API | Only when you use the AI chat feature (dev server only) |
+| Page views & UI interactions | Google Analytics | Always (anonymized, no personal data) |
+
+**Important notes:**
+- Raw NDJSON data is **never** sent to any external service.
+- The AI chat feature sends a **summarized statistical context** (not raw records) to the Gemini API so it can answer your questions. This runs through a local Vite dev server proxy — your API key never reaches the browser.
+- Google Analytics tracks anonymized usage events (page views, filter usage, exports). No file contents or user data from your Copilot metrics are sent to GA.
+
+---
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
