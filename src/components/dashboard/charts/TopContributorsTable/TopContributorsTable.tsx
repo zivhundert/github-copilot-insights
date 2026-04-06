@@ -3,6 +3,7 @@ import { Table, TableBody, TableHeader, TableRow } from '@/components/ui/table';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { HelpCircle } from 'lucide-react';
+import { useState } from 'react';
 import { TopContributorsTableProps, columnLabels } from './types';
 import { useContributorData } from './dataProcessing';
 import { useSortedContributors } from './sorting';
@@ -11,6 +12,7 @@ import { SortableTableHead } from './components/SortableTableHead';
 import { ContributorRow } from './components/ContributorRow';
 import { TableHoverProvider } from './components/TableHoverContext';
 import { useSettings } from '@/contexts/SettingsContext';
+import { UserStatsDialog } from '../UserStatsDialog';
 
 export const TopContributorsTable = ({
   data,
@@ -20,6 +22,7 @@ export const TopContributorsTable = ({
   const { showAll, toggleShowAll } = useDisplaySettings();
   const { sortConfig, handleSort } = useTableSorting();
   const { settings } = useSettings();
+  const [clickedUser, setClickedUser] = useState<string | null>(null);
 
   const allContributors = useContributorData(
     data,
@@ -178,12 +181,19 @@ export const TopContributorsTable = ({
                 <ContributorRow
                   key={contributor.userLogin}
                   contributor={contributor}
+                  onUserClick={setClickedUser}
                 />
               ))}
             </TableBody>
           </Table>
         </CardContent>
       </Card>
+      <UserStatsDialog
+        userName={clickedUser}
+        allData={data}
+        open={!!clickedUser}
+        onOpenChange={(open) => { if (!open) setClickedUser(null); }}
+      />
     </TableHoverProvider>
   );
 };

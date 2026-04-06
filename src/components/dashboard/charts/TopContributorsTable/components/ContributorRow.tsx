@@ -5,9 +5,10 @@ import { useTableHover } from './TableHoverContext';
 
 interface ContributorRowProps {
   contributor: ContributorWithSegment;
+  onUserClick?: (userLogin: string) => void;
 }
 
-export const ContributorRow = ({ contributor }: ContributorRowProps) => {
+export const ContributorRow = ({ contributor, onUserClick }: ContributorRowProps) => {
   const { highlightedColumns, hoveredEmail } = useTableHover();
 
   const getCellClassName = (columnKey: string) => {
@@ -23,7 +24,12 @@ export const ContributorRow = ({ contributor }: ContributorRowProps) => {
 
   return (
     <TableRow>
-      <TableCell className="font-medium">{contributor.userLogin}</TableCell>
+      <TableCell
+        className="font-medium cursor-pointer hover:underline text-primary"
+        onClick={() => onUserClick?.(contributor.userLogin)}
+      >
+        {contributor.userLogin}
+      </TableCell>
       <TableCell>
         <PerformanceSegmentBadge segment={contributor.segment} contributor={contributor} />
       </TableCell>
