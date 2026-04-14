@@ -28,9 +28,16 @@ export const UserStatsDialog = ({ userName, allData, open, onOpenChange }: UserS
     const modelsSorted = Array.from(modelCounts.entries()).sort((a, b) => b[1] - a[1]);
 
     const ideCounts = new Map<string, number>();
+    const ideLatestVersion = new Map<string, { version: string; sampledAt: string }>();
     userData.forEach(row => {
       (row.totals_by_ide || []).forEach(ide => {
         ideCounts.set(ide.ide, (ideCounts.get(ide.ide) || 0) + (ide.user_initiated_interaction_count || 0));
+        if (ide.last_known_ide_version?.ide_version) {
+          const existing = ideLatestVersion.get(ide.ide);
+          if (!existing || ide.last_known_ide_version.sampled_at > existing.sampledAt) {
+            ideLatestVersion.set(ide.ide, { version: ide.last_known_ide_version.ide_version, sampledAt: ide.last_known_ide_version.sampled_at });
+          }
+        }
       });
     });
     const idesSorted = Array.from(ideCounts.entries()).sort((a, b) => b[1] - a[1]);
@@ -68,7 +75,7 @@ export const UserStatsDialog = ({ userName, allData, open, onOpenChange }: UserS
     const activeDays = new Set(userData.map(r => r.day)).size;
     const dateRange = userData.map(r => r.day).sort();
 
-    return { topLanguages, topFeatures, totalInteractions, totalGenerations, totalAcceptances, totalLinesAdded, acceptanceRate, usedAgent, usedChat, usedCLI, activeDays, firstDay: dateRange[0], lastDay: dateRange[dateRange.length - 1], modelsSorted, idesSorted };
+    return { topLanguages, topFeatures, totalInteractions, totalGenerations, totalAcceptances, totalLinesAdded, acceptanceRate, usedAgent, usedChat, usedCLI, activeDays, firstDay: dateRange[0], lastDay: dateRange[dateRange.length - 1], modelsSorted, idesSorted, ideLatestVersion };
   }, [userName, allData]);
 
   if (!profile) return null;
@@ -110,7 +117,7 @@ export const UserStatsDialog = ({ userName, allData, open, onOpenChange }: UserS
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="rounded-lg border p-3">
                 <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground mb-2"><Monitor className="h-3.5 w-3.5" />IDEs</div>
-                <div className="space-y-1">{profile.idesSorted.map(([ide, count], i) => (<div key={ide} className="flex items-center justify-between text-sm"><span className={i === 0 ? 'font-medium' : 'text-muted-foreground'}>{ide}</span><span className="text-xs text-muted-foreground">{count.toLocaleString()}</span></div>))}</div>
+                <div className="space-y-1">{profile.idesSorted.map(([ide, count], i) => (<div key={ide} className="flex items-center justify-between text-sm"><span className={i === 0 ? 'font-medium' : 'text-muted-foreground'}>{ide}{profile.ideLatestVersion.get(ide) && <span className="text-[10px] text-muted-foreground ml-1">v{profile.ideLatestVersion.get(ide)!.version}</span>}</span><span className="text-xs text-muted-foreground">{count.toLocaleString()}</span></div>))}</div>
               </div>
               <div className="rounded-lg border p-3">
                 <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground mb-2"><Cpu className="h-3.5 w-3.5" />Models</div>

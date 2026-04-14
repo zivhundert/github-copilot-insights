@@ -87,6 +87,7 @@ const Index = () => {
     baseFilteredData,
     isLoading,
     handleFileUpload,
+    handleMultiFileUpload,
     fetchFromGitHub,
     apiConfigured,
     updateFilters,
@@ -98,8 +99,8 @@ const Index = () => {
   const [compareOpen, setCompareOpen] = useState(false);
 
   const handleFileUploadWithAnalytics = (data: any) => {
-    handleFileUpload(data);
-    analytics.trackFileUpload(data.length);
+    handleMultiFileUpload(Array.isArray(data) ? data : [data]);
+    analytics.trackFileUpload(Array.isArray(data) ? data.length : 1);
   };
 
   const handleReloadCSVWithAnalytics = () => {
@@ -142,6 +143,9 @@ const Index = () => {
           reloadLabel={apiConfigured ? 'Refresh from GitHub' : undefined}
           showChatButton={originalData.length > 0}
           chatData={originalData}
+          onImportMoreData={originalData.length > 0 ? handleFileUploadWithAnalytics : undefined}
+          onClearData={handleReloadCSVWithAnalytics}
+          exportData={originalData.length > 0 ? () => originalData.map(r => JSON.stringify(r)).join('\n') : undefined}
         />
         
         {originalData.length === 0 && isLoading && apiConfigured && (
