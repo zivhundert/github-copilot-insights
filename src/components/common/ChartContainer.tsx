@@ -12,18 +12,20 @@ interface ChartContainerProps {
   children: ReactNode;
   className?: string;
   guideTopicId?: string;
+  headerRight?: ReactNode;
 }
 
-export const ChartContainer = ({ title, helpText, children, className, guideTopicId }: ChartContainerProps) => {
+export const ChartContainer = ({ title, helpText, children, className, guideTopicId, headerRight }: ChartContainerProps) => {
   const { openGuide } = useDashboardGuide();
   const resolvedGuideTopicId = guideTopicId || getGuideTopicIdFromTitle(title);
 
   return (
     <Card className={className}>
       <CardHeader className="pb-2">
-        <div className="flex items-center gap-2">
-          <CardTitle className="text-sm font-medium text-foreground">{title}</CardTitle>
-          <Popover>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <CardTitle className="text-sm font-medium text-foreground">{title}</CardTitle>
+            <Popover>
             <PopoverTrigger>
               <HelpCircle className="h-3.5 w-3.5 text-muted-foreground/50 hover:text-muted-foreground transition-colors cursor-pointer" />
             </PopoverTrigger>
@@ -35,7 +37,9 @@ export const ChartContainer = ({ title, helpText, children, className, guideTopi
                 </Button>
               )}
             </PopoverContent>
-          </Popover>
+            </Popover>
+          </div>
+          {headerRight}
         </div>
       </CardHeader>
       <CardContent>
