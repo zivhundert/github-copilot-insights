@@ -67,3 +67,52 @@ export const parseNDJSONFile = async (file: File): Promise<ParseResult> => {
     return { data: [], error: 'Failed to parse file. Please check the format and try again.' };
   }
 };
+
+/** Parse multiple NDJSON/JSON files and return combined rows */
+export const parseMultipleNDJSONFiles = async (files: File[]): Promise<ParseResult> => {
+  const allRows: CopilotDataRow[] = [];
+  const fileErrors: string[] = [];
+
+  for (const file of files) {
+    const result = await parseNDJSONFile(file);
+    if (result.error) {
+      fileErrors.push(`${file.name}: ${result.error}`);
+    } else {
+      allRows.push(...result.data);
+    }
+  }
+
+  if (allRows.length === 0 && fileErrors.length > 0) {
+    return { data: [], error: fileErrors.join('\n') };
+  }
+
+  return { data: allRows };
+};
+
+/**
+ * Merge new rows into existing data, deduplicating on (user_login, day).
+ * When duplicates exist, the newer row (from newRows) wins.
+ * Returns { merged, newCount, duplicateCount }.
+ */
+export const mergeDataRows = (
+  existing: CopilotDataRow[],
+  newRows: CopilotDataRow[]
+): { merged: CopilotDataRow[]; newCount: number; duplicateCount: number } => {
+  const map = new Map<string, CopilotDataRow>();
+
+  for (const row of existing) {
+    map.set(`${row.user_login}::${row.day}`, row);
+  }
+
+  let duplicateCount = 0;
+  for (const row of newRows) {
+    const key = `${row.user_login}::${row.day}`;
+    if (map.has(key)) duplicateCount++;
+    map.set(key, row);
+  }
+
+  const merged = Array.from(map.values()).sort((a, b) => a.day.localeCompare(b.day));
+  const newCount = newRows.length - duplicateCount;
+
+  return { merged, newCount, duplicateCount };
+};

@@ -3,7 +3,7 @@ import { useDropzone } from 'react-dropzone';
 import { Sparkles } from 'lucide-react';
 
 interface LandingPageProps {
-  onFileUpload: (file: File) => void;
+  onFileUpload: (files: File[]) => void;
   isLoading: boolean;
 }
 
@@ -11,7 +11,7 @@ export const LandingPage = ({ onFileUpload, isLoading }: LandingPageProps) => {
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       if (acceptedFiles.length > 0) {
-        onFileUpload(acceptedFiles[0]);
+        onFileUpload(acceptedFiles);
       }
     },
     [onFileUpload]
@@ -23,7 +23,7 @@ export const LandingPage = ({ onFileUpload, isLoading }: LandingPageProps) => {
       'application/x-ndjson': ['.ndjson'],
       'application/json': ['.json'],
     },
-    multiple: false,
+    multiple: true,
   });
 
   return (
@@ -122,13 +122,13 @@ export const LandingPage = ({ onFileUpload, isLoading }: LandingPageProps) => {
                 Upload your .ndjson data
               </h2>
               <p className="text-[#434654] mb-8">
-                Drag and drop your GitHub Copilot usage exports here
+                Drag and drop one or more GitHub Copilot usage exports to build historical data
               </p>
               <button
                 className="px-8 py-4 rounded-xl font-bold text-white bg-gradient-to-r from-[#0051d5] to-[#2069ff] shadow-md"
                 disabled={isLoading}
               >
-                {isLoading ? 'Processing...' : 'Choose File'}
+                {isLoading ? 'Processing...' : 'Choose Files'}
               </button>
               <div className="flex justify-center gap-6 mt-10">
                 <div className="flex items-center gap-2 text-sm text-[#004d4a] font-medium">

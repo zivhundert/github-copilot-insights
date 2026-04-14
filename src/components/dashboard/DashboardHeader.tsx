@@ -1,7 +1,7 @@
-import { RefreshCcw, Settings, Download, Linkedin, BookOpen, BarChart3, ArrowLeftRight, MessageSquare } from 'lucide-react';
+import { RefreshCcw, Settings, Download, Linkedin, BookOpen, BarChart3, ArrowLeftRight, MessageSquare, FolderUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { DashboardSettings } from "./DashboardSettings";
 import { useToast } from '@/hooks/use-toast';
 import { exportToImage } from '@/utils/exportUtils';
@@ -20,6 +20,9 @@ interface DashboardHeaderProps {
   reloadLabel?: string;
   showChatButton?: boolean;
   chatData?: CopilotDataRow[];
+  onImportMoreData?: (files: File[]) => void;
+  onClearData?: () => void;
+  exportData?: () => string | null;
 }
 
 const LINKEDIN_URL = "https://www.linkedin.com/in/zivhundert/";
@@ -34,6 +37,9 @@ export const DashboardHeader = ({
   reloadLabel,
   showChatButton = false,
   chatData = [],
+  onImportMoreData,
+  onClearData,
+  exportData,
 }: DashboardHeaderProps) => {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
@@ -41,6 +47,7 @@ export const DashboardHeader = ({
   const [chatConfigured, setChatConfigured] = useState<boolean | null>(null);
   const { toast } = useToast();
   const { openGuide } = useDashboardGuide();
+  const importInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!showChatButton) return;
@@ -119,6 +126,31 @@ export const DashboardHeader = ({
           </Tooltip>
         )}
 
+        {onImportMoreData && (
+          <>
+            <input
+              ref={importInputRef}
+              type="file"
+              accept=".ndjson,.json"
+              multiple
+              className="hidden"
+              onChange={(e) => {
+                const files = Array.from(e.target.files || []);
+                if (files.length > 0) onImportMoreData(files);
+                e.target.value = '';
+              }}
+            />
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon" onClick={() => importInputRef.current?.click()} className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                  <FolderUp className="w-4 h-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Import More Data</TooltipContent>
+            </Tooltip>
+          </>
+        )}
+
         {showExportButton && (
           <Tooltip>
             <TooltipTrigger asChild>
@@ -181,7 +213,7 @@ export const DashboardHeader = ({
         )}
       </div>
 
-      <DashboardSettings open={settingsOpen} onOpenChange={setSettingsOpen} />
+      <DashboardSettings open={settingsOpen} onOpenChange={setSettingsOpen} onClearData={onClearData} exportData={exportData} />
       <ChatPanel open={chatOpen} onOpenChange={setChatOpen} data={chatData} />
     </header>
   );

@@ -4,14 +4,14 @@ import { Upload, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface FileUploadProps {
-  onFileUpload: (file: File) => void;
+  onFileUpload: (files: File[]) => void;
   isLoading: boolean;
 }
 
 export const FileUpload = ({ onFileUpload, isLoading }: FileUploadProps) => {
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {
-      onFileUpload(acceptedFiles[0]);
+      onFileUpload(acceptedFiles);
     }
   }, [onFileUpload]);
 
@@ -21,7 +21,7 @@ export const FileUpload = ({ onFileUpload, isLoading }: FileUploadProps) => {
       'application/x-ndjson': ['.ndjson'],
       'application/json': ['.json'],
     },
-    multiple: false,
+    multiple: true,
   });
 
   return (
@@ -39,10 +39,10 @@ export const FileUpload = ({ onFileUpload, isLoading }: FileUploadProps) => {
           <Upload className="w-6 h-6 text-muted-foreground mx-auto" />
           <div>
             <p className="text-sm font-medium text-foreground">
-              {isDragActive ? 'Drop your file here' : 'Drop your .ndjson file here, or click to browse'}
+              {isDragActive ? 'Drop your files here' : 'Drop one or more .ndjson files here, or click to browse'}
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              GitHub Copilot admin export (.ndjson or .json)
+              Upload multiple exports to build historical data beyond 28 days
             </p>
           </div>
           <Button
@@ -50,7 +50,7 @@ export const FileUpload = ({ onFileUpload, isLoading }: FileUploadProps) => {
             size="sm"
             disabled={isLoading}
           >
-            {isLoading ? 'Processing...' : 'Choose File'}
+            {isLoading ? 'Processing...' : 'Choose Files'}
           </Button>
         </div>
       </div>

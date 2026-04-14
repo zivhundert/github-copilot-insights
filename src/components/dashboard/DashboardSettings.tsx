@@ -9,10 +9,14 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { useSettings } from "@/contexts/SettingsContext";
+import { getStorageMeta, clearDataStorage, formatBytes } from "@/utils/dataStorage";
+import { Database, Trash2, Download } from "lucide-react";
 
 export interface DashboardSettingsSheetProps {
   open: boolean;
   onOpenChange: (next: boolean) => void;
+  onClearData?: () => void;
+  exportData?: () => string | null;
 }
 
 interface FormFields {
@@ -22,8 +26,9 @@ interface FormFields {
   copilotPricePerUser: number;
 }
 
-export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open, onOpenChange }) => {
+export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open, onOpenChange, onClearData, exportData }) => {
   const { settings, updateSetting, resetDefaults, toggleChartVisibility, showAllCharts, hideAllCharts } = useSettings();
+  const [storageMeta, setStorageMeta] = React.useState(getStorageMeta());
   const { register, handleSubmit, reset, control, formState: { errors, isDirty } } = useForm<FormFields>({
     defaultValues: { 
       linesPerMinute: settings.linesPerMinute, 
@@ -42,6 +47,7 @@ export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open,
         pricePerHour: settings.pricePerHour,
         copilotPricePerUser: settings.copilotPricePerUser
       });
+      setStorageMeta(getStorageMeta());
     }
   }, [open, settings.linesPerMinute, settings.theme, settings.pricePerHour, settings.copilotPricePerUser, reset]);
 
@@ -202,6 +208,75 @@ export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open,
               </div>
             </div>
           </form>
+
+          <Separator />
+
+          <div>
+            <h3 className="text-lg font-medium mb-4 flex items-center gap-2"><Database className="h-4 w-4" />Data Storage</h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              Your data is saved locally in the browser so you don't need to re-upload each session. Upload additional exports to accumulate historical data beyond 28 days.
+            </p>
+            {storageMeta ? (
+              <div className="rounded-lg border p-4 space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Rows saved</span>
+                  <span className="font-medium">{storageMeta.rowCount.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Date range</span>
+                  <span className="font-medium">{storageMeta.dateRange.from} → {storageMeta.dateRange.to}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Storage used</span>
+                  <span className="font-medium">{formatBytes(storageMeta.sizeBytes)}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Last updated</span>
+                  <span className="font-medium">{new Date(storageMeta.lastUpdated).toLocaleString()}</span>
+                </div>
+                {onClearData && (
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="sm"
+                    className="w-full mt-2 gap-1.5"
+                    onClick={() => {
+                      clearDataStorage();
+                      setStorageMeta(null);
+                      onClearData();
+                    }}
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                    Clear Saved Data
+                  </Button>
+                )}
+                {exportData && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="w-full mt-2 gap-1.5"
+                    onClick={() => {
+                      const ndjson = exportData();
+                      if (!ndjson) return;
+                      const blob = new Blob([ndjson], { type: 'application/x-ndjson' });
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement('a');
+                      a.href = url;
+                      a.download = `copilot-data-merged-${new Date().toISOString().slice(0, 10)}.ndjson`;
+                      a.click();
+                      URL.revokeObjectURL(url);
+                    }}
+                  >
+                    <Download className="h-3.5 w-3.5" />
+                    Export Merged Data (.ndjson)
+                  </Button>
+                )}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground italic">No data saved yet. Upload a file to get started.</p>
+            )}
+          </div>
 
           <Separator />
 
