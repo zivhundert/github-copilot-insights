@@ -1,6 +1,6 @@
 # AI Development Intelligence Dashboard
 
-A modern analytics dashboard for tracking GitHub Copilot adoption and ROI across your engineering team. Upload your Copilot usage data or connect directly to the GitHub Enterprise API to get actionable insights — with an AI-powered chat assistant to explore your data conversationally.
+A modern analytics dashboard for tracking GitHub Copilot adoption and ROI across your engineering team. Upload one or more Copilot usage exports to build historical data beyond 28 days, or connect directly to the GitHub Enterprise API — with an AI-powered chat assistant to explore your data conversationally.
 
 ![Dashboard Screenshot](public/dashboardimage.jpg)
 
@@ -31,7 +31,7 @@ A modern analytics dashboard for tracking GitHub Copilot adoption and ROI across
 - **Active Users** — total unique users in the dataset
 
 ### 📈 17 Interactive Charts
-- AI Code Generation Growth (daily/weekly/monthly)
+- AI Code Generation Growth — daily code added (bars) + cumulative total (line) on dual axes
 - Acceptance Rate Trend
 - Model Usage Distribution (GPT-4o, Claude, etc.)
 - Feature Usage Breakdown (chat, agent, completions, CLI, plan mode)
@@ -42,8 +42,8 @@ A modern analytics dashboard for tracking GitHub Copilot adoption and ROI across
 - Programming Language Treemap
 - Agent Adoption Trend
 - Language × Feature Matrix (heatmap)
-- Engagement Heatmap
-- Day-of-Week Activity Patterns
+- Engagement Heatmap — click any cell to see active users
+- Day-of-Week Activity — toggle between All Data and Last 7 Days; click a bar to see users (Last 7 Days mode)
 - IDE Version Tracking
 - Top Contributors Leaderboard with performance segments
 
@@ -76,9 +76,19 @@ The project includes a **Stitch MCP integration** for design-to-code workflows:
 ### 🔍 Advanced Analysis
 - **Adoption Insights Panel** — automated suggestions for underused features (< 30% adoption), with champion users highlighted per feature
 - **Non-Adopter Analysis** — identifies users with low engagement, sporadic activity, or missing features
-- **User Profile Cards** — click any user to see their preferred model, IDE, top languages, acceptance rate, features used, and active days
+- **User Profile Cards** — click any user to see their preferred model, IDE (with latest version), top languages, acceptance rate, features used, and active days
 - **User Comparison** — compare 2–5 users side by side across all metrics (key stats, modes, IDEs, models, languages, features)
 - **Performance Segments** — Champion, Producer, Explorer, Starter classifications
+
+### 📂 Multi-File Upload & Data Persistence
+- **Upload multiple exports** — drag & drop several `.ndjson` files at once to combine data from different time periods
+- **Smart merge** — automatically deduplicates rows on `(user_login, day)`; newer rows win on overlap
+- **localStorage auto-save** — your data is saved locally and restored on next visit; no need to re-upload each session
+- **Import More Data** — add additional exports from the dashboard header without leaving the dashboard
+- **Export merged data** — download your accumulated dataset as a single `.ndjson` file for backup or sharing
+- **Data Storage management** — view row count, date range, storage size in Settings; clear saved data when needed
+
+> **Tip:** GitHub Copilot exports only the last 28 days. Upload exports from different months to build a complete historical view.
 
 ### 🎛️ Filters & Settings
 - **Date range picker** — filter data to a specific time window
@@ -133,7 +143,7 @@ This starts the Vite dev server at `http://localhost:8080`.
 
 ### Option A: Upload Data Manually
 
-No configuration needed — just start the app and drag & drop your GitHub Copilot admin export (`.ndjson` or `.json` file, up to 500 MB) into the upload area. All data is processed locally in your browser.
+No configuration needed — just start the app and drag & drop one or more GitHub Copilot admin exports (`.ndjson` or `.json` files) into the upload area. All data is processed locally in your browser. Upload multiple exports from different time periods to build data beyond the 28-day API limit. Your data is automatically saved to `localStorage` and restored on your next visit.
 
 ### Option B: Auto-Fetch from GitHub Enterprise API
 
@@ -269,7 +279,7 @@ Use the **Time Period** filter to switch between:
 │   │   ├── useChat.ts          # AI chat state management
 │   │   ├── useDashboardData.ts # Data loading & transformation
 │   │   ├── useDataFiltering.ts # Filter logic (date, users, aggregation)
-│   │   ├── useFileUpload.ts    # File upload + API fetch logic
+│   │   ├── useFileUpload.ts    # Multi-file upload, merge & API fetch logic
 │   │   ├── use-mobile.tsx      # Responsive breakpoint hook
 │   │   └── use-toast.ts        # Toast notification hook
 │   ├── contexts/
@@ -285,7 +295,8 @@ Use the **Time Period** filter to switch between:
 │   │   ├── dataAggregation.ts  # Weekly/monthly aggregation logic
 │   │   ├── exportUtils.ts      # Dashboard PNG export
 │   │   ├── metricsCalculator.ts # KPI calculation engine
-│   │   └── ndjsonParser.ts     # NDJSON file parser
+│   │   ├── ndjsonParser.ts     # NDJSON file parser with multi-file merge
+│   │   └── dataStorage.ts      # localStorage persistence layer
 │   ├── config/
 │   │   └── chartConfigs.ts     # Highcharts theme & base configurations
 │   └── content/
