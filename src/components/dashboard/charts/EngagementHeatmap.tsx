@@ -103,7 +103,7 @@ export const EngagementHeatmap = ({ data }: EngagementHeatmapProps) => {
     chart: {
       ...getBaseChartConfig().chart,
       type: 'heatmap',
-      marginBottom: 100,
+      marginBottom: 140,
     },
     xAxis: {
       categories: weekLabels,
@@ -157,6 +157,8 @@ export const EngagementHeatmap = ({ data }: EngagementHeatmapProps) => {
       align: 'center',
       layout: 'horizontal',
       verticalAlign: 'bottom',
+      y: 15,
+      margin: 25,
     },
     series: [
       {
