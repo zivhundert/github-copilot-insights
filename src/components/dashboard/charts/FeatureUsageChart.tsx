@@ -78,6 +78,7 @@ export const FeatureUsageChart = ({ data, aggregationPeriod }: FeatureUsageChart
 
   const options: Partial<HighchartsOptions> = {
     ...getColumnChartConfig(),
+    chart: { ...getColumnChartConfig().chart, marginBottom: 140 },
     xAxis: { ...getColumnChartConfig().xAxis, type: 'datetime' },
     yAxis: {
       ...getColumnChartConfig().yAxis,
@@ -88,7 +89,7 @@ export const FeatureUsageChart = ({ data, aggregationPeriod }: FeatureUsageChart
       align: 'center',
       verticalAlign: 'bottom',
       layout: 'horizontal',
-      y: 0,
+      y: 10,
       itemStyle: {
         fontSize: '11px',
         fontWeight: 'normal',
@@ -96,7 +97,7 @@ export const FeatureUsageChart = ({ data, aggregationPeriod }: FeatureUsageChart
         textOverflow: undefined,
       },
       itemDistance: 12,
-      margin: 20,
+      margin: 25,
       padding: 10,
       floating: false,
     },
