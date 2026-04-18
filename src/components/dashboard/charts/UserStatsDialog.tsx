@@ -1,9 +1,11 @@
 import { useMemo } from 'react';
 import { CopilotDataRow } from '@/pages/Index';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { User, Cpu, Monitor, Code, TrendingUp, Bot, MessageSquare, Terminal, Calendar, Zap, FileCode, ArrowUpDown } from 'lucide-react';
+import { User, Cpu, Monitor, Code, TrendingUp, Bot, MessageSquare, Terminal, Calendar, Zap, FileCode, ArrowUpDown, Filter } from 'lucide-react';
+import { useFilterByUser } from '@/contexts/FilterByUserContext';
 import React from 'react';
 
 interface UserStatsDialogProps {
@@ -14,6 +16,7 @@ interface UserStatsDialogProps {
 }
 
 export const UserStatsDialog = ({ userName, allData, open, onOpenChange }: UserStatsDialogProps) => {
+  const filterByUserCtx = useFilterByUser();
   const profile = useMemo(() => {
     if (!userName) return null;
     const userData = allData.filter(r => r.user_login === userName);
@@ -88,13 +91,27 @@ export const UserStatsDialog = ({ userName, allData, open, onOpenChange }: UserS
             <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
               <User className="h-4 w-4 text-primary" />
             </div>
-            <div>
+            <div className="flex-1">
               <span className="text-lg">{userName}</span>
               <div className="flex items-center gap-1.5 mt-0.5">
                 <Badge variant="outline" className="text-[10px] font-normal gap-1"><Calendar className="h-2.5 w-2.5" />{profile.activeDays} active day{profile.activeDays !== 1 ? 's' : ''}</Badge>
                 <Badge variant="outline" className="text-[10px] font-normal">{profile.firstDay} → {profile.lastDay}</Badge>
               </div>
             </div>
+            {filterByUserCtx && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="ml-auto gap-1.5"
+                onClick={() => {
+                  filterByUserCtx.filterByUser(userName!);
+                  onOpenChange(false);
+                }}
+              >
+                <Filter className="h-3.5 w-3.5" />
+                Filter Dashboard
+              </Button>
+            )}
           </DialogTitle>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">

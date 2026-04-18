@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { DateRangePicker } from './filters/DateRangePicker';
 import { UserSelector } from './filters/UserSelector';
 import { AggregationPeriodSelector } from './filters/AggregationPeriodSelector';
@@ -14,12 +14,19 @@ interface DashboardFiltersProps {
     selectedUsers: string[];
     aggregationPeriod: AggregationPeriod;
   }) => void;
+  externalSelectedUsers?: string[];
 }
 
-export const DashboardFilters = ({ data, onFiltersChange }: DashboardFiltersProps) => {
+export const DashboardFilters = ({ data, onFiltersChange, externalSelectedUsers }: DashboardFiltersProps) => {
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [aggregationPeriod, setAggregationPeriod] = useState<AggregationPeriod>('day');
+
+  useEffect(() => {
+    if (externalSelectedUsers !== undefined) {
+      setSelectedUsers(externalSelectedUsers);
+    }
+  }, [externalSelectedUsers]);
 
   const uniqueUsers = Array.from(new Set(data.map(row => row.user_login))).sort();
 
