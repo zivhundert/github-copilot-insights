@@ -10,8 +10,9 @@ import { PrivacyFooter } from '@/components/common/PrivacyFooter';
 import { LandingPage } from '@/components/landing/LandingPage';
 import { useDashboardData } from '@/hooks/useDashboardData';
 import { useSettings } from '@/contexts/SettingsContext';
+import { FilterByUserProvider } from '@/contexts/FilterByUserContext';
 import { analytics } from '@/services/analytics';
-import { useState } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 
 export interface CopilotDataRow {
   day: string;
@@ -120,6 +121,20 @@ const Index = () => {
     });
   };
 
+  const [externalSelectedUsers, setExternalSelectedUsers] = useState<string[] | undefined>();
+
+  const handleFilterByUser = useCallback((userName: string) => {
+    const newFilters = {
+      dateRange: filters.dateRange || {},
+      selectedUsers: [userName],
+      aggregationPeriod: filters.aggregationPeriod || 'day' as const,
+    };
+    setExternalSelectedUsers([userName]);
+    updateFiltersWithAnalytics(newFilters);
+  }, [filters]);
+
+  const filterByUserContextValue = useMemo(() => ({ filterByUser: handleFilterByUser }), [handleFilterByUser]);
+
   const isSingleUserSelected = filters.selectedUsers && filters.selectedUsers.length === 1;
   const singleUserData = isSingleUserSelected
     ? filteredData.filter(r => r.user_login === filters.selectedUsers![0])
@@ -131,6 +146,7 @@ const Index = () => {
   }
 
   return (
+    <FilterByUserProvider value={filterByUserContextValue}>
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4" data-export="dashboard-main">
         <DashboardHeader
@@ -169,7 +185,11 @@ const Index = () => {
 
             <DashboardFilters 
               data={originalData} 
-              onFiltersChange={updateFiltersWithAnalytics} 
+              onFiltersChange={(newFilters) => {
+                setExternalSelectedUsers(undefined);
+                updateFiltersWithAnalytics(newFilters);
+              }}
+              externalSelectedUsers={externalSelectedUsers}
             />
 
             {isSingleUserSelected && settings.chartVisibility.userProfileCard && (
@@ -198,6 +218,7 @@ const Index = () => {
       />
       <PrivacyFooter />
     </div>
+    </FilterByUserProvider>
   );
 };
 
