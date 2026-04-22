@@ -15,13 +15,15 @@ import { UserStatsDialog } from './UserStatsDialog';
 
 interface DayOfWeekChartProps {
   data: CopilotDataRow[];
+  originalData: CopilotDataRow[];
 }
 
-export const DayOfWeekChart = ({ data }: DayOfWeekChartProps) => {
+export const DayOfWeekChart = ({ data, originalData }: DayOfWeekChartProps) => {
   const [isMobile, setIsMobile] = useState(false);
   const [range, setRange] = useState<'all' | 'last7'>('all');
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
   const [clickedUser, setClickedUser] = useState<string | null>(null);
+  const [dialogTab, setDialogTab] = useState<'active' | 'inactive'>('active');
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 640);
@@ -111,6 +113,29 @@ export const DayOfWeekChart = ({ data }: DayOfWeekChartProps) => {
       .sort((a, b) => b.interactions - a.interactions);
   }, [selectedDay, dayUsers]);
 
+  // All known users from the full dataset and their last active date
+  const allUsersLastActive = useMemo(() => {
+    const map = new Map<string, string>(); // user_login -> latest day
+    originalData.forEach(row => {
+      const prev = map.get(row.user_login);
+      if (!prev || row.day > prev) {
+        map.set(row.user_login, row.day);
+      }
+    });
+    return map;
+  }, [originalData]);
+
+  // Users inactive on the selected day
+  const inactiveUsers = useMemo(() => {
+    if (!selectedDay) return [];
+    const activeOnDay = dayUsers.get(selectedDay);
+    const activeSet = activeOnDay ? new Set(activeOnDay.keys()) : new Set<string>();
+    return [...allUsersLastActive.entries()]
+      .filter(([user]) => !activeSet.has(user))
+      .map(([user, lastActive]) => ({ user, lastActive }))
+      .sort((a, b) => b.lastActive.localeCompare(a.lastActive));
+  }, [selectedDay, dayUsers, allUsersLastActive]);
+
   const chartData = useMemo(() => {
     const dayOfWeekActivity = new Map<string, { interactions: number; linesAdded: number; users: Set<string> }>();
     dayNames.forEach((day) => dayOfWeekActivity.set(day, { interactions: 0, linesAdded: 0, users: new Set<string>() }));
@@ -191,40 +216,70 @@ export const DayOfWeekChart = ({ data }: DayOfWeekChartProps) => {
     >
       <BaseHighchart options={options} />
 
-      <Dialog open={!!selectedDay && selectedUsers.length > 0} onOpenChange={(open) => { if (!open) setSelectedDay(null); }}>
+      <Dialog open={!!selectedDay && (selectedUsers.length > 0 || inactiveUsers.length > 0)} onOpenChange={(open) => { if (!open) { setSelectedDay(null); setDialogTab('active'); } }}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
+            <DialogTitle className="flex items-center gap-2 flex-wrap">
               <MousePointerClick className="h-4 w-4 text-muted-foreground" />
               <span>{selectedDayLabel}</span>
               <Badge variant="secondary" className="text-xs">
-                {selectedUsers.length} user{selectedUsers.length !== 1 ? 's' : ''}
+                {dialogTab === 'active' ? selectedUsers.length : inactiveUsers.length} {dialogTab === 'active' ? 'active' : 'inactive'} user{(dialogTab === 'active' ? selectedUsers.length : inactiveUsers.length) !== 1 ? 's' : ''}
               </Badge>
             </DialogTitle>
           </DialogHeader>
+          <ToggleGroup type="single" value={dialogTab} onValueChange={(v) => v && setDialogTab(v as 'active' | 'inactive')} size="sm" className="gap-0 border rounded-md w-fit">
+            <ToggleGroupItem value="active" className="h-7 px-3 text-xs rounded-r-none data-[state=on]:bg-primary data-[state=on]:text-primary-foreground">Active</ToggleGroupItem>
+            <ToggleGroupItem value="inactive" className="h-7 px-3 text-xs rounded-l-none data-[state=on]:bg-primary data-[state=on]:text-primary-foreground">Inactive</ToggleGroupItem>
+          </ToggleGroup>
           <ScrollArea className="max-h-[60vh]">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="text-xs">User</TableHead>
-                  <TableHead className="text-xs text-right">Interactions</TableHead>
-                  <TableHead className="text-xs text-right">Generations</TableHead>
-                  <TableHead className="text-xs text-right">Acceptances</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {selectedUsers.map(({ user, interactions, generations, acceptances }) => (
-                  <TableRow key={user} className="cursor-pointer hover:bg-muted/50" onClick={() => setClickedUser(user)}>
-                    <TableCell className="text-sm font-medium py-1.5">{user}</TableCell>
-                    <TableCell className="text-sm text-right py-1.5">{interactions.toLocaleString()}</TableCell>
-                    <TableCell className="text-sm text-right py-1.5">{generations.toLocaleString()}</TableCell>
-                    <TableCell className="text-sm text-right py-1.5">{acceptances.toLocaleString()}</TableCell>
+            {dialogTab === 'active' ? (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="text-xs">User</TableHead>
+                    <TableHead className="text-xs text-right">Interactions</TableHead>
+                    <TableHead className="text-xs text-right">Generations</TableHead>
+                    <TableHead className="text-xs text-right">Acceptances</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {selectedUsers.map(({ user, interactions, generations, acceptances }) => (
+                    <TableRow key={user} className="cursor-pointer hover:bg-muted/50" onClick={() => setClickedUser(user)}>
+                      <TableCell className="text-sm font-medium py-1.5">{user}</TableCell>
+                      <TableCell className="text-sm text-right py-1.5">{interactions.toLocaleString()}</TableCell>
+                      <TableCell className="text-sm text-right py-1.5">{generations.toLocaleString()}</TableCell>
+                      <TableCell className="text-sm text-right py-1.5">{acceptances.toLocaleString()}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="text-xs">User</TableHead>
+                    <TableHead className="text-xs text-right">Last Active</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {inactiveUsers.map(({ user, lastActive }) => (
+                    <TableRow key={user} className="cursor-pointer hover:bg-muted/50" onClick={() => setClickedUser(user)}>
+                      <TableCell className="text-sm font-medium py-1.5">{user}</TableCell>
+                      <TableCell className="text-sm text-right py-1.5 text-muted-foreground">
+                        {new Date(lastActive).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {inactiveUsers.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={2} className="text-sm text-center text-muted-foreground py-4">All users were active on this day</TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            )}
           </ScrollArea>
-          <UserStatsDialog userName={clickedUser} allData={data} open={!!clickedUser} onOpenChange={(open) => { if (!open) setClickedUser(null); }} />
+          <UserStatsDialog userName={clickedUser} allData={originalData} open={!!clickedUser} onOpenChange={(open) => { if (!open) setClickedUser(null); }} />
         </DialogContent>
       </Dialog>
     </ChartContainer>

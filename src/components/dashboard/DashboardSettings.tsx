@@ -10,13 +10,17 @@ import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { useSettings } from "@/contexts/SettingsContext";
 import { getStorageMeta, clearDataStorage, formatBytes } from "@/utils/dataStorage";
-import { Database, Trash2, Download } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@/components/ui/badge";
+import { Database, Trash2, Download, Users, Search, X } from "lucide-react";
 
 export interface DashboardSettingsSheetProps {
   open: boolean;
   onOpenChange: (next: boolean) => void;
   onClearData?: () => void;
   exportData?: () => string | null;
+  availableUsers?: string[];
 }
 
 interface FormFields {
@@ -26,8 +30,10 @@ interface FormFields {
   copilotPricePerUser: number;
 }
 
-export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open, onOpenChange, onClearData, exportData }) => {
+export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open, onOpenChange, onClearData, exportData, availableUsers = [] }) => {
   const { settings, updateSetting, resetDefaults, toggleChartVisibility, showAllCharts, hideAllCharts } = useSettings();
+  const [teamMembers, setTeamMembers] = React.useState<string[]>(settings.myTeamMembers);
+  const [teamSearch, setTeamSearch] = React.useState('');
   const [storageMeta, setStorageMeta] = React.useState(getStorageMeta());
   const { register, handleSubmit, reset, control, formState: { errors, isDirty } } = useForm<FormFields>({
     defaultValues: { 
@@ -48,8 +54,31 @@ export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open,
         copilotPricePerUser: settings.copilotPricePerUser
       });
       setStorageMeta(getStorageMeta());
+      setTeamMembers(settings.myTeamMembers);
+      setTeamSearch('');
     }
-  }, [open, settings.linesPerMinute, settings.theme, settings.pricePerHour, settings.copilotPricePerUser, reset]);
+  }, [open, settings.linesPerMinute, settings.theme, settings.pricePerHour, settings.copilotPricePerUser, reset, settings.myTeamMembers]);
+
+  const toggleTeamMember = (user: string) => {
+    setTeamMembers(prev =>
+      prev.includes(user) ? prev.filter(u => u !== user) : [...prev, user]
+    );
+  };
+
+  const saveTeam = () => {
+    updateSetting('myTeamMembers', teamMembers);
+  };
+
+  const clearTeam = () => {
+    setTeamMembers([]);
+    updateSetting('myTeamMembers', []);
+  };
+
+  const filteredAvailableUsers = availableUsers.filter(u =>
+    u.toLowerCase().includes(teamSearch.toLowerCase())
+  );
+
+  const teamIsDirty = JSON.stringify(teamMembers.slice().sort()) !== JSON.stringify(settings.myTeamMembers.slice().sort());
 
   const onSubmit = (values: FormFields) => {
     updateSetting("linesPerMinute", values.linesPerMinute);
@@ -208,6 +237,79 @@ export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open,
               </div>
             </div>
           </form>
+
+          <Separator />
+
+          <div>
+            <h3 className="text-lg font-medium mb-3 flex items-center gap-2"><Users className="h-4 w-4" />My Team</h3>
+            <p className="text-sm text-muted-foreground mb-3">
+              Select your team members to quickly filter the dashboard by your team.
+            </p>
+            {availableUsers.length > 0 ? (
+              <div className="rounded-lg border p-4 space-y-3">
+                <div className="flex items-center gap-2">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
+                    <Input
+                      placeholder="Search users..."
+                      value={teamSearch}
+                      onChange={(e) => setTeamSearch(e.target.value)}
+                      className="pl-8 h-9 text-sm"
+                    />
+                  </div>
+                  <Badge variant="secondary" className="text-xs whitespace-nowrap">
+                    {teamMembers.length} selected
+                  </Badge>
+                </div>
+                <ScrollArea className="max-h-48">
+                  <div className="space-y-1">
+                    {filteredAvailableUsers.map(user => (
+                      <div key={user} className="flex items-center space-x-2 p-1.5 hover:bg-muted rounded">
+                        <Checkbox
+                          id={`team-${user}`}
+                          checked={teamMembers.includes(user)}
+                          onCheckedChange={() => toggleTeamMember(user)}
+                        />
+                        <label htmlFor={`team-${user}`} className="text-sm cursor-pointer truncate flex-1">
+                          {user}
+                        </label>
+                      </div>
+                    ))}
+                    {filteredAvailableUsers.length === 0 && (
+                      <p className="text-sm text-muted-foreground text-center py-2">No users match "{teamSearch}"</p>
+                    )}
+                  </div>
+                </ScrollArea>
+                {teamMembers.length > 0 && (
+                  <div className="border-t pt-2">
+                    <div className="flex flex-wrap gap-1">
+                      {teamMembers.map(user => (
+                        <Badge
+                          key={user}
+                          variant="secondary"
+                          className="text-xs cursor-pointer gap-1"
+                          onClick={() => toggleTeamMember(user)}
+                        >
+                          {user}
+                          <X className="h-3 w-3" />
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                <div className="flex gap-2 justify-between">
+                  <Button type="button" variant="outline" size="sm" onClick={clearTeam}>
+                    Clear Team
+                  </Button>
+                  <Button type="button" variant="default" size="sm" disabled={!teamIsDirty} onClick={saveTeam}>
+                    Save Team
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground italic">Upload data first to configure your team.</p>
+            )}
+          </div>
 
           <Separator />
 

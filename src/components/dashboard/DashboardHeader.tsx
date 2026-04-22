@@ -1,7 +1,7 @@
 import { RefreshCcw, Settings, Download, Linkedin, BookOpen, BarChart3, ArrowLeftRight, MessageSquare, FolderUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { DashboardSettings } from "./DashboardSettings";
 import { useToast } from '@/hooks/use-toast';
 import { exportToImage } from '@/utils/exportUtils';
@@ -48,6 +48,11 @@ export const DashboardHeader = ({
   const { toast } = useToast();
   const { openGuide } = useDashboardGuide();
   const importInputRef = useRef<HTMLInputElement>(null);
+
+  const availableUsers = useMemo(() =>
+    Array.from(new Set(chatData.map(r => r.user_login))).sort(),
+    [chatData]
+  );
 
   useEffect(() => {
     if (!showChatButton) return;
@@ -213,7 +218,7 @@ export const DashboardHeader = ({
         )}
       </div>
 
-      <DashboardSettings open={settingsOpen} onOpenChange={setSettingsOpen} onClearData={onClearData} exportData={exportData} />
+      <DashboardSettings open={settingsOpen} onOpenChange={setSettingsOpen} onClearData={onClearData} exportData={exportData} availableUsers={availableUsers} />
       <ChatPanel open={chatOpen} onOpenChange={setChatOpen} data={chatData} />
     </header>
   );

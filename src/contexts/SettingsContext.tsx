@@ -27,6 +27,7 @@ type Settings = {
   pricePerHour: number;
   copilotPricePerUser: number;
   chartVisibility: ChartVisibility;
+  myTeamMembers: string[];
 };
 
 type SettingsContextType = {
@@ -65,6 +66,7 @@ const DEFAULT_SETTINGS: Settings = {
   pricePerHour: 55,
   copilotPricePerUser: 39,
   chartVisibility: DEFAULT_CHART_VISIBILITY,
+  myTeamMembers: [],
 };
 
 const LOCALSTORAGE_KEY = "dashboard_settings_v2";

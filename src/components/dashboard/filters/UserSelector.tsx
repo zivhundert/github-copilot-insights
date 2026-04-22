@@ -10,9 +10,10 @@ interface UserSelectorProps {
   users: string[];
   selectedUsers: string[];
   onChange: (selectedUsers: string[]) => void;
+  myTeamMembers?: string[];
 }
 
-export const UserSelector = ({ users, selectedUsers, onChange }: UserSelectorProps) => {
+export const UserSelector = ({ users, selectedUsers, onChange, myTeamMembers = [] }: UserSelectorProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleUserToggle = (user: string) => {
@@ -37,6 +38,9 @@ export const UserSelector = ({ users, selectedUsers, onChange }: UserSelectorPro
 
   const getUserDisplayText = () => {
     if (selectedUsers.length === 0) return 'All Users';
+    if (myTeamMembers.length > 0 &&
+        selectedUsers.length === myTeamMembers.length &&
+        myTeamMembers.every(m => selectedUsers.includes(m))) return 'My Team';
     if (selectedUsers.length === 1) return selectedUsers[0];
     if (selectedUsers.length <= 3) return selectedUsers.join(', ');
     return `${selectedUsers.slice(0, 2).join(', ')}, +${selectedUsers.length - 2} more`;
@@ -79,6 +83,17 @@ export const UserSelector = ({ users, selectedUsers, onChange }: UserSelectorPro
                 Clear All
               </Button>
             </div>
+            {myTeamMembers.length > 0 && (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => onChange([...myTeamMembers.filter(m => users.includes(m))])}
+                className="w-full gap-1.5"
+              >
+                <Users className="w-4 h-4" />
+                My Team ({myTeamMembers.filter(m => users.includes(m)).length})
+              </Button>
+            )}
 
             <div className="space-y-2 max-h-60 overflow-y-auto">
               <div className="flex items-center space-x-2 p-2 hover:bg-muted rounded">

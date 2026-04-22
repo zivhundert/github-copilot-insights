@@ -3,6 +3,7 @@ import { DateRangePicker } from './filters/DateRangePicker';
 import { UserSelector } from './filters/UserSelector';
 import { AggregationPeriodSelector } from './filters/AggregationPeriodSelector';
 import { FilterActions } from './filters/FilterActions';
+import { useSettings } from '@/contexts/SettingsContext';
 import type { CopilotDataRow } from '@/pages/Index';
 import type { DateRange } from 'react-day-picker';
 import type { AggregationPeriod } from '@/utils/dataAggregation';
@@ -21,6 +22,7 @@ export const DashboardFilters = ({ data, onFiltersChange, externalSelectedUsers 
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [aggregationPeriod, setAggregationPeriod] = useState<AggregationPeriod>('day');
+  const { settings } = useSettings();
 
   useEffect(() => {
     if (externalSelectedUsers !== undefined) {
@@ -69,6 +71,7 @@ export const DashboardFilters = ({ data, onFiltersChange, externalSelectedUsers 
         users={uniqueUsers}
         selectedUsers={selectedUsers}
         onChange={setSelectedUsers}
+        myTeamMembers={settings.myTeamMembers}
       />
 
       <FilterActions

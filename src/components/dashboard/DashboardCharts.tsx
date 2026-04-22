@@ -142,7 +142,7 @@ export const DashboardCharts = React.memo(({
       key: 'temporal-and-version',
       charts: [
         {
-          component: <DayOfWeekChart data={data} />,
+          component: <DayOfWeekChart data={data} originalData={originalData} />,
           visible: chartVisibility.dayOfWeekChart && aggregationPeriod === 'day',
           colSpan: 'half'
         },
