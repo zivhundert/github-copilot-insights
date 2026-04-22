@@ -14,6 +14,9 @@ interface ModelUsageChartProps {
   data: CopilotDataRow[];
 }
 
+const BASE_CHART_CONFIG = getBaseChartConfig();
+const PIE_CHART_CONFIG = getPieChartConfig();
+
 interface ModelUserStats {
   interactions: number;
   generations: number;
@@ -99,7 +102,7 @@ export const ModelUsageChart = ({ data }: ModelUsageChartProps) => {
   const slicePoint = useCallback((modelName: string | null) => {
     const chart = chartRef.current?.chart;
     if (!chart?.series?.[0]) return;
-    chart.series[0].points.forEach((pt: any) => {
+    chart.series[0].points.forEach((pt: Highcharts.Point) => {
       const shouldSlice = pt.name === modelName;
       if (pt.sliced !== shouldSlice) pt.slice(shouldSlice, true, { duration: 400 });
     });
@@ -135,8 +138,8 @@ export const ModelUsageChart = ({ data }: ModelUsageChartProps) => {
     ? (selectedSlice.y / totalInteractions) * 100
     : 0;
 
-  const baseConfig = getBaseChartConfig();
-  const pieConfig = getPieChartConfig();
+  const baseConfig = BASE_CHART_CONFIG;
+  const pieConfig = PIE_CHART_CONFIG;
 
   const options: Partial<HighchartsOptions> = {
     ...pieConfig,
@@ -163,17 +166,17 @@ export const ModelUsageChart = ({ data }: ModelUsageChartProps) => {
   };
 
   const mergedOptions = useMemo(() => ({
-    ...baseConfig,
+    ...BASE_CHART_CONFIG,
     ...options,
-    chart: { ...baseConfig.chart, ...options.chart },
+    chart: { ...BASE_CHART_CONFIG.chart, ...options.chart },
     tooltip: {
-      ...baseConfig.tooltip,
+      ...BASE_CHART_CONFIG.tooltip,
       outside: true,
       useHTML: true,
       ...options.tooltip,
-      style: { ...baseConfig.tooltip?.style, ...(options.tooltip?.style || {}), zIndex: '9999' },
+      style: { ...BASE_CHART_CONFIG.tooltip?.style, ...(options.tooltip?.style || {}), zIndex: '9999' },
     },
-    legend: { ...baseConfig.legend, ...options.legend },
+    legend: { ...BASE_CHART_CONFIG.legend, ...options.legend },
   }), [options]);
 
   return (

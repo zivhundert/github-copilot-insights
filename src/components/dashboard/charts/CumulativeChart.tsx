@@ -1,6 +1,6 @@
 
 import { useMemo } from 'react';
-import { Options as HighchartsOptions } from 'highcharts';
+import Highcharts, { Options as HighchartsOptions } from 'highcharts';
 import { ChartContainer } from '@/components/common/ChartContainer';
 import { BaseHighchart } from '@/components/common/BaseHighchart';
 import { getLineChartConfig, CHART_COLORS } from '@/config/chartConfigs';
@@ -75,7 +75,7 @@ export const CumulativeChart = ({ baseFilteredData, aggregationPeriod }: Cumulat
     tooltip: {
       shared: true,
       formatter: function () {
-        const points = (this as any).points as Array<{ series: { name: string }; y: number; x: number }>;
+        const points = (this as Highcharts.TooltipFormatterContextObject).points as Array<{ series: { name: string }; y: number; x: number }>;
         if (!points || points.length === 0) return false;
         const dateStr = format(new Date(points[0].x), 'MMM dd, yyyy');
         let html = `<b>${dateStr}</b>`;

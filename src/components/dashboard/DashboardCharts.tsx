@@ -163,7 +163,7 @@ export const DashboardCharts = React.memo(({
         }
       ]
     }
-  ], [data, originalData, baseFilteredData, aggregationPeriod, selectedUsers, isFiltered, chartVisibility]);
+  ], [data, originalData, baseFilteredData, aggregationPeriod, selectedUsers, chartVisibility]);
 
   const renderChartRow = (rowConfig: ChartRowConfig) => {
     const visibleCharts = rowConfig.charts.filter(chart => chart.visible);

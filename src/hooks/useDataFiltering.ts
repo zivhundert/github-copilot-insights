@@ -3,7 +3,7 @@ import { useState, useMemo } from 'react';
 import { CopilotDataRow } from '@/pages/Index';
 import { aggregateDataByPeriod, type AggregationPeriod } from '@/utils/dataAggregation';
 
-interface FilterOptions {
+export interface FilterOptions {
   dateRange: { from?: Date; to?: Date };
   selectedUsers: string[];
   aggregationPeriod: AggregationPeriod;

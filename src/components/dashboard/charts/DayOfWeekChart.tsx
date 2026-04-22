@@ -18,6 +18,8 @@ interface DayOfWeekChartProps {
   originalData: CopilotDataRow[];
 }
 
+const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
 export const DayOfWeekChart = ({ data, originalData }: DayOfWeekChartProps) => {
   const [isMobile, setIsMobile] = useState(false);
   const [range, setRange] = useState<'all' | 'last7'>('all');
@@ -31,8 +33,6 @@ export const DayOfWeekChart = ({ data, originalData }: DayOfWeekChartProps) => {
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
-
-  const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
   const last7DaysSet = useMemo(() => {
     const today = new Date();
@@ -55,7 +55,7 @@ export const DayOfWeekChart = ({ data, originalData }: DayOfWeekChartProps) => {
     if (range !== 'last7') return map;
     last7DaysSet.forEach(day => {
       const date = new Date(day);
-      const dayName = dayNames[date.getDay()];
+      const dayName = DAY_NAMES[date.getDay()];
       const dd = String(date.getDate()).padStart(2, '0');
       const mm = String(date.getMonth() + 1).padStart(2, '0');
       map.set(dayName, `${dd}/${mm}`);
@@ -69,7 +69,7 @@ export const DayOfWeekChart = ({ data, originalData }: DayOfWeekChartProps) => {
     if (range !== 'last7') return map;
     last7DaysSet.forEach(day => {
       const date = new Date(day);
-      const dayName = dayNames[date.getDay()];
+      const dayName = DAY_NAMES[date.getDay()];
       map.set(dayName, day);
     });
     return map;
@@ -138,11 +138,11 @@ export const DayOfWeekChart = ({ data, originalData }: DayOfWeekChartProps) => {
 
   const chartData = useMemo(() => {
     const dayOfWeekActivity = new Map<string, { interactions: number; linesAdded: number; users: Set<string> }>();
-    dayNames.forEach((day) => dayOfWeekActivity.set(day, { interactions: 0, linesAdded: 0, users: new Set<string>() }));
+    DAY_NAMES.forEach((day) => dayOfWeekActivity.set(day, { interactions: 0, linesAdded: 0, users: new Set<string>() }));
 
     filteredData.forEach((row) => {
       const date = new Date(row.day);
-      const dayName = dayNames[date.getDay()];
+      const dayName = DAY_NAMES[date.getDay()];
       const stats = dayOfWeekActivity.get(dayName)!;
       stats.interactions += row.user_initiated_interaction_count || 0;
       stats.linesAdded += row.loc_added_sum || 0;
@@ -151,7 +151,7 @@ export const DayOfWeekChart = ({ data, originalData }: DayOfWeekChartProps) => {
       }
     });
 
-    return dayNames.map((day) => {
+    return DAY_NAMES.map((day) => {
       const stats = dayOfWeekActivity.get(day)!;
       return {
         name: day,
@@ -169,7 +169,7 @@ export const DayOfWeekChart = ({ data, originalData }: DayOfWeekChartProps) => {
     chart: { ...getColumnChartConfig().chart, marginBottom: isMobile ? 120 : 100 },
     xAxis: {
       ...getColumnChartConfig().xAxis,
-      categories: dayNames,
+      categories: DAY_NAMES,
       labels: {
         rotation: isMobile ? -45 : 0,
         style: { fontSize: isMobile ? '10px' : '12px', color: 'hsl(var(--foreground))' },

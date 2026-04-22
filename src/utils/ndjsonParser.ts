@@ -7,7 +7,7 @@ export interface ParseResult {
 }
 
 /** Map a raw JSON object to a typed CopilotDataRow */
-const mapRow = (row: any): CopilotDataRow => ({
+const mapRow = (row: Partial<CopilotDataRow>): CopilotDataRow => ({
   day: row.day || '',
   user_login: row.user_login || '',
   user_id: row.user_id || 0,

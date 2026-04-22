@@ -1,9 +1,10 @@
 
 import Highcharts from 'highcharts';
+import type { TooltipFormatterContextObject, AxisLabelsFormatterContextObject } from 'highcharts';
 
 // Common tooltip formatters
 export const createDateTooltipFormatter = (seriesName: string, valueFormatter?: (value: number) => string) => {
-  return function(this: any) {
+  return function(this: TooltipFormatterContextObject) {
     const formattedValue = valueFormatter ? valueFormatter(this.y as number) : (this.y as number).toLocaleString();
     return `Date: ${Highcharts.dateFormat('%Y-%m-%d', this.x as number)}<br/>
             ${seriesName}: <b>${formattedValue}</b>`;
@@ -11,7 +12,7 @@ export const createDateTooltipFormatter = (seriesName: string, valueFormatter?: 
 };
 
 export const createCategoryTooltipFormatter = (seriesName: string, valueFormatter?: (value: number) => string) => {
-  return function(this: any) {
+  return function(this: TooltipFormatterContextObject) {
     const formattedValue = valueFormatter ? valueFormatter(this.y as number) : (this.y as number).toLocaleString();
     return `${this.x}<br/>
             ${seriesName}: <b>${formattedValue}</b>`;
@@ -19,7 +20,7 @@ export const createCategoryTooltipFormatter = (seriesName: string, valueFormatte
 };
 
 export const createPercentageFormatter = () => {
-  return function(this: any) {
+  return function(this: AxisLabelsFormatterContextObject) {
     return this.value + '%';
   };
 };

@@ -35,7 +35,7 @@ export const fetchCopilotMetrics = async (): Promise<{
     }
 
     return parseNDJSONString(text);
-  } catch (err: any) {
-    return { data: [], error: `Failed to load Copilot data: ${err.message ?? err}` };
+  } catch (err: unknown) {
+    return { data: [], error: `Failed to load Copilot data: ${err instanceof Error ? err.message : String(err)}` };
   }
 };

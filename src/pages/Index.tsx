@@ -9,6 +9,7 @@ import { UserCompareDialog } from '@/components/dashboard/UserCompareDialog';
 import { PrivacyFooter } from '@/components/common/PrivacyFooter';
 import { LandingPage } from '@/components/landing/LandingPage';
 import { useDashboardData } from '@/hooks/useDashboardData';
+import { type FilterOptions } from '@/hooks/useDataFiltering';
 import { useSettings } from '@/contexts/SettingsContext';
 import { FilterByUserProvider } from '@/contexts/FilterByUserContext';
 import { analytics } from '@/services/analytics';
@@ -99,7 +100,7 @@ const Index = () => {
   const { settings } = useSettings();
   const [compareOpen, setCompareOpen] = useState(false);
 
-  const handleFileUploadWithAnalytics = (data: any) => {
+  const handleFileUploadWithAnalytics = (data: File[]) => {
     handleMultiFileUpload(Array.isArray(data) ? data : [data]);
     analytics.trackFileUpload(Array.isArray(data) ? data.length : 1);
   };
@@ -114,7 +115,7 @@ const Index = () => {
     fetchFromGitHub();
   };
 
-  const updateFiltersWithAnalytics = (newFilters: any) => {
+  const updateFiltersWithAnalytics = (newFilters: FilterOptions) => {
     updateFilters(newFilters);
     Object.keys(newFilters).forEach(filterKey => {
       analytics.trackFilterUsage(filterKey);

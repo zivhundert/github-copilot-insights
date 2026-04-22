@@ -87,7 +87,7 @@ export const IDEVersionChart = ({ data, aggregationPeriod }: IDEVersionChartProp
       style: { color: 'hsl(var(--foreground))' },
       shared: false, useHTML: true,
       formatter: function() {
-        const point = this as any;
+        const point = this as Highcharts.TooltipFormatterContextObject & { users?: string[]; version?: string; count?: number };
         const users = point.users || [];
         const version = point.version || this.series.name;
         const percentage = point.y || 0;

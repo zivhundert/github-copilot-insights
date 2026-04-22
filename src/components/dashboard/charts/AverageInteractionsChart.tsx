@@ -1,5 +1,5 @@
 import { useMemo, useState, useCallback } from 'react';
-import Highcharts, { Options as HighchartsOptions } from 'highcharts';
+import Highcharts, { Options as HighchartsOptions, TooltipFormatterContextObject } from 'highcharts';
 import { ChartContainer } from '@/components/common/ChartContainer';
 import { BaseHighchart } from '@/components/common/BaseHighchart';
 import { getLineChartConfig, CHART_COLORS } from '@/config/chartConfigs';
@@ -90,7 +90,7 @@ export const AverageInteractionsChart = ({ data, aggregationPeriod }: AverageInt
   const options: Partial<HighchartsOptions> = {
     ...getLineChartConfig(),
     tooltip: {
-      formatter: function (this: any) {
+      formatter: function (this: TooltipFormatterContextObject) {
         return `Date: ${Highcharts.dateFormat('%Y-%m-%d', this.x as number)}<br/>
                 Avg Interactions: <b>${(this.y as number).toLocaleString()}</b><br/>
                 <span style="font-size:10px;color:gray">Click to see users</span>`;

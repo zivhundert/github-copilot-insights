@@ -1,5 +1,5 @@
 import { useMemo, useState, useCallback } from 'react';
-import Highcharts, { Options as HighchartsOptions } from 'highcharts';
+import Highcharts, { Options as HighchartsOptions, TooltipFormatterContextObject } from 'highcharts';
 import { ChartContainer } from '@/components/common/ChartContainer';
 import { BaseHighchart } from '@/components/common/BaseHighchart';
 import { getBaseChartConfig, getAxisConfig } from '@/config/chartConfigs';
@@ -81,7 +81,7 @@ export const EngagementHeatmap = ({ data }: EngagementHeatmapProps) => {
   }, [data]);
 
   const handlePointClick = useCallback(function (this: Highcharts.Point) {
-    const point = this as any;
+    const point = this as Highcharts.Point & { x: number; y: number };
     const actualDate = new Date(heatmapStart.getTime() + (point.x * 7 + point.y) * 24 * 60 * 60 * 1000);
     const dateStr = format(actualDate, 'yyyy-MM-dd');
     setSelectedDay(dateStr);
@@ -136,8 +136,8 @@ export const EngagementHeatmap = ({ data }: EngagementHeatmapProps) => {
       ],
     },
     tooltip: {
-      formatter: function (this: any) {
-        const point = this.point as any;
+      formatter: function (this: TooltipFormatterContextObject) {
+        const point = this.point as Highcharts.Point & { x: number; y: number; value: number };
         const actualDate = new Date(heatmapStart.getTime() + (point.x * 7 + point.y) * 24 * 60 * 60 * 1000);
         const dateLabel = format(actualDate, 'EEE, MMM dd yyyy');
         return `<b>${dateLabel}</b><br/>Interactions: <b>${point.value?.toLocaleString()}</b><br/><span style="font-size:10px;color:gray">Click to see users</span>`;
@@ -168,7 +168,7 @@ export const EngagementHeatmap = ({ data }: EngagementHeatmapProps) => {
         borderWidth: 2,
         borderColor: 'hsl(var(--background))',
         dataLabels: { enabled: false },
-      } as any,
+      } as Highcharts.SeriesOptionsType,
     ],
   };
 

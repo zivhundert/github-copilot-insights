@@ -1,6 +1,6 @@
 
 import { useMemo } from 'react';
-import { Options as HighchartsOptions } from 'highcharts';
+import Highcharts, { Options as HighchartsOptions, TooltipFormatterContextObject, DataLabelsFormatterContextObject } from 'highcharts';
 import { ChartContainer } from '@/components/common/ChartContainer';
 import { BaseHighchart } from '@/components/common/BaseHighchart';
 import { getBaseChartConfig, getAxisConfig } from '@/config/chartConfigs';
@@ -83,8 +83,8 @@ export const LanguageFeatureMatrix = ({ data }: LanguageFeatureMatrixProps) => {
       ],
     },
     tooltip: {
-      formatter: function (this: any) {
-        const point = this.point as any;
+      formatter: function (this: TooltipFormatterContextObject) {
+        const point = this.point as Highcharts.Point & { x: number; y: number; value: number };
         return `<b>${languages[point.y]}</b> × <b>${features[point.x]?.replace(/_/g, ' ')}</b><br/>Activity: <b>${point.value?.toLocaleString()}</b>`;
       },
     },
@@ -103,12 +103,13 @@ export const LanguageFeatureMatrix = ({ data }: LanguageFeatureMatrixProps) => {
         borderColor: 'hsl(var(--border))',
         dataLabels: {
           enabled: true,
-          formatter: function (this: any) {
-            return this.point.value > 0 ? this.point.value.toLocaleString() : '';
+          formatter: function (this: DataLabelsFormatterContextObject) {
+            const val = (this.point as Highcharts.Point & { value?: number }).value;
+            return val != null && val > 0 ? val.toLocaleString() : '';
           },
           style: { fontSize: '10px', fontWeight: 'normal', textOutline: 'none' },
         },
-      } as any,
+      } as Highcharts.SeriesOptionsType,
     ],
   };
 
