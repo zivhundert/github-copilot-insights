@@ -3,6 +3,30 @@
   "private": false,
   "version": "1.0.0",
   "license": "MIT",
+  "description": "A modern analytics dashboard for tracking GitHub Copilot adoption and ROI across your engineering team. Upload Copilot usage exports or auto-fetch from the GitHub Enterprise API, with an optional AI chat assistant.",
+  "author": "Ziv Hundert",
+  "homepage": "https://github.com/zivhundert/github-copilot-insights#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zivhundert/github-copilot-insights.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zivhundert/github-copilot-insights/issues"
+  },
+  "keywords": [
+    "github-copilot",
+    "analytics",
+    "dashboard",
+    "developer-productivity",
+    "copilot-metrics",
+    "react",
+    "vite",
+    "typescript",
+    "highcharts"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
   "type": "module",
   "scripts": {
     "fetch-data": "node scripts/fetch-copilot-data.mjs",
@@ -83,7 +107,6 @@
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
     "eslint-plugin-react-refresh": "^0.4.9",
     "globals": "^15.9.0",
-    "lovable-tagger": "^1.1.13",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.11",
     "typescript": "^5.5.3",

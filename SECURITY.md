@@ -5,7 +5,7 @@
 If you discover a security vulnerability, please report it responsibly:
 
 1. **Do not** open a public issue
-2. Email the maintainer or use [GitHub's private vulnerability reporting](https://github.com/amitrok1/remix-of-github-adoption-insights/security/advisories/new)
+2. Email the maintainer or use [GitHub's private vulnerability reporting](https://github.com/zivhundert/github-copilot-insights/security/advisories/new)
 3. Include steps to reproduce and any relevant details
 
 We will respond within 7 days and work with you to address the issue.

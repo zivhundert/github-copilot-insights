@@ -9,7 +9,7 @@
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://github.com/amitrok1/remix-of-github-adoption-insights" />
+    <meta property="og:url" content="https://github.com/zivhundert/github-copilot-insights" />
     <meta property="og:title" content="GitHub Copilot Analytics Dashboard">
     <meta property="og:description" content="See how your team can generate 97K+ lines of code, save thousands, and achieve over 70% ROI with GitHub Copilot Enterprise. Our dashboard provides real data.">
     <meta property="og:image" content="/dashboardimage.jpg" />
@@ -21,20 +21,25 @@
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content="https://github.com/amitrok1/remix-of-github-adoption-insights" />
+    <meta name="twitter:url" content="https://github.com/zivhundert/github-copilot-insights" />
     <meta name="twitter:title" content="GitHub Copilot Analytics Dashboard">
     <meta name="twitter:description" content="See how your team can generate 97K+ lines of code, save thousands, and achieve over 70% ROI with GitHub Copilot Enterprise. Our dashboard provides real data.">
     <meta name="twitter:image" content="/dashboardimage.jpg" />
     <meta name="twitter:image:alt" content="A dashboard showing GitHub Copilot usage analytics, including lines of code generated and ROI." />
 
-    <!-- Google Analytics — see PRIVACY.md for details -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZB6MY0J59M"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-ZB6MY0J59M');
+    <!-- Google Analytics — opt-in via VITE_GA_ID env var; see README Privacy section -->
+    <script type="module">
+      const gaId = import.meta.env.VITE_GA_ID;
+      if (gaId) {
+        const s = document.createElement('script');
+        s.async = true;
+        s.src = `https://www.googletagmanager.com/gtag/js?id=${gaId}`;
+        document.head.appendChild(s);
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = function () { window.dataLayer.push(arguments); };
+        window.gtag('js', new Date());
+        window.gtag('config', gaId);
+      }
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   </head>

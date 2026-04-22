@@ -128,8 +128,8 @@ The project includes a **Stitch MCP integration** for design-to-code workflows:
 ### Installation
 
 ```bash
-git clone https://github.com/amitrok1/remix-of-github-adoption-insights.git
-cd remix-of-github-adoption-insights
+git clone https://github.com/zivhundert/github-copilot-insights.git
+cd github-copilot-insights
 npm install
 ```
 
@@ -178,7 +178,8 @@ Create a `.env.local` file in the project root. No variables are required — th
 | `GITHUB_PAT` | Server | — | Personal Access Token with `manage_billing:copilot` scope |
 | `GEMINI_API_KEY` | Server | — | Google Gemini API key; enables the AI chat assistant. Get one at [Google AI Studio](https://aistudio.google.com/apikey) |
 | `CHAT_MODEL` | Server | `gemini-2.0-flash` | Gemini model to use for chat responses |
-| `STITCH_API_KEY` | Server | — | Stitch MCP API key; enables design-to-code integration with [Stitch](https://stitch.withgoogle.com/) |
+| `VITE_GA_ID` | Client | — | Google Analytics measurement ID (e.g. `G-XXXXXXXXXX`). Leave empty to disable analytics entirely. |
+| `STITCH_API_KEY` | External | — | Stitch design tool API key — consumed by the Stitch MCP server (configured in your IDE/agent), not by this app's runtime. |
 
 **Example `.env.local`:**
 
@@ -192,7 +193,10 @@ GITHUB_PAT=ghp_your_personal_access_token
 GEMINI_API_KEY=your-gemini-api-key
 CHAT_MODEL=gemini-2.0-flash
 
-# Stitch MCP (optional — enables design-to-code integration)
+# Google Analytics (optional — leave empty to disable)
+VITE_GA_ID=
+
+# Stitch MCP (optional — used by the Stitch MCP server, not the app runtime)
 STITCH_API_KEY=your-stitch-api-key
 ```
 
@@ -340,13 +344,13 @@ This dashboard is designed with privacy in mind. Here is exactly what happens wi
 |-----------|---------------|------|
 | Uploaded NDJSON/JSON files | Stays in your browser (no server upload) | Always |
 | Dashboard rendering & charts | Local browser only | Always |
-| Chat questions + aggregated data summary | Google Gemini API | Only when you use the AI chat feature (dev server only) |
-| Page views & UI interactions | Google Analytics | Always (anonymized, no personal data) |
+| Chat questions + per-user usage summary (incl. `user_login` values) | Google Gemini API | Only when you use the AI chat feature (dev server only) |
+| Page views & UI interactions | Google Analytics | Only if `VITE_GA_ID` is set in your `.env` |
 
 **Important notes:**
 - Raw NDJSON data is **never** sent to any external service.
-- The AI chat feature sends a **summarized statistical context** (not raw records) to the Gemini API so it can answer your questions. This runs through a local Vite dev server proxy — your API key never reaches the browser.
-- Google Analytics tracks anonymized usage events (page views, filter usage, exports). No file contents or user data from your Copilot metrics are sent to GA.
+- The AI chat feature sends an **aggregated per-user summary** (counts, rates, IDEs used, **and `user_login` identifiers**) to the Gemini API so it can answer questions like "who are the top users?". No per-row records, code samples, or PII beyond the GitHub username are transmitted. The request runs through a local Vite dev server proxy — your `GEMINI_API_KEY` never reaches the browser.
+- Google Analytics is **opt-in via the `VITE_GA_ID` environment variable**. When unset (the default), no analytics scripts are loaded. When set, only anonymized event metadata is tracked (page views, filter usage, exports) — never file contents or Copilot data.
 
 ---
 

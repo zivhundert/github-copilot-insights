@@ -11,8 +11,8 @@ Thank you for your interest in contributing! This guide will help you get starte
 
 ```bash
 # Clone the repo
-git clone https://github.com/amitrok1/remix-of-github-adoption-insights.git
-cd remix-of-github-adoption-insights
+git clone https://github.com/zivhundert/github-copilot-insights.git
+cd github-copilot-insights
 
 # Install dependencies
 npm install
@@ -99,4 +99,4 @@ scripts/            # Build-time scripts
 
 ## Reporting Issues
 
-Use [GitHub Issues](https://github.com/amitrok1/remix-of-github-adoption-insights/issues) to report bugs or request features.
+Use [GitHub Issues](https://github.com/zivhundert/github-copilot-insights/issues) to report bugs or request features.
