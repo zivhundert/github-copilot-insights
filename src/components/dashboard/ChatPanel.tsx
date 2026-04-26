@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Send, Square, Trash2, Bot, User, Users, TrendingUp, Monitor, BarChart3, Sparkles } from "lucide-react";
+import { Send, Square, Trash2, Bot, User, Users, TrendingUp, Monitor, BarChart3, Sparkles, Download } from "lucide-react";
 import { useChat } from "@/hooks/useChat";
 import type { CopilotDataRow } from "@/pages/Index";
 
@@ -184,10 +184,32 @@ export const ChatPanel = ({ open, onOpenChange, data }: ChatPanelProps) => {
           </div>
           <div className="flex items-center justify-between px-1">
             {messages.length > 0 ? (
-              <Button variant="ghost" size="sm" onClick={clear} className="h-6 text-xs text-muted-foreground/60 hover:text-muted-foreground gap-1 px-2">
-                <Trash2 className="w-3 h-3" />
-                Clear chat
-              </Button>
+              <div className="flex items-center gap-1">
+                <Button variant="ghost" size="sm" onClick={clear} className="h-6 text-xs text-muted-foreground/60 hover:text-muted-foreground gap-1 px-2">
+                  <Trash2 className="w-3 h-3" />
+                  Clear chat
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    const text = messages
+                      .map((m) => `${m.role === "user" ? "You" : "Assistant"}:\n${m.content}`)
+                      .join("\n\n---\n\n");
+                    const blob = new Blob([text], { type: "text/plain" });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = `chat-session-${new Date().toISOString().slice(0, 10)}.txt`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                  }}
+                  className="h-6 text-xs text-muted-foreground/60 hover:text-muted-foreground gap-1 px-2"
+                >
+                  <Download className="w-3 h-3" />
+                  Download
+                </Button>
+              </div>
             ) : (
               <span />
             )}
