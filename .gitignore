@@ -30,3 +30,8 @@ public/copilot_data.ndjson
 *.njsproj
 *.sln
 *.sw?
+
+# Graphify local/intermediate files (graph outputs are committed for team use)
+graphify-out/.graphify_python
+graphify-out/.graphify_*
+graphify-out/cache/
