@@ -1,7 +1,7 @@
 # Graph Report - /Users/ziv.hundert/github-copilot-insights  (2026-04-27)
 
 ## Corpus Check
-- 136 files · ~181,141 words
+- 136 files · ~199,728 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -135,16 +135,16 @@
 10. `parseNDJSONFile()` - 3 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `AverageInteractionsChart()` --calls--> `getLineChartConfig()`  [INFERRED]
-  /Users/ziv.hundert/github-copilot-insights/src/components/dashboard/charts/AverageInteractionsChart.tsx → /Users/ziv.hundert/github-copilot-insights/src/config/chartConfigs.ts
-- `CumulativeChart()` --calls--> `getLineChartConfig()`  [INFERRED]
-  /Users/ziv.hundert/github-copilot-insights/src/components/dashboard/charts/CumulativeChart.tsx → /Users/ziv.hundert/github-copilot-insights/src/config/chartConfigs.ts
-- `FeatureUsageChart()` --calls--> `getColumnChartConfig()`  [INFERRED]
-  /Users/ziv.hundert/github-copilot-insights/src/components/dashboard/charts/FeatureUsageChart.tsx → /Users/ziv.hundert/github-copilot-insights/src/config/chartConfigs.ts
-- `AgentAdoptionChart()` --calls--> `getColumnChartConfig()`  [INFERRED]
-  /Users/ziv.hundert/github-copilot-insights/src/components/dashboard/charts/AgentAdoptionChart.tsx → /Users/ziv.hundert/github-copilot-insights/src/config/chartConfigs.ts
-- `IDEVersionChart()` --calls--> `getColumnChartConfig()`  [INFERRED]
-  /Users/ziv.hundert/github-copilot-insights/src/components/dashboard/charts/IDEVersionChart.tsx → /Users/ziv.hundert/github-copilot-insights/src/config/chartConfigs.ts
+- `getLineChartConfig()` --calls--> `AverageInteractionsChart()`  [INFERRED]
+  /Users/ziv.hundert/github-copilot-insights/src/config/chartConfigs.ts → /Users/ziv.hundert/github-copilot-insights/src/components/dashboard/charts/AverageInteractionsChart.tsx
+- `getLineChartConfig()` --calls--> `CumulativeChart()`  [INFERRED]
+  /Users/ziv.hundert/github-copilot-insights/src/config/chartConfigs.ts → /Users/ziv.hundert/github-copilot-insights/src/components/dashboard/charts/CumulativeChart.tsx
+- `getColumnChartConfig()` --calls--> `FeatureUsageChart()`  [INFERRED]
+  /Users/ziv.hundert/github-copilot-insights/src/config/chartConfigs.ts → /Users/ziv.hundert/github-copilot-insights/src/components/dashboard/charts/FeatureUsageChart.tsx
+- `getColumnChartConfig()` --calls--> `AgentAdoptionChart()`  [INFERRED]
+  /Users/ziv.hundert/github-copilot-insights/src/config/chartConfigs.ts → /Users/ziv.hundert/github-copilot-insights/src/components/dashboard/charts/AgentAdoptionChart.tsx
+- `getColumnChartConfig()` --calls--> `IDEVersionChart()`  [INFERRED]
+  /Users/ziv.hundert/github-copilot-insights/src/config/chartConfigs.ts → /Users/ziv.hundert/github-copilot-insights/src/components/dashboard/charts/IDEVersionChart.tsx
 
 ## Communities
 
